@@ -76,7 +76,7 @@ No matter which agent you use, **one line does it**:
 ### Claude Code
 
 ```
-/plugin marketplace add ~/Claude/aJay
+/plugin marketplace add Aji-Q/aJay-Skill   # 或本地路径 ~/Claude/aJay
 /plugin install ajay@ajay-skill
 ```
 

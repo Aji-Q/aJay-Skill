@@ -19,7 +19,7 @@
 #
 set -euo pipefail
 
-REPO_URL="${AJAY_REPO_URL:-}"  # aJay 尚未发布到 GitHub;没有本地源码时必须显式给仓库地址,不再默认克隆上游 UZI-Skill
+REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据;不再默认克隆上游 UZI-Skill
 [ -n "$REPO_URL" ] || [ -d "$(dirname "$0")/skills" ] || { echo "❌ 请设 AJAY_REPO_URL=<你的 aJay 仓库地址>,或在 ~/Claude/aJay 源码目录内运行"; exit 1; }
 CLONE_DIR="${1:-$HOME/aJay-Skill}"
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"

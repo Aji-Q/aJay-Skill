@@ -1,4 +1,4 @@
-> aJay 尚未发布到 GitHub:下面凡是 `<你的GitHub用户名>/aJay-Skill` 的坐标,发布后再替换;本机直接用 `~/Claude/aJay` 源码。
+> 仓库:https://github.com/Aji-Q/aJay-Skill(private)。本机也可直接用 `~/Claude/aJay` 源码。
 
 # Hermes Agent · 安装指南
 
@@ -38,7 +38,7 @@ bash install-hermes.sh /opt/ajay-skill   # 自定义 clone 路径
 rm -rf ~/.hermes/skills/{deep-analysis,investor-panel,lhb-analyzer,trap-detector}
 
 # clone + symlink
-cp -R ~/Claude/aJay ~/aJay-Skill   # 或发布后 git clone <你的仓库> ~/aJay-Skill
+cp -R ~/Claude/aJay ~/aJay-Skill   # 或 git clone https://github.com/Aji-Q/aJay-Skill.git ~/aJay-Skill
 mkdir -p ~/.hermes/skills
 for s in deep-analysis investor-panel lhb-analyzer trap-detector; do
   ln -sfn ~/aJay-Skill/skills/$s ~/.hermes/skills/$s
@@ -52,10 +52,10 @@ done
 
 ```bash
 # 目前会报 DANGEROUS · 见上方背景
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/deep-analysis
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/investor-panel
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/lhb-analyzer
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/trap-detector
+hermes skills install Aji-Q/aJay-Skill/skills/deep-analysis
+hermes skills install Aji-Q/aJay-Skill/skills/investor-panel
+hermes skills install Aji-Q/aJay-Skill/skills/lhb-analyzer
+hermes skills install Aji-Q/aJay-Skill/skills/trap-detector
 ```
 
 ### Skills Guard 误判的具体原因
@@ -81,10 +81,10 @@ hermes skills install <你的GitHub用户名>/aJay-Skill/skills/trap-detector
 
 ```bash
 hermes skills uninstall deep-analysis investor-panel lhb-analyzer trap-detector
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/deep-analysis
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/investor-panel
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/lhb-analyzer
-hermes skills install <你的GitHub用户名>/aJay-Skill/skills/trap-detector
+hermes skills install Aji-Q/aJay-Skill/skills/deep-analysis
+hermes skills install Aji-Q/aJay-Skill/skills/investor-panel
+hermes skills install Aji-Q/aJay-Skill/skills/lhb-analyzer
+hermes skills install Aji-Q/aJay-Skill/skills/trap-detector
 ```
 
 旧版本（v2.10.8 之前）skill_dir 缺 `run.py` 或 `requirements.txt` · 这是历史报错的根因.
@@ -94,7 +94,7 @@ hermes skills install <你的GitHub用户名>/aJay-Skill/skills/trap-detector
 适合开发或想修改源码的用户：
 
 ```bash
-cp -R ~/Claude/aJay ~/aJay-Skill   # 或发布后 git clone <你的仓库> ~/aJay-Skill
+cp -R ~/Claude/aJay ~/aJay-Skill   # 或 git clone https://github.com/Aji-Q/aJay-Skill.git ~/aJay-Skill
 mkdir -p ~/.hermes/skills
 for s in deep-analysis investor-panel lhb-analyzer trap-detector; do
   ln -sfn ~/aJay-Skill/skills/$s ~/.hermes/skills/$s

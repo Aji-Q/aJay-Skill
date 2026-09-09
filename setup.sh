@@ -1,6 +1,6 @@
 #!/bin/bash
 # aJay-Skill 一键安装脚本
-# 用法: bash ~/Claude/aJay/setup.sh        # 在源码目录内运行;不在目录内时需 AJAY_REPO_URL=<你的 aJay 仓库地址>
+# 用法: bash ~/Claude/aJay/setup.sh        # 在源码目录内运行;不在目录内时 AJAY_REPO_URL 默认 https://github.com/Aji-Q/aJay-Skill.git
 
 set -e
 
@@ -30,7 +30,7 @@ if [ ! -f "run.py" ]; then
         cd aJay-Skill && git pull
     else
         # aJay 尚未发布到 GitHub:不默认克隆上游 UZI-Skill,必须显式给自己的仓库地址
-        [ -n "${AJAY_REPO_URL:-}" ] || { echo "❌ 不在 aJay 源码目录内,且未设 AJAY_REPO_URL;请 cd ~/Claude/aJay 后重跑,或 export AJAY_REPO_URL=<你的 aJay 仓库地址>"; exit 1; }
+        AJAY_REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据
         echo "⏬ 克隆仓库 $AJAY_REPO_URL ..."
         git clone "$AJAY_REPO_URL" aJay-Skill
         cd aJay-Skill

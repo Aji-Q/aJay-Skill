@@ -37,7 +37,7 @@ A 股 / 港股 / 美股 · 个股深度分析引擎 · **66 位评审团 × 9 �
 
 | 你用的 agent | 直接丢这句 |
 |---|---|
-| **Claude Code** | `/plugin marketplace add ~/Claude/aJay` 然后 `/plugin install ajay@ajay-skill` |
+| **Claude Code** | `/plugin marketplace add Aji-Q/aJay-Skill   # 或本地路径 ~/Claude/aJay` 然后 `/plugin install ajay@ajay-skill` |
 | **Codex / OpenAI CLI** | "按 https://raw.githubusercontent.com/wbh604/UZI-Skill/main/.codex/INSTALL.md 装 aJay-Skill，分析 600519" |
 | **Cursor** | `/add-plugin ajay` |
 | **Gemini CLI** | `gemini extensions install https://github.com/wbh604/UZI-Skill` |
@@ -118,7 +118,7 @@ A 股 / 港股 / 美股 · 个股深度分析引擎 · **66 位评审团 × 9 �
 ### Claude Code
 
 ```
-/plugin marketplace add ~/Claude/aJay
+/plugin marketplace add Aji-Q/aJay-Skill   # 或本地路径 ~/Claude/aJay
 /plugin install ajay@ajay-skill
 ```
 
