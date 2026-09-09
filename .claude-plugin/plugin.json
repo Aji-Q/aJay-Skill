@@ -1,0 +1,29 @@
+{
+  "name": "ajay",
+  "version": "1.0.1",
+  "description": "aJay · A股/港股/美股个股深度分析引擎(派生自 stock-deep-analyzer 3.9.4)· 22维数据 × 66位评委 × 22种机构级方法 · 美股补数(SEC XBRL/moomoo资金流/czsc缠论)· Bloomberg风格HTML报告",
+  "author": {
+    "name": "aJay",
+    "email": "aji3269794743@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "stock-analysis",
+    "a-share",
+    "china-stocks",
+    "hong-kong-stocks",
+    "chinese-equities",
+    "dcf",
+    "bloomberg",
+    "quantitative",
+    "investor-panel",
+    "trap-detection",
+    "buffett",
+    "munger",
+    "equity-research",
+    "us-stocks",
+    "chan-theory",
+    "czsc"
+  ],
+  "displayName": "aJay"
+}

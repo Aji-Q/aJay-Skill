@@ -1,0 +1,14 @@
+{
+  "name": "ajay-skill",
+  "owner": {
+    "name": "aJay"
+  },
+  "plugins": [
+    {
+      "name": "ajay",
+      "source": "./",
+      "description": "aJay · A股/港股/美股个股深度分析引擎(派生自 stock-deep-analyzer 3.9.4)· 22维数据 × 66位评委 × 22种机构级方法 · 美股补数(SEC XBRL/moomoo资金流/czsc缠论)· Bloomberg风格HTML报告"
+    }
+  ],
+  "description": "aJay 个股深度分析插件(A股/港股/美股;派生自 stock-deep-analyzer 3.9.4,新增美股补数链与缠论结构)"
+}
