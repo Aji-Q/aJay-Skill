@@ -1,23 +1,102 @@
+<div align="center">
+
 # aJay
 
-**aJay 的美股研究工作台。** 从公开数据到可追溯判断，再到清晰、可阅读的研究报告。
+### 把全球金融中心，装进你的本地投资研究室。
 
-**维护者：aJay（Aji-Q） · 版本：1.1.0 · 唯一项目入口：[Aji-Q/aJay-Skill](https://github.com/Aji-Q/aJay-Skill)**
+**输入一个股票代码。得到一套能追溯、能质疑、能拿去做决策的深度研究网站。**
 
-[English](README_EN.md) · [使用流程](AGENTS.md) · [版本记录](RELEASE-NOTES.md) · [贡献归属](CONTRIBUTORS.md) · [品牌与归属](docs/OWNERSHIP.md) · [MIT 许可](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.1.0-C7A46A?style=for-the-badge)](RELEASE-NOTES.md)
+[![Focus](https://img.shields.io/badge/focus-US%20Equities-0B1118?style=for-the-badge)](#这不是一张更花哨的评分卡)
+[![Report](https://img.shields.io/badge/output-Self--contained%20HTML-17324D?style=for-the-badge)](#一条命令开始研究)
+[![Tests](https://img.shields.io/badge/release%20gate-1004%20tests%20passed-2E7D65?style=for-the-badge)](docs/FUNCTIONAL-AUDIT.md)
+[![License](https://img.shields.io/badge/license-MIT-E7E4DC?style=for-the-badge&labelColor=4B5563)](LICENSE)
 
-## 研究范围
+[English](README_EN.md) · [立即开始](#一条命令开始研究) · [查看产品](#这不是一张更花哨的评分卡) · [分析审计](docs/ANALYSIS-AUDIT.md) · [功能审计](docs/FUNCTIONAL-AUDIT.md) · [提交问题](https://github.com/Aji-Q/aJay-Skill/issues)
 
-- **美股优先**：已有 SEC XBRL 财务补数、yfinance 同行信息、可选 FMP 共识与 moomoo OpenD 资金流接口；实际覆盖取决于数据可达性、凭据与标的。
-- **证据分层**：区分原始数据、规则评分、AI 推理和模拟投资方法评审；缺失数据、代理指标与降级路径应在报告中明示。
-- **决策阅读顺序**：研究摘要 → 证据质量 → 关键驱动 → 估值假设 → 风险与验证条件 → 数据明细。
-- **兼容保留**：A 股、港股及龙虎榜等上游工作流继续可用，但不代表各市场具有同等数据覆盖。
+</div>
 
-投资方法面板是算法 / AI 模拟，不是真实投资者投票、独立专家意见或人物背书。评分和“置信度”不是收益概率；未经回测校准的评分应作为研究线索。
+![aJay private research report — Wall Street investment brief](docs/readme/ajay-report-hero.jpg)
 
-## 安装与运行
+> **你缺的不是第 17 个行情网站。** 你缺的是一个敢把数据缺口、估值假设、反方证据和决策条件同时摆上桌面的研究系统。
+>
+> **aJay 不是“AI 给个分”的股票玩具。** 它更像一间随时待命的私人投资委员会：先核验证据，再拆生意、算价格、组织分歧，最后告诉你什么条件值得行动，什么信息仍然未知。
 
-需要 Git 和 Python 3.10+。先从 aJay 的仓库克隆，在独立环境安装依赖：
+## 这不是一张更花哨的评分卡
+
+aJay 把一次个股研究组织成一座连续、可交互的金融研究网站。你从纽约的投资简报出发，穿过上海的经营质量、伦敦的估值模型与香港的市场分歧，最终抵达可执行的决策条件和完整研究底册。
+
+| 传统股票工具 | aJay |
+|---|---|
+| 给你一个分数 | 给你**结论、证据、反证与缺口** |
+| 图表很多，但不知道先看什么 | 按买方决策顺序组织为**六章研究叙事** |
+| DCF 只展示目标价 | 展示**输入、假设、结果与敏感性矩阵** |
+| AI 语气很确定 | 缺失数据保持未知，不用 `0` 或默认值制造确定感 |
+| “大师观点”只是金句 | 42 位美股适配的模拟方法视角进入同一场可检索讨论 |
+| 报告依赖在线页面 | 生成可离线保存、转发和审阅的**单文件 HTML** |
+
+## 一个代码，六间研究室
+
+```text
+TICKER
+  └─ 公开数据与来源校验
+       └─ 19 个研究维度
+            └─ 生意质量与资本效率
+                 └─ DCF / 相对估值 / LBO / 敏感性
+                      └─ 42 个市场适配视角的分歧审理
+                           └─ 买入条件 / 证伪条件 / 风险边界
+                                └─ 可追溯、可导出的独立研究网站
+```
+
+### 01 / 先给投资结论，再给结论边界
+
+研究摘要把支持核验、关键缺口、价格与核心判断放在第一屏。读者不必翻完几十张图，才能知道这份研究到底在说什么。
+
+### 02 / 让财务质量随着建筑一起展开
+
+收入、利润、ROE、分红、负债和现金流不再挤在仪表盘卡片里。数据叙事与摄影构图共同推进，让“经营质量”成为一段连续阅读，而不是表格堆积。
+
+![aJay business-quality chapter — Shanghai financial district](docs/readme/ajay-business-quality.jpg)
+
+### 03 / 估值不是答案，是一组可以被攻击的假设
+
+当前估值、历史分位、行业比较、DCF 内在价值和敏感性矩阵进入同一工作台。你看到的不只是一个目标价，还能看到这个价格依赖什么。
+
+![aJay valuation workspace — DCF and sensitivity analysis](docs/readme/ajay-valuation-workspace.jpg)
+
+### 04 / 把“不同意”变成研究资产
+
+价值、质量、成长、量化、宏观与交易视角在同一公司上形成分歧。每个判断都可以继续检索、筛选并回到证据入口——不是人物背书，而是可复核的方法模拟。
+
+![aJay market disagreement chapter — Hong Kong financial district](docs/readme/ajay-market-disagreement.jpg)
+
+## 你的私人投资委员会，不替你假装确定
+
+美股报告会按市场适配性组织当前 42 个模拟视角，包括 Buffett、Munger、Graham、Lynch、Dalio、Soros、Simons、Livermore 等方法原型；不参与美股研究的 A 股专属短线角色会被自动排除。
+
+这里没有真实人物投票，也没有名人背书。真正有价值的是：
+
+- 同一份证据如何被不同投资体系解释；
+- 哪些观点彼此冲突，冲突来自事实还是假设；
+- 哪条反证足以推翻当前判断；
+- 哪些数据尚未获得，因此暂时不应下结论。
+
+## 为决策而生，而不是为展示而生
+
+- **证据可追溯**：关键判断连接数据提供方、日期与原始记录。
+- **缺口可见**：缺失、代理指标、降级来源与失败补数不会被包装成完整数据。
+- **模型可检查**：估值输入、假设、结果、区间和敏感性在同一阅读路径中。
+- **分歧可检索**：按人物、流派和关键词搜索观点，而不是滚动寻找答案。
+- **研究可带走**：导出研究输入与自包含 HTML；默认只保存在本机。
+- **桌面与移动端一致**：同一份研究可以在大屏深读，也能在手机上完成关键判断。
+
+<p align="center">
+  <img src="docs/readme/ajay-report-mobile.png" width="360" alt="aJay mobile equity research report" />
+</p>
+
+## 一条命令开始研究
+
+需要 Git 与 Python 3.10+：
 
 ```bash
 git clone https://github.com/Aji-Q/aJay-Skill.git
@@ -28,73 +107,59 @@ python -m pip install -r requirements.txt
 python run.py AAPL --depth medium --no-browser
 ```
 
-若 GitHub 提示认证，使用你自己的仓库访问凭据。不要在脚本、报告或 issue 中粘贴密钥。
+完成后，终端会给出报告路径。打开 `full-report-standalone.html`，即可离线阅读、保存或分享。
 
-报告生成后，终端会显示 HTML 的实际路径。默认报告保留在本机；`--remote` 是主动公开报告的选项，使用前先检查报告是否包含私人信息。
+| 模式 | 适合场景 | 你会得到什么 |
+|---|---|---|
+| `lite` | 盘前扫描、快速排雷 | 核心数据、规则扫描与初步风险 |
+| `medium` | 日常个股研究 | 更完整的数据、建模与报告 |
+| 深度研究工作流 | 建仓前、财报后、投资备忘录 | 数据补全、方法评审、输入指纹与人工质量闸门 |
 
-| 使用方式 | 入口 |
-|---|---|
-| Codex | [.codex/INSTALL.md](.codex/INSTALL.md) |
-| Claude Code / Cursor | 本仓库插件 manifest 与 [AGENTS.md](AGENTS.md) |
-| Gemini CLI | [GEMINI.md](GEMINI.md) |
-| OpenCode | [.opencode/INSTALL.md](.opencode/INSTALL.md) |
-| Hermes | 先阅读 [INSTALL-HERMES.md](INSTALL-HERMES.md)，再运行本仓库的 `install-hermes.sh` |
+要完成真正的深度研究，请让 agent 按 [AGENTS.md](AGENTS.md) 与 [analyze-stock](commands/analyze-stock.md) 执行证据采集、补数、复算、方法评审和最终检查。一次 CLI 自动扫描不等于独立分析师复核。
 
-## 深度研究
-
-`lite` / `medium` 可用于快速规则扫描。需要完整深度分析时，请让 agent 按 [AGENTS.md](AGENTS.md) 和 [analyze-stock](commands/analyze-stock.md) 完成：
-
-1. 采集数据并检查来源、日期与缺口。
-2. 美股按需运行 `us_backfill.py`，再重新计算建模与分析指纹。
-3. 基于真实输入完成方法评审，记录推理与 `analysis_input_hash`。
-4. 生成报告并复核数字、假设、证据质量及风险提示。
-
-直接执行一次 CLI 不等于已完成独立的分析师复核。
-
-可选配置见 [.env.example](.env.example)：SEC 联系方式 `AJAY_SEC_UA`、`FMP_APIKEY`、moomoo OpenD 及其他数据源按实际需要启用。
-
-## 更新与验证
-
-更新前确认远端属于此项目：
+### 想先看效果，不想等待数据？
 
 ```bash
-git remote get-url origin
-# 预期：https://github.com/Aji-Q/aJay-Skill.git
-# GitHub SSH 等价地址也可。
-git pull --ff-only
-python -m pip install -r requirements.txt
-cd skills/deep-analysis/scripts
-python -m pytest tests/ -q
-```
-
-更新通知默认关闭。显式设置 `AJAY_REPO=Aji-Q/aJay-Skill` 后可检查本项目 GitHub release；`AJAY_NO_UPDATE_CHECK=1` 关闭检查。未发布 release 或网络失败不代表当前代码已是最新。
-
-## 新版报告与审计
-
-连续六章的研究网站：简报 → 生意质量 → 价格模型 → 市场分歧 → 决策条件 → 研究底册
-
-19 个研究维度、估值模型及假设、完整流派笔记搜索与筛选、风险条件、原始记录和导出均保留在主报告。缺失产品展示真实空状态。摄影来自近两年公开作品，经 image 工具轻微重构；人物为 AI 肖像，非本人发言或背书。
-
-```bash
-# 从项目根目录开始；以下只生成合成演示数据
 cd skills/deep-analysis/scripts
 python preview_editorial.py
-# 打开输出的 full-report-standalone.html，可独立保存与分享
 ```
 
-预览中的 Aster Systems / AJAY.DEMO 不是实际证券。默认一次构建同时输出内容相同、资源内联的 full-report.html 与 full-report-standalone.html。生产报告仍要求完整数据与质量闸门；council / editorial 布局仅作显式兼容入口。
+预览中的 Aster Systems / `AJAY.DEMO` 是合成样本，不是实际证券或推荐。
 
-[分析架构审计](docs/ANALYSIS-AUDIT.md) · [功能与应用审核](docs/FUNCTIONAL-AUDIT.md) · [UI 交付与验证](docs/UI-REFACTOR.md) · [品牌规范](docs/brand-spec.md) · [UI skill 检索](docs/UI-SKILL-RESEARCH.md) · [图像来源](docs/IMAGE-PROVENANCE.md)
+## 数据与能力边界
 
-## 品牌、来源与反馈
+美股是当前重点市场：支持 SEC XBRL 财务补数、yfinance 行情与同行信息，并可选接入 FMP 共识数据和 moomoo OpenD 资金流。实际覆盖取决于数据可达性、凭据和标的；A 股、港股及龙虎榜工作流作为兼容能力保留，但不代表覆盖完全一致。
 
-**aJay 是本派生项目的品牌与维护者。** 项目基于 MIT 许可的 stock-deep-analyzer 3.9.4，并非所有代码都由 aJay 原创；保留上游版权和贡献记录。
+可选配置见 [.env.example](.env.example)。报告默认留在本机；只有显式使用 `--remote` 才会主动公开访问。公开前请检查报告是否包含私人信息。
 
-- [NOTICE](NOTICE)：软件来源、版权及非关联说明。
-- [归属说明](docs/OWNERSHIP.md)：当前维护边界、品牌规范与检查规则。
-- [上游发布历史](docs/UPSTREAM-RELEASE-NOTES.md) / [贡献记录](docs/UPSTREAM-CONTRIBUTORS.md)：仅供追溯。
-- [本项目问题反馈](https://github.com/Aji-Q/aJay-Skill/issues)：项目维护入口，不引导至上游社群、二维码或联系人。
+## 不是口号：发布前真的跑过
 
-旧 README 与截图保留在 `docs/archive/` 和 `docs/screenshots/` 作为历史资料，旧安装命令与宣传内容不作为当前说明。报告视觉借鉴 Vantara 的编辑式章节与留白布局，不使用其标志、照片、文案，也不表示双方有关联。
+v1.1 发布闸门在真实 AAPL 流程上验证了报告生成、42 位美股适配讨论阵容、搜索与流派筛选、证据弹窗、主题切换、研究输入导出、移动端布局和浏览器控制台；自动化测试结果为 **1004 passed**。
 
-本工具提供研究辅助，不构成投资建议；使用者应自行核实信息与承担决策风险。
+[阅读分析架构审计](docs/ANALYSIS-AUDIT.md) · [阅读功能与应用审核](docs/FUNCTIONAL-AUDIT.md) · [阅读 UI 交付记录](docs/UI-REFACTOR.md) · [查看图像来源](docs/IMAGE-PROVENANCE.md)
+
+## 在你的 agent 工作流里使用
+
+| 环境 | 入口 |
+|---|---|
+| Codex | [.codex/INSTALL.md](.codex/INSTALL.md) |
+| Claude Code / Cursor | [AGENTS.md](AGENTS.md) 与仓库插件 manifest |
+| Gemini CLI | [GEMINI.md](GEMINI.md) |
+| OpenCode | [.opencode/INSTALL.md](.opencode/INSTALL.md) |
+| Hermes | [INSTALL-HERMES.md](INSTALL-HERMES.md) |
+
+## aJay 出品
+
+**aJay（Aji-Q）拥有并维护 aJay 项目的品牌、产品方向与本项目修改。** 完整的贡献归属、维护边界与软件来源见 [CONTRIBUTORS.md](CONTRIBUTORS.md)、[OWNERSHIP.md](docs/OWNERSHIP.md) 与 [NOTICE](NOTICE)。
+
+本项目派生自 MIT 许可的 stock-deep-analyzer 3.9.4，并完整保留上游版权和贡献记录。摄影与 AI 重构素材均有来源记录；模拟投资方法不构成真实人物发言、投票或背书。
+
+<div align="center">
+
+**研究的终点不是一个分数，而是一个你敢为之负责的判断。**
+
+[开始使用](#一条命令开始研究) · [查看版本记录](RELEASE-NOTES.md) · [提交问题](https://github.com/Aji-Q/aJay-Skill/issues)
+
+<sub>研究辅助工具，不构成投资建议。请独立核验数据与假设，并自行承担决策风险。</sub>
+
+</div>
