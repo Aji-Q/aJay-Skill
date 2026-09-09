@@ -29,7 +29,7 @@ if [ ! -f "run.py" ]; then
         echo "✓ aJay-Skill 目录已存在，更新中..."
         cd aJay-Skill && git pull
     else
-        # aJay 尚未发布到 GitHub:不默认克隆上游 UZI-Skill,必须显式给自己的仓库地址
+        # 默认克隆 aJay 自己的 private 仓库(不是上游 UZI-Skill);可用 AJAY_REPO_URL 覆盖
         AJAY_REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据
         echo "⏬ 克隆仓库 $AJAY_REPO_URL ..."
         git clone "$AJAY_REPO_URL" aJay-Skill
