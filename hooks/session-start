@@ -34,13 +34,14 @@ fi
 
 # Build the context message with skill summaries
 CONTEXT="$(cat <<'SKILLS_CONTEXT'
-🎯 aJay Skills v1.0 已加载（派生自 stock-deep-analyzer 3.9.4）
+🎯 aJay Research v1.1.0 已加载 · Maintained by aJay (Aji-Q)
+美股研究主线；上游贡献与许可见 NOTICE。
 
 ## 可用技能
 
 | 命令 | 说明 |
 |---|---|
-| `/ajay:analyze-stock <代码>` | 完整深度分析（22维 + 66评委 + Bloomberg报告；美股自动补数链） |
+| `/ajay:analyze-stock <代码>` | 完整深度分析（22维 + 66评委 + aJay 编辑式报告；美股自动补数链） |
 | `/ajay:dcf <代码>` | DCF 估值 |
 | `/ajay:comps <代码>` | 同行对标 |
 | `/ajay:lbo <代码>` | LBO 压力测试 |
@@ -51,7 +52,7 @@ CONTEXT="$(cat <<'SKILLS_CONTEXT'
 
 ## 更新检查
 
-默认关闭。设了 `AJAY_REPO=owner/repo` 时 hook 才后台查 GitHub release 并写 `.cache/_global/update_prompt.md`，存在则展示给用户并用 `lib.update_check.handle_answer(ans, latest)` 处理回答。
+默认关闭。设了 `AJAY_REPO=Aji-Q/aJay-Skill` 时 hook 才后台查 GitHub release 并写 `.cache/_global/update_prompt.md`，存在则展示给用户并用 `lib.update_check.handle_answer(ans, latest)` 处理回答。
 
 ## 工作流提醒
 

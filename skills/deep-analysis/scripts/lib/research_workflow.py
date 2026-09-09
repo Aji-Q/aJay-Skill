@@ -19,6 +19,7 @@ from __future__ import annotations
 from datetime import datetime, timedelta
 from typing import Any
 
+from lib.investor_criteria import _buffett_roe_5y_above_15
 from lib.stock_features import sanitize_features
 
 
@@ -670,7 +671,9 @@ def run_idea_screen(features: dict, style: str = "quality") -> dict:
             ("ROE > 15%", features.get("roe_last", 0) > 15),
         ],
         "quality": [
-            ("ROE 连续 5 年 > 15%", features.get("roe_5y_above_15", 0) >= 4),
+            # Keep this screen's label honest: five finite observations must
+            # each clear the strict 15% threshold, just like Buffett's rule.
+            ("ROE 连续 5 年 > 15%", _buffett_roe_5y_above_15(features)),
             ("净利率 > 15%", features.get("net_margin", 0) > 15),
             ("FCF 持续为正", features.get("fcf_positive", False)),
             ("资产负债率 < 50%", 0 < features.get("debt_ratio", 100) < 50),

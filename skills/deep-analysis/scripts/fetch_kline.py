@@ -291,6 +291,11 @@ def main(ticker: str) -> dict:
     )
     rsi_val = indicators.get("rsi_14")
     rsi_label = f"{rsi_val:.0f}" if rsi_val is not None else "—"
+    source = {
+        "A": "akshare/baostock/Eastmoney/Sina/Tencent A-share history fallback chain",
+        "H": "akshare/yfinance/Yahoo HK history fallback chain",
+        "U": "yfinance/akshare/Yahoo/Stooq US history fallback chain",
+    }.get(ti.market, "market history provider")
 
     return {
         "ticker": ti.full,
@@ -304,7 +309,7 @@ def main(ticker: str) -> dict:
             "chip_distribution": chips,
             **viz_shape,
         },
-        "source": "akshare:stock_zh_a_hist + stock_cyq_em (+ 6 path fallback chain)",
+        "source": source,
         "fallback": False,
     }
 

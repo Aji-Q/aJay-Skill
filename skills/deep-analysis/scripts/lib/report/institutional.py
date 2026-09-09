@@ -347,9 +347,15 @@ def _render_ic_memo(dim22: dict) -> str:
     for s in scenarios:
         ret = _number(s.get("return_pct"))
         ret_color = "#10b981" if ret > 0 else "#ef4444"
+        scenario_weight = s.get("weight_pct")
+        scenario_weight_label = (
+            f"设定权重 {_safe(scenario_weight)}%"
+            if scenario_weight is not None
+            else f"p={_safe(s.get('probability_pct'))}%"
+        )
         scen_html += f'''
         <div style="border:1px solid #e5e7eb;border-radius:8px;padding:10px">
-          <div style="font-size:11px;color:#6b7280;font-weight:700">{s.get("scenario", "—")} · p={_safe(s.get("probability_pct"))}%</div>
+          <div style="font-size:11px;color:#6b7280;font-weight:700">{s.get("scenario", "—")} · {scenario_weight_label}</div>
           <div style="font-size:20px;font-weight:800;margin:4px 0">¥{_safe(s.get("price_target"))}</div>
           <div style="font-size:13px;font-weight:700;color:{ret_color}">{ret:+.1f}%</div>
           <div style="font-size:10px;color:#9ca3af;margin-top:4px">{s.get("assumptions", "")}</div>
@@ -695,7 +701,7 @@ def _render_institutional_section(raw: dict) -> str:
     d22 = (dims.get("22_deep_methods") or {}).get("data") or {}
 
     if not (d20 or d21 or d22):
-        return '<div class="muted" style="padding:20px;text-align:center;color:#9ca3af">Task 1.5 机构建模数据缺失 · 请运行 compute_deep_methods</div>'
+        return '<div class="chapter-intro" style="padding:20px;text-align:center;color:var(--text-mid)">估值模型尚未建立。补充现金流、折现率与可比公司假设后，再展示结果。</div>'
 
     return (
         _render_dcf_block(d20) +

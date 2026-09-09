@@ -244,7 +244,7 @@ def apply_style_weights(panel_investors: list[dict],
     bullish_n = neutral_n = bearish_n = 0
     for inv in (panel_investors or []):
         sig = inv.get("signal", "neutral")
-        if sig == "skip":
+        if sig == "skip" or inv.get("mandate") == "short":
             continue
         gid = inv.get("group", "")
         gw = group_w.get(gid, 1.0)

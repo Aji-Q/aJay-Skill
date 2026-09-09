@@ -1,14 +1,9 @@
 #!/usr/bin/env bash
-# install-hermes.sh · v3.6.1
+# install-hermes.sh · aJay 1.1.0
 #
-# aJay-Skill 一键 Hermes 安装脚本（绕过 Skills Guard 假阳性）
-#
-# 背景：Hermes Skills Guard 是模式匹配扫描器（issue #1006 已知 bug）·
-#   会把 os.environ.get(...) 当作"exfiltration" · subprocess.run([...]) 当作"execution" ·
-#   即使是 cloudflared 这类用户 opt-in 的合法功能也会被判 DANGEROUS · --force 也覆盖不了.
-#
-# 本脚本绕过 Hub 的 quarantine 扫描 · 直接 clone + symlink 到 ~/.hermes/skills/ ·
-#   不经过 `hermes skills install` · 但完全等价 (Hermes 跑时只看目录 layout).
+# Install reviewed local aJay source as Hermes skill symlinks.
+# This local-source route does not run Hermes Hub / Skills Guard scanning.
+# Review this script and its dependencies before executing it.
 #
 # 用法：
 #   bash ~/Claude/aJay/install-hermes.sh          # 本地源码;发布到 GitHub 后可 curl 你自己的 raw 链接
@@ -21,6 +16,25 @@ set -euo pipefail
 
 REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据;不再默认克隆上游 UZI-Skill
 [ -n "$REPO_URL" ] || [ -d "$(dirname "$0")/skills" ] || { echo "❌ 请设 AJAY_REPO_URL=<你的 aJay 仓库地址>,或在 ~/Claude/aJay 源码目录内运行"; exit 1; }
+
+# Compare repository identities before updating an existing checkout. Accept
+# GitHub HTTPS/SSH spellings, but never silently repoint another project's origin.
+normalize_repo_url() {
+    printf '%s' "$1" | sed -E 's#/*$##; s#\.git$##; s#^https?://github\.com/##; s#^ssh://git@github\.com/##; s#^git@github\.com:##'
+}
+verify_repo_origin() {
+    local directory="$1" actual
+    actual=$(git -C "$directory" remote get-url origin 2>/dev/null) || {
+        echo "❌ $directory 没有 origin；请先确认它是 aJay 源码，再配置来源。"
+        return 1
+    }
+    if [ "$(normalize_repo_url "$actual")" != "$(normalize_repo_url "$REPO_URL")" ]; then
+        echo "❌ 仓库来源不匹配：$actual"
+        echo "   预期：${REPO_URL}；未更新该目录。请选择新的 aJay 目录，或显式设置 AJAY_REPO_URL。"
+        return 1
+    fi
+}
+
 CLONE_DIR="${1:-$HOME/aJay-Skill}"
 HERMES_HOME="${HERMES_HOME:-$HOME/.hermes}"
 HERMES_SKILLS_DIR="$HERMES_HOME/skills"
@@ -28,7 +42,7 @@ HERMES_SKILLS_DIR="$HERMES_HOME/skills"
 SKILLS=(deep-analysis investor-panel lhb-analyzer trap-detector)
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🛠   aJay-Skill · Hermes 一键安装（绕过 Skills Guard）"
+echo "🛠   aJay-Skill · Hermes 本地源码安装（不运行 Skills Guard 扫描）"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Repo:    $REPO_URL"
 echo "  Clone →  $CLONE_DIR"
@@ -71,24 +85,27 @@ if [ ! -d "$HERMES_HOME" ]; then
 fi
 
 # 2) clone 或 pull
-if [ -d "$CLONE_DIR/.git" ]; then
+if [ -e "$CLONE_DIR/.git" ]; then
+  verify_repo_origin "$CLONE_DIR"
   echo "♻️  $CLONE_DIR 已存在 · pull 更新到最新"
-  git -C "$CLONE_DIR" fetch --all --quiet
-  git -C "$CLONE_DIR" pull --ff-only --quiet
+  git -C "$CLONE_DIR" fetch origin --quiet
+  git -C "$CLONE_DIR" pull --ff-only --quiet origin
 else
   echo "📥 git clone $REPO_URL → $CLONE_DIR"
   git clone --depth 1 "$REPO_URL" "$CLONE_DIR"
 fi
 
-# 3) 卸载旧 Hub 版本（如果之前用 hermes skills install 装过）
+# 3) Preserve any same-named prior skills instead of deleting their content.
 mkdir -p "$HERMES_SKILLS_DIR"
+BACKUP_DIR="$HERMES_HOME/skill-backups/ajay-$(date +%Y%m%d-%H%M%S)-$$"
 echo ""
-echo "🧹 清理旧版（如有）..."
+echo "📦 保留同名旧技能（如有）..."
 for s in "${SKILLS[@]}"; do
   target="$HERMES_SKILLS_DIR/$s"
   if [ -L "$target" ] || [ -e "$target" ]; then
-    rm -rf "$target"
-    echo "   ✗ 删除 $target"
+    mkdir -p "$BACKUP_DIR"
+    mv "$target" "$BACKUP_DIR/$s"
+    echo "   ✓ 备份 $target → $BACKUP_DIR/$s"
   fi
 done
 
@@ -184,11 +201,11 @@ echo ""
 echo "下一步："
 echo "   1. 启动 Hermes:    hermes"
 echo "   2. 列出 skills:    /skills            (应见 4 个 aJay skill)"
-echo "   3. 触发分析:       直接用自然语言说「分析 600519.SH」或「深度分析 贵州茅台」"
+echo "   3. 触发分析:       直接用自然语言说「分析 AAPL」或「深度分析 MSFT」"
 echo "                      → 自动触发 deep-analysis skill"
 echo ""
 echo "   ⚠️  注意：/analyze-stock 是 Claude Code 的 slash 命令 · Hermes 不支持"
 echo "      （Hermes 只认 SKILL.md skill · 靠自然语言描述触发 · 不是 /命令）"
 echo ""
-echo "如有问题:见 ~/Claude/aJay/README.md"
+echo "如有问题:见 $CLONE_DIR/README.md · https://github.com/Aji-Q/aJay-Skill/issues"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"

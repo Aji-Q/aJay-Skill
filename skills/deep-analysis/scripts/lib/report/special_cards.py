@@ -28,6 +28,7 @@ from lib.report.svg_primitives import (
 )
 from lib.report.institutional import trap_color_emoji
 from lib.report.security import escape_payload, safe_asset_id, safe_url
+from lib.report.evidence import finite_number, display_score
 
 
 def _safe(v, default="—"):
@@ -406,9 +407,9 @@ def render_panel_insights(syn: dict, panel: dict) -> str:
             )
             grp_summary.append(f"{label} {c['bullish']}✓ / {c['bearish']}✗（主流 {tag}）")
         insights = (
-            f"<strong>51 位评委投票聚合</strong>："
+            f"<strong>{len(investors)} 个模拟角色输出聚合</strong>："
             f"{bull} 看多 · {neu} 中性 · {bear} 看空 · {skip} 不适合该市场。"
-            f"共识度 <strong>{cons:.0f}%</strong>（neutral 半权计入）。"
+            f"模拟一致度 <strong>{display_score(cons) if panel.get('consensus_valid') else '—'}%</strong>（共享输入，非独立证据）。"
             f"<br><br><strong>按流派分布</strong>："
             + "；".join(grp_summary) + "。"
         )
@@ -420,11 +421,11 @@ def render_panel_insights(syn: dict, panel: dict) -> str:
                 f"{short.get('no_short_thesis', 0)} 个暂无明确做空逻辑。"
             )
         if bull == 0 and bear > 10:
-            insights += " <em>⚠️ 无一人看多，压倒性看空——高信念回避信号。</em>"
+            insights += " <em>⚠️ 无一人看多，模拟信号集中于看空；须检查相同输入或默认特征是否被重复使用。</em>"
         elif bear == 0 and bull > 10:
-            insights += " <em>⚡ 无一人看空，压倒性看多——共识度极高（警惕追高）。</em>"
+            insights += " <em>⚡ 无一人看空，模拟信号集中于看多；一致不代表正确。</em>"
         elif abs(bull - bear) < 5 and (bull + bear) > 20:
-            insights += " <em>🌪 多空旗鼓相当——这类分歧票往往波动最大。</em>"
+            insights += " <em>🌪 多空旗鼓相当——需要逐项核实各流派的输入与假设。</em>"
         tag_src = "（自动聚合 · agent 未介入）"
     else:
         tag_src = "（agent 深度分析）"
@@ -480,6 +481,9 @@ def render_school_scores(syn: dict, panel: dict) -> str:
         verdict = s.get("verdict", "—")
         n_members = s.get("n_members", 0)
         n_active = s.get("n_active", 0)
+        if not n_active or any(finite_number(v) is None for v in (cons, avg, score_mean, vote_cons)):
+            items.append(f'<div class="school-unavailable"><strong>{label}</strong><p>— · 无适用角色或评分依据未记录</p></div>')
+            continue
         bull = s.get("bullish", 0)
         neu = s.get("neutral", 0)
         bear = s.get("bearish", 0)
@@ -533,7 +537,7 @@ def render_school_scores(syn: dict, panel: dict) -> str:
         f'background:rgba(139,92,246,0.06);border-left:4px solid #8b5cf6;'
         f'border-radius:6px">'
         f'  <div style="font-size:11px;color:#7c3aed;letter-spacing:2px;'
-        f'margin-bottom:4px">🎭 SCHOOL SCORES · 七大流派各自评分</div>'
+        f'margin-bottom:4px">SCHOOL SCORES · 模拟流派条件评分</div>'
         f'  <div style="font-size:12px;color:#6b7280;margin-bottom:14px">'
         f'混合打分 = 0.65 × 实分均值 + 0.35 × 投票共识 · 再做极化拉伸(k=1.3) · '
         f'不同哲学给出不同分数 · 分歧越大意味着结论越不稳 · 鼠标悬停查看分量'

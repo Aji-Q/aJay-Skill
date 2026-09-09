@@ -1,6 +1,6 @@
 # 免责声明 · Disclaimer
 
-本报告由 AI 模型（Stock Deep Analyzer · FloatFu-true）基于以下公开信息生成：
+本报告由 AI 模型（aJay Research · aJay）基于以下公开信息生成：
 
 1. akshare / yfinance / baostock 等开源数据库
 2. 东方财富、巨潮资讯、财联社等公开 API
@@ -39,4 +39,6 @@
 
 > 工具的目的是让你少被人骗，而不是替别人骗你。
 
-— FloatFu-true · O.o
+— aJay (Aji-Q) · aJay-Skill
+
+软件来源与 MIT 版权声明见项目 `NOTICE` / `LICENSE`；模拟评语不代表人物本人观点或背书。

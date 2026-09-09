@@ -1,0 +1,328 @@
+{
+  "schema_version": "1.0",
+  "meta": {
+    "name": "aJay Financial Night Editorial",
+    "product": "aJay Research",
+    "owner": "aJay / Aji-Q",
+    "updated_at": "2026-09-09",
+    "scope": "Single-security main report. Portfolio and versus reports receive branding changes only.",
+    "source_kind": "Local source inspection; not a browser-certified visual snapshot.",
+    "source_files": [
+      "skills/deep-analysis/assets/report-template.html",
+      "skills/deep-analysis/assets/report-editorial.css",
+      "skills/deep-analysis/scripts/assemble_report.py",
+      "skills/deep-analysis/scripts/lib/report/evidence.py",
+      "skills/deep-analysis/scripts/inline_assets.py"
+    ],
+    "reference_url": "https://vantara.in/en",
+    "reference_use": "Macro layout, capsule navigation, typographic hierarchy and chapter rhythm only.",
+    "reference_exclusions": [
+      "No source-code copying",
+      "No Vantara logo, photography or text",
+      "No GT Ultra or other reference-site font files",
+      "No claim of affiliation or endorsement"
+    ],
+    "latest_user_direction": "Obsidian, deep navy and metallic silver; financial city night photography, not nature or soft warm palettes."
+  },
+  "design_system": {
+    "theme": {
+      "default": "dark",
+      "persistence_key": "ajay-theme",
+      "preference": "Explicit stored reader choice overrides the dark default.",
+      "light_mode": "Cool silver-gray reading mode."
+    },
+    "color": {
+      "dark": {
+        "background": "#0b111a",
+        "outer": "#090f17",
+        "card": "#111b29",
+        "elevated": "#162234",
+        "hero": "#0a1422",
+        "chapter_dark": "#0b1727",
+        "heading": "#edf2f7",
+        "body": "#dce5ef",
+        "secondary": "#aebed1",
+        "muted": "#a5b6ca",
+        "border": "#2d3d53",
+        "accent_steel_blue": "#98c1dd",
+        "accent_silver": "#b9c6dc",
+        "semantic_bull": "#9bd5c5",
+        "semantic_bear": "#f0aaaa",
+        "semantic_warning": "#d8c4a1"
+      },
+      "light": {
+        "background": "#edf2f7",
+        "card": "#f7f9fc",
+        "heading": "#0b1119",
+        "body": "#182334",
+        "secondary": "#526174",
+        "border": "#c5cfdb",
+        "accent_steel_blue": "#406d8a",
+        "accent_silver": "#5d7692"
+      },
+      "compatibility_aliases": {
+        "--ajay-forest": "Deep navy #0a1422; the legacy name is not a green direction.",
+        "--neon-cyan": "Restrained steel-blue accent, no neon glow requirement.",
+        "--neon-gold": "Silver accent, not a gold/night-sunset palette."
+      },
+      "semantics": "Keep data direction, warning and missing-state distinctions visible; color is not the only signal.",
+      "verification": "Read from report-editorial.css. Contrast and complete computed-style combinations await runtime verification."
+    },
+    "typography": {
+      "display_family": [
+        "Iowan Old Style",
+        "Palatino Linotype",
+        "Songti SC",
+        "Georgia",
+        "serif"
+      ],
+      "body_family": [
+        "Avenir Next",
+        "PingFang SC",
+        "Microsoft YaHei",
+        "sans-serif"
+      ],
+      "font_loading": "System fonts only; no font CDN.",
+      "hero": {
+        "desktop": "clamp(50px,6.3vw,96px)",
+        "mobile": "54px",
+        "line_height": 1.06,
+        "weight": 400
+      },
+      "chapter": {
+        "desktop": "clamp(32px,4vw,56px)",
+        "mobile": "34px",
+        "line_height": 1.2,
+        "weight": 400
+      },
+      "body": {
+        "size_px": 16,
+        "line_height": 1.65
+      },
+      "notes": "Actual font availability and line wrapping vary by operating system; browser inspection is required."
+    },
+    "layout": {
+      "content_max_width_px": 1600,
+      "chapter_padding": {
+        "desktop_block_px": 80,
+        "mobile_block_px": 50,
+        "inline": "max(5vw,24px); 24px mobile"
+      },
+      "breakpoints_px": [
+        1000,
+        600
+      ],
+      "navigation": {
+        "surface": "absolute capsule over hero",
+        "radius_px": 40,
+        "desktop_padding": "14px 26px",
+        "mobile_padding": "10px 16px",
+        "mobile_width": "calc(100% - 28px)"
+      },
+      "toc": {
+        "surface": "bottom-right compact rail",
+        "default": "collapsed",
+        "state_key": "ajay-toc-collapsed",
+        "contract": "Stable section anchors, scroll-spy and explicit expand/collapse; no content obstruction."
+      },
+      "core_overview": {
+        "desktop_columns": "1fr 1.25fr",
+        "mobile_columns": 1
+      },
+      "evidence": {
+        "desktop_columns": 4,
+        "compact_columns": 2
+      },
+      "dimension_cards": {
+        "desktop_columns": 3,
+        "tablet_columns": 2,
+        "mobile_columns": 1
+      },
+      "portraits": {
+        "desktop_columns": 2,
+        "mobile_columns": 1
+      },
+      "zones": {
+        "desktop_columns": 4,
+        "tablet_columns": 2,
+        "mobile_columns": 1
+      }
+    },
+    "shape": {
+      "navigation_radius_px": 40,
+      "button_radius_px": 40,
+      "card_radius_px": 3,
+      "portrait_crop": "Rectangular, no decorative frame.",
+      "borders": "Thin structured rules; limited shadows."
+    },
+    "motion": {
+      "score_count_up": false,
+      "reduced_motion": "Disable non-essential animation and transitions.",
+      "navigation": "Scroll motion respects reduced-motion preference.",
+      "webgl": false,
+      "canvas_scene": false,
+      "external_animation_runtime": false
+    },
+    "components": [
+      "Capsule primary navigation",
+      "Financial night hero",
+      "Evidence strip",
+      "Core score and historical-observation chart",
+      "Six research category accordions",
+      "Institutional model panels",
+      "Shanghai night interlude",
+      "Simulated thesis/counterthesis section",
+      "AI portrait methodology pair",
+      "Dynamic simulated-role board",
+      "A-I role filters and expandable notes",
+      "Risk and conditional-price sections",
+      "Native local share dialog",
+      "aJay attribution footer"
+    ]
+  },
+  "design_style": {
+    "aesthetic": [
+      "financial editorial",
+      "architectural precision",
+      "deep-night contrast",
+      "restrained premium typography"
+    ],
+    "composition": "A large photographic introduction followed by evidence-led long-form reading, alternating analytical density and clear chapter separation.",
+    "imagery": "Cool silver/steel window grids and deep navy water/sky. Black-and-white generated methodology portraits.",
+    "prohibited_direction": [
+      "Nature-led hero",
+      "Forests and gardens",
+      "Warm courtyard imagery",
+      "Cream/forest primary palette",
+      "Gold sunset wash",
+      "Neon cyberpunk",
+      "Floating charts or holograms",
+      "Decorative score animations"
+    ],
+    "brand_voice": "Specific, evidence-aware and explicit about uncertainty; no theatrical certainty or implied famous-investor endorsement."
+  },
+  "visual_effects": {
+    "hero": {
+      "technology": "CSS object-fit image plus restrained dark linear gradients",
+      "image": "manhattan-night.png",
+      "object_position": "60% 50%; 65% 50% mobile"
+    },
+    "interlude": {
+      "technology": "CSS image and dark overlay",
+      "image": "shanghai-night.png"
+    },
+    "portraits": {
+      "technology": "CSS object-fit with lower gradient caption area",
+      "images": [
+        "buffett-portrait.png",
+        "simons-portrait.png"
+      ]
+    },
+    "generated_assets": {
+      "nature": "AI-generated photographic-style depictions, not real photo sessions.",
+      "tool": "Built-in image_gen.imagegen",
+      "model_version": "Not returned; no Image 2.5 claim.",
+      "endorsement": false,
+      "provenance_documents": [
+        "docs/IMAGE-PROVENANCE.md",
+        "docs/BUFFETT-PORTRAIT-PROVENANCE.md",
+        "docs/SIMONS-PORTRAIT-PROVENANCE.md"
+      ]
+    },
+    "excluded_concepts": [
+      "Original waterfront/forest morning hero",
+      "research-courtyard.png"
+    ],
+    "effect_intensity": "low",
+    "external_visual_dependencies": []
+  },
+  "data_presentation_contract": {
+    "overall_score": {
+      "field": "synthesis.overall_score",
+      "requires": [
+        "No critical missing inputs",
+        "dimensions.fundamental_score_valid",
+        "Finite numeric value"
+      ],
+      "unknown": "—",
+      "real_zero_is_valid": true,
+      "interpretation": "Heuristic research score, not a calibrated probability."
+    },
+    "dimension_score": {
+      "field": "dimensions.dimensions[dim].score",
+      "status_field": "score_status",
+      "hide_unmeasured_states": [
+        "missing",
+        "not_applicable",
+        "stale",
+        "heuristic",
+        null
+      ]
+    },
+    "role_score": {
+      "field": "investor.score",
+      "not_from": "confidence",
+      "unknown": "—",
+      "do_not_impute_zero": true
+    },
+    "rules": {
+      "field": "rule_coverage_pct",
+      "interpretation": "Executable-rule ratio; may include default features.",
+      "incomplete_records": "未记录"
+    },
+    "consensus": {
+      "field": "panel_consensus",
+      "interpretation": "Agreement among simulated roles sharing inputs; not independent votes or win probability."
+    },
+    "history": {
+      "field": "2_kline.data.close_60d",
+      "requires": "At least two positive finite observations; do not fabricate missing paths."
+    },
+    "agent_review": "Current input fingerprint matching is AI review freshness, not human approval.",
+    "conditional_prices": "Use valid current reviewed assumptions; do not relabel fixed price multipliers as DCF or historical percentiles.",
+    "demo": {
+      "ticker": "AJAY.DEMO",
+      "name": "Aster Systems",
+      "is_demo": true,
+      "visible_disclosure": true,
+      "synthetic_market_data": true,
+      "quality_gate_skip": "Allowed only for explicitly disclosed UI fixture; environment restored afterward."
+    }
+  },
+  "delivery": {
+    "standard": "full-report.html + adjacent avatars/; main CSS and four PNGs are already embedded.",
+    "standalone": "Run inline_assets.py for full-report-standalone.html; verify all avatars are inlined.",
+    "runtime_network": "No automatic font CDN, QR request, telemetry or report upload; explicit source links may be opened by the reader.",
+    "exports": {
+      "share_card_css_px": [
+        1080,
+        1920
+      ],
+      "war_report_css_px": [
+        1920,
+        1080
+      ],
+      "note": "Raster dimensions depend on screenshot scale; file size is not a fidelity metric."
+    }
+  },
+  "verification": {
+    "status": "pending_root_runtime_verification",
+    "no_claims": [
+      "No prewritten passing test counts",
+      "No prewritten zero-console-error result",
+      "No measured visual-fidelity percentage",
+      "No predictive-confidence percentage"
+    ],
+    "required": [
+      "Python regression suite",
+      "Desktop and mobile screenshots",
+      "Dark and light mode",
+      "Missing/stale/unmeasured data",
+      "Keyboard and dialog focus",
+      "Role filters and note navigation",
+      "Standalone file moved and opened offline",
+      "Asset loading and network audit",
+      "Print/export if delivered"
+    ]
+  }
+}

@@ -1,27 +1,31 @@
 {
-  "version": "1.0.1",
+  "version": "1.1.0",
   "files": [
     ".claude-plugin/plugin.json",
     ".cursor-plugin/plugin.json",
     "package.json",
     "gemini-extension.json",
-    "hooks/hooks.json",
-    "run.py",
+    "SKILL.md",
     "skills/deep-analysis/SKILL.md",
     "skills/investor-panel/SKILL.md",
     "skills/lhb-analyzer/SKILL.md",
-    "skills/trap-detector/SKILL.md"
+    "skills/trap-detector/SKILL.md",
+    "hooks/session-start",
+    "skills/deep-analysis/scripts/lib/portfolio_runner.py",
+    "skills/deep-analysis/scripts/lib/versus_runner.py"
   ],
   "patterns": {
     ".claude-plugin/plugin.json": "\"version\": \"VERSION\"",
     ".cursor-plugin/plugin.json": "\"version\": \"VERSION\"",
     "package.json": "\"version\": \"VERSION\"",
     "gemini-extension.json": "\"version\": \"VERSION\"",
-    "hooks/hooks.json": "Skills vVERSION_SHORT 已加载",
-    "run.py": "Skills vVERSION_SHORT · 深度分析引擎",
+    "SKILL.md": "version: VERSION",
     "skills/deep-analysis/SKILL.md": "version: VERSION",
     "skills/investor-panel/SKILL.md": "version: VERSION",
     "skills/lhb-analyzer/SKILL.md": "version: VERSION",
-    "skills/trap-detector/SKILL.md": "version: VERSION"
+    "skills/trap-detector/SKILL.md": "version: VERSION",
+    "hooks/session-start": "aJay Research vVERSION 已加载",
+    "skills/deep-analysis/scripts/lib/portfolio_runner.py": "aJay-Skill vVERSION",
+    "skills/deep-analysis/scripts/lib/versus_runner.py": "aJay-Skill vVERSION"
   }
 }

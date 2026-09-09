@@ -8,7 +8,7 @@ Output schema:
         "investor_id": "buffett",
         "score": 0-100,                     # weighted rule pass rate
         "signal": "bullish"|"bearish"|"neutral",
-        "confidence": 0-100,                # coverage-adjusted confidence
+        "confidence": 0-100,                # rule coverage, NOT prediction probability
         "weight_pass": int,                 # sum of weights of passed rules
         "weight_total": int,                # sum of all rule weights
         "pass_rules": [{rule_id, name, weight, msg}, ...],
@@ -150,6 +150,12 @@ def _safe_check(rule: Rule, features: dict) -> bool | None:
         None  → data missing (rule references a feature whose value is None).
                 Caller should treat this as "skip" (not pass, not fail).
     """
+    # Some predicates intentionally return False when called by non-panel
+    # modeling code. Within the panel, insufficient observation windows are
+    # unknown rather than negative evidence.
+    observations = features.get("roe_observation_count")
+    if rule.rule_id == "roe_5y_15" and observations is not None and observations < 5:
+        return None
     try:
         return bool(rule.check(features))
     except (KeyError, TypeError, ValueError, ZeroDivisionError):
@@ -226,6 +232,11 @@ def evaluate(investor_id: str, features: dict) -> dict:
                 "msg": _fmt_msg(rule.fail_msg or f"未达{rule.name}", features),
             })
 
+    # Preserve real rule coverage before the historical-holding score adjustment.
+    # These count executable rule inputs, not independent sources or accuracy.
+    rule_weight_evaluated = weight_total
+    rule_weight_possible = sum(rule.weight for rule in rules)
+
     # Base score from rules
     rule_score = round((weight_pass / weight_total) * 100, 1) if weight_total else 0.0
 
@@ -265,11 +276,11 @@ def evaluate(investor_id: str, features: dict) -> dict:
     else:
         signal = "neutral"
 
-    # Confidence
-    n_rules = len(rules) + (1 if holding_match else 0)
-    base_conf = min(100, 50 + n_rules * 8)
-    extremeness = abs(score - 50) * 0.6
-    confidence = round(min(100, base_conf * 0.6 + 40 + extremeness * 0.4), 0)
+    # The legacy confidence rewarded extreme scores even when every rule skipped.
+    # Keep the numeric interface, but give it an auditable coverage-only meaning.
+    confidence = round(
+        100 * rule_weight_evaluated / rule_weight_possible, 1
+    ) if rule_weight_possible else 0.0
 
     # Sort rules by weight desc for display
     pass_list.sort(key=lambda r: -r["weight"])
@@ -287,6 +298,10 @@ def evaluate(investor_id: str, features: dict) -> dict:
         "score": score,
         "signal": signal,
         "confidence": confidence,
+        "confidence_kind": "rule_coverage",
+        "rule_coverage_pct": confidence,
+        "rule_weight_evaluated": rule_weight_evaluated,
+        "rule_weight_possible": rule_weight_possible,
         "weight_pass": weight_pass,
         "weight_total": weight_total,
         "pass_count": len(pass_list),
@@ -345,6 +360,10 @@ def _skip_result(investor_id: str, reason: str) -> dict:
         "score": -1,
         "signal": "skip",
         "confidence": 0,
+        "confidence_kind": "rule_coverage",
+        "rule_coverage_pct": 0,
+        "rule_weight_evaluated": 0,
+        "rule_weight_possible": 0,
         "weight_pass": 0,
         "weight_total": 0,
         "pass_count": 0,
@@ -366,7 +385,11 @@ def _unknown_result(investor_id: str) -> dict:
         "investor_id": investor_id,
         "score": 50.0,
         "signal": "neutral",
-        "confidence": 30,
+        "confidence": 0,
+        "confidence_kind": "rule_coverage",
+        "rule_coverage_pct": 0,
+        "rule_weight_evaluated": 0,
+        "rule_weight_possible": 0,
         "weight_pass": 0,
         "weight_total": 0,
         "pass_count": 0,

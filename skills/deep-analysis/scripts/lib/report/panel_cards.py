@@ -19,6 +19,7 @@ assemble_report.py 做 re-export · 所有历史调用不变.
 from __future__ import annotations
 
 from lib.report.security import escape_payload, safe_asset_id
+from lib.report.evidence import display_score, finite_number
 
 
 def _safe(v, default="—"):
@@ -37,7 +38,7 @@ def render_jury_seat(inv: dict) -> str:
     inv = escape_payload(inv)
     sig = inv.get("signal", "neutral")
     name = (inv.get("name") or "")[:4]
-    score = inv.get("score", 0)
+    score = display_score(None if sig == "skip" else inv.get("score"))
     inv_id = safe_asset_id(inv.get("investor_id"))
     return f'''<div class="seat {sig}" data-group="{inv.get("group", "")}" data-target="msg-{inv_id}" title="{inv.get("name", "")} · {inv.get("verdict", "")} · 点击查看完整结论">
   <img src="avatars/{inv_id}.svg" class="seat-avatar" alt="">
@@ -65,8 +66,9 @@ def render_chat_message(inv: dict) -> str:
     sig = inv.get("signal", "neutral")
     group = inv.get("group", "")
     group_label = GROUP_LABELS.get(group, group)
-    score = inv.get("score", 0)
-    confidence = inv.get("confidence", 0)
+    score = display_score(None if sig == "skip" else inv.get("score"))
+    coverage = finite_number(inv.get("rule_coverage_pct"))
+    confidence = f"规则覆盖 {coverage:g}%" if isinstance(coverage, (int, float)) else "规则覆盖 未记录"
     reasoning = _safe(inv.get("reasoning") or inv.get("comment"), "—")
     comment = _safe(inv.get("comment"), "")
     verdict = _safe(inv.get("verdict"), "—")
@@ -109,7 +111,7 @@ def render_chat_message(inv: dict) -> str:
       <span class="msg-group-tag">{group} · {group_label}</span>
       <span class="msg-signal-dot"></span>
       <span class="msg-score-badge">{score}分</span>
-      <span class="msg-confidence">conf {confidence}</span>
+      <span class="msg-confidence">{confidence}</span>
     </div>
     <div class="msg-bubble">
       {bubble_main}
@@ -152,12 +154,12 @@ def render_vote_bars(vote_dist: dict) -> str:
 
 
 def render_top3_bulls(investors: list[dict]) -> str:
-    return _render_top3_by_signal(investors, "bullish", "无看多评委 · 51 人整体倾向中性")
+    return _render_top3_by_signal(investors, "bullish", "没有适用的模拟看多角色")
 
 
 def render_top3_bears(investors: list[dict]) -> str:
     """v2.9.1 对称 render_top3_bulls 的 bear 版。share-card 原先只有 bulls 不对称。"""
-    return _render_top3_by_signal(investors, "bearish", "无看空评委 · 51 人整体倾向中性")
+    return _render_top3_by_signal(investors, "bearish", "没有适用的模拟看空角色")
 
 
 def _render_top3_by_signal(investors: list[dict], target_signal: str, empty_msg: str) -> str:
@@ -165,8 +167,8 @@ def _render_top3_by_signal(investors: list[dict], target_signal: str, empty_msg:
     investors = escape_payload(investors)
     empty_msg = escape_payload(empty_msg)
     hits = sorted(
-        [i for i in investors if i.get("signal") == target_signal and i.get("mandate") != "short"],
-        key=lambda x: x.get("score", 0),
+        [i for i in investors if i.get("signal") == target_signal and i.get("mandate") != "short" and finite_number(i.get("score")) is not None],
+        key=lambda x: finite_number(x.get("score")),
         reverse=(target_signal == "bullish"),  # bullish 按分降序；bearish 按分升序
     )[:3]
     if not hits:
@@ -181,7 +183,7 @@ def _render_top3_by_signal(investors: list[dict], target_signal: str, empty_msg:
             f'<div class="sc-best-cell">'
             f'<img src="avatars/{safe_asset_id(inv.get("investor_id"))}.svg">'
             f'<div class="name">{inv.get("name")}</div>'
-            f'<div class="score-num">{inv.get("score", 0)}</div>'
+            f'<div class="score-num">{display_score(inv.get("score"))}</div>'
             f"</div>"
         )
     # 不足 3 个时给半透明 placeholder 而不是空白格

@@ -80,11 +80,16 @@ def main(user_input: str) -> dict:
         }
 
     data = ds.fetch_basic(ti)
+    source = {
+        "A": "akshare + A-share quote fallback chain",
+        "H": "Xueqiu/Eastmoney/akshare + HK quote fallback chain",
+        "U": "yfinance:Ticker.info",
+    }.get(ti.market, "market quote provider")
     return {
         "ticker": ti.full,
         "market": ti.market,
         "data": data,
-        "source": f"akshare:{ti.market}",
+        "source": source,
         "fallback": False,
     }
 

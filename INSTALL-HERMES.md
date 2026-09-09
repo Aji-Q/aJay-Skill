@@ -1,180 +1,49 @@
-> 仓库:https://github.com/Aji-Q/aJay-Skill(private)。本机也可直接用 `~/Claude/aJay` 源码。
+# aJay · Hermes 安装
 
-# Hermes Agent · 安装指南
+**维护者 aJay（Aji-Q） · 默认仓库 [Aji-Q/aJay-Skill](https://github.com/Aji-Q/aJay-Skill)。**
 
-> ⚠️ **2026-05 重要更新**：Hermes Skills Guard 扫描器（Hermes 官方 issue [#1006](https://github.com/NousResearch/hermes-agent/issues/1006)、[#7072](https://github.com/NousResearch/hermes-agent/issues/7072) 已知 bug）对 aJay-Skill 报 **`Verdict: DANGEROUS · 168 findings`** · `--force` 也覆盖不了（DANGEROUS 设计上不可绕过）.
->
-> **这些 findings 全是假阳性** · 都是模式匹配吃了我们自己的 `os.environ.get("AJAY_DEPTH")` / `subprocess.run(["brew", ...])` / cloudflared opt-in 远程映射等合法代码。Hermes 团队公开承认问题（**官方/builtin skills 也被自家扫描器拦下了**） · 在等 allowlist 模型升级.
->
-> **解决办法 · 一键脚本绕过 Hub 扫描 · 完全等价**（见下方第 1 节）.
+这是从本地审阅过的源码创建 skill 软链接的安装流程，不经过 Hermes Hub 的 Skills Guard 扫描。运行前阅读脚本及依赖；不要把“跳过扫描”理解为安全认证。
 
-## 1️⃣ 推荐 · 一键脚本（绕过 Skills Guard · v3.6.1+）
+## 1. 获取与检查源码
 
 ```bash
-bash ~/Claude/aJay/install-hermes.sh   # 本地源码直装
+git clone https://github.com/Aji-Q/aJay-Skill.git
+cd aJay-Skill
+# 先阅读 install-hermes.sh、requirements.txt 与 NOTICE
+bash install-hermes.sh "$PWD"
 ```
 
-或下载 / clone 后跑：
+需要 Python 3.10+、Git 和已安装的 Hermes。GitHub 若要求认证，请使用自己的仓库访问凭据。
+
+脚本默认源为 `Aji-Q/aJay-Skill`，显式 `AJAY_REPO_URL` 可使用自己的镜像。已存在 Git 目录先核对 `origin`，不自动把其他项目改成 aJay。安装会把 4 个 skill 链接到 `${HERMES_HOME:-$HOME/.hermes}/skills/`，请留意同名旧 skill 的处理提示。
+
+## 2. 使用自然语言触发
+
+对 Hermes 说：
+
+> 用 aJay 分析 AAPL，先检查数据质量，再生成研究报告。
+
+**`/ajay:analyze-stock` 是 Claude Code 的插件命令，不是 Hermes 的 slash 命令。** Hermes 加载 `SKILL.md`，不自动注册本仓库 `commands/`。
+
+看到 `Unknown command` 时，使用上面的自然语言请求。快速扫描可运行 `python run.py AAPL --depth medium --no-browser`；深度研究按 `AGENTS.md` 完成 agent 复核。
+
+## 3. 更新
 
 ```bash
-bash install-hermes.sh                  # 装到默认 ~/aJay-Skill
-bash install-hermes.sh /opt/ajay-skill   # 自定义 clone 路径
+git -C ~/aJay-Skill remote get-url origin
+# 应为 Aji-Q/aJay-Skill 的 GitHub 地址
+git -C ~/aJay-Skill pull --ff-only
 ```
 
-脚本会：
-- `git clone` 仓库到 `~/aJay-Skill`（已存在则 pull 更新）
-- 删除 `~/.hermes/skills/{deep-analysis,investor-panel,lhb-analyzer,trap-detector}` 旧版（如有）
-- `ln -sfn` 创建 4 个 skill 的 symlink 到 `~/.hermes/skills/`
-- 用 Hermes venv pip 装 `requirements.txt`
-- 验证 SKILL.md 版本号
+若安装在自定义目录，使用该实际目录。软链接会跟随源文件更新；依赖变化后重新安装 `requirements.txt`。不要运行指向上游仓库的旧 Hub 更新命令。
 
-完成后 `hermes` 启动 → `/skills` → 应见 4 个 aJay skill 。
-环境变量配置（可选）写到 `~/.hermes/.env` · 见下方"环境变量"章节。
+## 历史兼容说明
 
-## 2️⃣ 备选 · 手动 clone + symlink（不放心跑脚本时）
+继承的安装文档记录过 Skills Guard 的 `DANGEROUS` 诊断，并引用 [NousResearch/hermes-agent #1006](https://github.com/NousResearch/hermes-agent/issues/1006)。这是历史记录，不是对当前 Hermes 版本扫描结果的实时判断。具体告警应逐条检查，不能仅因旧文档称“误报”就忽略。
 
-```bash
-# 卸载旧版（如果之前用 hermes skills install 装过）
-rm -rf ~/.hermes/skills/{deep-analysis,investor-panel,lhb-analyzer,trap-detector}
+## 项目边界
 
-# clone + symlink
-cp -R ~/Claude/aJay ~/aJay-Skill   # 或 git clone https://github.com/Aji-Q/aJay-Skill.git ~/aJay-Skill
-mkdir -p ~/.hermes/skills
-for s in deep-analysis investor-panel lhb-analyzer trap-detector; do
-  ln -sfn ~/aJay-Skill/skills/$s ~/.hermes/skills/$s
-done
-
-# 装 Python 依赖到 Hermes venv
-"$HOME/.hermes/venv/bin/pip" install -r ~/aJay-Skill/requirements.txt
-```
-
-## 3️⃣ ⚠️ `hermes skills install`（当前 Skills Guard 会拦下）
-
-```bash
-# 目前会报 DANGEROUS · 见上方背景
-hermes skills install Aji-Q/aJay-Skill/skills/deep-analysis
-hermes skills install Aji-Q/aJay-Skill/skills/investor-panel
-hermes skills install Aji-Q/aJay-Skill/skills/lhb-analyzer
-hermes skills install Aji-Q/aJay-Skill/skills/trap-detector
-```
-
-### Skills Guard 误判的具体原因
-
-| Finding 类别 | 实际代码 | 真实意图 |
-|---|---|---|
-| `exfiltration` 87 处 | `os.environ.get("AJAY_DEPTH")` | 读 **我们自己**的配置（lite/medium/deep）· 不动用户敏感 env |
-| `network` 9 处 | `subprocess.run(["brew", "install", "cloudflared"])` | **用户显式 `--remote`** 才触发的远程映射 · 默认不跑 |
-| `privilege_escalation` | `curl -fsSL .../cloudflared-linux-amd64` | 同上 · 仅 `--remote` 路径 · 装到 `/usr/local/bin` 也需 sudo 用户同意 |
-| `injection` | HTML 注释 `<!-- HIDDEN SHARE-CARD -->` | **纯文本注释** · 不是动态注入 |
-| `persistence` | 文档字符串包含 "AGENTS.md" | docstring 提到文件名 · 不写盘 |
-| `structural` | 1973KB / 284 files | 仅大小 · 含 tests/personas/references |
-
-这些都是 Hermes Skills Guard v0.x **模式匹配的副作用** · 跟 aJay-Skill 实际行为无关。
-
----
-
-首次用自然语言（如「分析 600519.SH」）触发 `deep-analysis` 时，skill 会根据自身 SKILL.md 的提示自动让 LLM 跑一次 `pip install -r ~/.hermes/skills/deep-analysis/requirements.txt`，之后永久生效。
-
-## 升级提示（重要）
-
-如果你在 v3.3.1 之前装过 hermes 版本，升级前**先删掉旧的**再装新的：
-
-```bash
-hermes skills uninstall deep-analysis investor-panel lhb-analyzer trap-detector
-hermes skills install Aji-Q/aJay-Skill/skills/deep-analysis
-hermes skills install Aji-Q/aJay-Skill/skills/investor-panel
-hermes skills install Aji-Q/aJay-Skill/skills/lhb-analyzer
-hermes skills install Aji-Q/aJay-Skill/skills/trap-detector
-```
-
-旧版本（v2.10.8 之前）skill_dir 缺 `run.py` 或 `requirements.txt` · 这是历史报错的根因.
-
-## 手动安装（clone + symlink）
-
-适合开发或想修改源码的用户：
-
-```bash
-cp -R ~/Claude/aJay ~/aJay-Skill   # 或 git clone https://github.com/Aji-Q/aJay-Skill.git ~/aJay-Skill
-mkdir -p ~/.hermes/skills
-for s in deep-analysis investor-panel lhb-analyzer trap-detector; do
-  ln -sfn ~/aJay-Skill/skills/$s ~/.hermes/skills/$s
-done
-# 装 Python 依赖到 Hermes venv
-"$HOME/.hermes/venv/bin/pip" install -r ~/aJay-Skill/requirements.txt
-```
-
-## 验证
-
-```bash
-hermes                       # 打开 TUI
-/skills                      # 列出已装 skill · 应见 deep-analysis / investor-panel / lhb-analyzer / trap-detector
-分析 600519.SH               # 用自然语言触发 · 自动命中 deep-analysis skill · lite 模式 30-60 秒出报告
-```
-
-> ⚠️ **Hermes 用自然语言触发 skill，没有 `/analyze-stock` 这种 slash 命令**（那是 Claude Code 插件命令，Hermes 不注册 `commands/`）。
-> 直接说「分析 600519.SH」「深度分析 贵州茅台」「帮我看看 00700.HK」即可——skill 会按 SKILL.md 的描述关键词自动触发。
-
-报告生成到：
-- `~/.hermes/skills/deep-analysis/scripts/reports/<ticker>_<date>/full-report-standalone.html`
-- 手动装的话：`~/aJay-Skill/skills/deep-analysis/scripts/reports/...`
-
-## 可选：环境变量（数据源增强）
-
-写到 `~/.hermes/.env`：
-
-```bash
-# 东财妙想官方 API（国内推荐，境外反而更稳）
-MX_APIKEY=your_miaoxiang_key
-
-# Tushare（覆盖 baostock 不到的场景）
-TUSHARE_TOKEN=your_tushare_token
-```
-
-不设也能跑，只是 fallback 数据源多一层。
-
-## 三档思考深度
-
-Hermes 用户推荐默认跑 `lite`（30-60s）或 `medium`（2-4min）。用自然语言带上档位即可：
-
-```
-分析 00700.HK，用 lite 模式
-分析 AAPL，medium 深度
-深度分析 600519.SH（deep · 15-20min，含 Bull-Bear 辩论）
-```
-
-> Hermes 没有 `/analyze-stock --depth` 这种 slash 语法 · 直接在自然语言里说档位 · agent 会传给脚本。
-
-## 与其他环境的关系
-
-| 环境 | 分支 | 状态 |
-|---|---|---|
-| Claude Code | `main` | 官方支持 v2.10.7 |
-| Codex | `main` | 官方支持 v2.10.7 |
-| Cursor | `main` | 官方支持 v2.10.7 |
-| **Hermes** | **`hermes-compat`** | **v2.10.8 · 本次适配** |
-
-`hermes-compat` 分支从 `main` 派生，只做 Hermes 兼容改动（SKILL.md 加 tags / 复制 requirements 到 skill dir / run.py 路径兼容），不会回灌到 `main` 影响其他环境用户。
-
-## 故障排查
-
-**问题：`/skills` 没列出 aJay-Skill**
-- 检查 `~/.hermes/skills/deep-analysis/SKILL.md` 是否存在
-- 跑 `hermes skills list` 看状态
-
-**问题：触发后 `ImportError: No module named akshare`**
-- 检查依赖装哪了：`which pip && pip show akshare`
-- 重跑：`~/.hermes/venv/bin/pip install -r ~/.hermes/skills/deep-analysis/requirements.txt`
-
-**问题：`Unknown command: /analyze-stock`（issue #76）**
-- Hermes **没有** `/analyze-stock` 这个命令 —— 那是 Claude Code 的 slash 命令
-- 改用自然语言：直接说「分析 600519.SH」/「深度分析 贵州茅台」即可触发
-
-**问题：网络受限跑不完**
-- 降到 lite：自然语言里说「用 lite 模式分析 <ticker>」
-- 设 `MX_APIKEY` 切换到东财妙想主源
-- 参考 [AGENTS.md 网络受限章节](./AGENTS.md)
-
-## 反馈
-
-- 问题:见 README.md;上游 stock-deep-analyzer 的 issue 区 https://github.com/wbh604/UZI-Skill/issues 仅供追溯
-- 上游 hermes-compat 分支(追溯用): https://github.com/wbh604/UZI-Skill/tree/hermes-compat
+- 默认报告保留本机，`--remote` 会公开报告访问入口。
+- 美股是当前研究主线，A 股 / 港股路径保留兼容。
+- 当前维护反馈入口：[aJay issues](https://github.com/Aji-Q/aJay-Skill/issues)。
+- 上游贡献与版权保留于 `NOTICE`、`LICENSE` 和历史档案。

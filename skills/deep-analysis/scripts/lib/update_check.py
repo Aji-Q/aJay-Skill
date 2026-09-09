@@ -2,7 +2,7 @@
 
 设计：
 - 读本地 `.claude-plugin/plugin.json::version`
-- 查 `api.github.com/repos/wbh604/UZI-Skill/releases/latest`
+- 显式启用时查 aJay 仓库的 GitHub releases/latest；默认无网络请求
 - semver 比较 · 缓存 6h 防 GH API 60/h 限流
 - 支持 "skip this version"：用户跳某版后直到下一个新版前不再弹
 - 非 TTY / `AJAY_NO_UPDATE_CHECK=1` / 网络异常 → silent skip
@@ -17,7 +17,9 @@ import time
 from dataclasses import dataclass, asdict
 from pathlib import Path
 
-GITHUB_REPO = os.environ.get("AJAY_REPO", "")  # 派生版默认无上游 release 可升级;设 owner/repo 才启用检查
+CANONICAL_REPO = "Aji-Q/aJay-Skill"
+GITHUB_REPO = os.environ.get("AJAY_REPO", CANONICAL_REPO)
+# 网络检查仍需显式设置 AJAY_REPO；默认目的地始终为 aJay，不回退到上游。
 CACHE_TTL_SEC = 6 * 3600  # 6h · 避免 GH API 限流
 HTTP_TIMEOUT = 5  # 失败快速放行
 
@@ -71,14 +73,21 @@ def _load_state() -> dict:
     if not f.exists():
         return {}
     try:
-        return json.loads(f.read_text(encoding="utf-8"))
+        state = json.loads(f.read_text(encoding="utf-8"))
+        # Ignore inherited or differently configured repository release state.
+        if not isinstance(state, dict) or state.get("repository") != GITHUB_REPO:
+            return {}
+        return state
     except Exception:
         return {}
 
 
 def _save_state(state: dict) -> None:
     try:
-        _cache_path().write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding="utf-8")
+        _cache_path().write_text(
+            json.dumps({**state, "repository": GITHUB_REPO}, ensure_ascii=False, indent=2),
+            encoding="utf-8",
+        )
     except Exception:
         pass
 
@@ -96,7 +105,7 @@ def _fetch_latest_release() -> dict | None:
     派生版没有配置 AJAY_REPO 时直接返 None(等价于"无新版"),不发任何网络请求;
     guard 放在这里而不是 check_for_update,测试 mock 本函数时不受影响。
     """
-    if not GITHUB_REPO:
+    if not os.environ.get("AJAY_REPO") or not GITHUB_REPO:
         return None
     try:
         import requests
@@ -202,8 +211,8 @@ def handle_answer(answer: str, latest: str) -> str:
         return (
             f"→ 请按 README 里你当前 agent 的更新命令操作：\n"
             f"  Claude Code: /plugin update ajay\n"
-            f"  git clone: cd aJay-Skill && git pull\n"
-            f"  Hermes: hermes skills update wbh604/UZI-Skill/skills/deep-analysis"
+            f"  git clone: cd aJay-Skill && git pull --ff-only\n"
+            f"  Hermes: git -C ~/aJay-Skill pull --ff-only (先确认 origin 为 {GITHUB_REPO})"
         )
     return "→ 好的，下次启动再问"
 

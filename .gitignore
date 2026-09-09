@@ -46,6 +46,13 @@ id_rsa*
 
 docs/screenshots/full-page.png
 
+# Local design-research evidence (source URLs + hashes stay in tracked docs)
+docs/research/photo-originals/
+docs/research/screenshots/
+garden-gpt-image-2/
+.playwright-cli/
+output/playwright/
+
 # Local-only drafts (not for remote)
 docs/wechat-article.md
 docs/*.local.md

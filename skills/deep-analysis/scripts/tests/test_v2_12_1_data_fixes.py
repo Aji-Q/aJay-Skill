@@ -154,6 +154,15 @@ def test_bcg_question_mark_for_high_growth_small_share():
     assert "Question" in bcg or "问号" in bcg, f"高增长+低份额应归 Question Mark，got {bcg}"
 
 
+def test_competitive_analysis_accepts_null_live_moat_scores():
+    """Partial live snapshots can carry ``scores: null`` without dropping dim 22."""
+    from lib import deep_analysis_methods
+    features = {"market_share": 2.0, "industry_growth": 10.0}
+    raw = {"dimensions": {"14_moat": {"data": {"scores": None}}}}
+    result = deep_analysis_methods.build_competitive_analysis(features, raw)
+    assert result["porter_five_forces"]["new_entrants_threat"]["score"] >= 1
+
+
 # ─── Bug 1 · fetch_peers Tier 4 保底 ───────────────────────────────
 
 def test_fetch_peers_has_self_only_fallback():

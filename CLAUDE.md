@@ -4,13 +4,13 @@
 
 ## 这是什么
 
-一个股票深度分析 plugin。用户说"分析 XXX"时，你应该自动触发 `deep-analysis` skill。
+由 aJay（Aji-Q）维护的美股研究 plugin（保留 A 股 / 港股兼容路径）。用户说"分析 XXX"时，你应该自动触发 `deep-analysis` skill。
 
 ## 核心技能
 
 | Skill | 触发条件 | 说明 |
 |---|---|---|
-| `deep-analysis` | 用户提到"分析/研究/估值/DCF/值不值得买"等 | 22维数据 + 66评委 + Bloomberg报告 |
+| `deep-analysis` | 用户提到"分析/研究/估值/DCF/值不值得买"等 | 22维数据 + 66评委 + aJay 编辑式报告 |
 | `investor-panel` | 用户要求"只看评委/大佬怎么看" | 单独跑投资者面板 |
 | `lhb-analyzer` | 用户提到"龙虎榜/游资/营业部" | 龙虎榜专项分析 |
 | `trap-detector` | 用户提到"杀猪盘/有没有问题/安全吗" | 杀猪盘检测 |

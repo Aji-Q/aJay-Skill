@@ -10,7 +10,9 @@ or mark the report with a warning banner.
 from __future__ import annotations
 
 import json
+import math
 from datetime import datetime, timezone
+from numbers import Real
 from pathlib import Path
 from typing import Any
 
@@ -81,12 +83,17 @@ def _get(obj: dict, path: str) -> Any:
 
 
 def _is_missing(v: Any) -> bool:
+    """Missing is not zero; nonfinite and recursively empty fields are gaps."""
     if v is None:
         return True
-    if isinstance(v, str) and v.strip() in ("", "—", "-", "N/A", "None", "0", "0.0"):
+    if isinstance(v, Real) and not isinstance(v, bool):
+        return not math.isfinite(float(v))
+    if isinstance(v, str) and v.strip().lower() in ("", "—", "-", "n/a", "none", "null", "nan", "无数据", "暂无"):
         return True
-    if isinstance(v, (list, dict)) and len(v) == 0:
-        return True
+    if isinstance(v, dict):
+        return all(_is_missing(item) for item in v.values())
+    if isinstance(v, (list, tuple, set)):
+        return all(_is_missing(item) for item in v)
     return False
 
 

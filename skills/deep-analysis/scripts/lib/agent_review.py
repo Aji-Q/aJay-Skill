@@ -29,11 +29,21 @@ def analysis_input_hash(raw: dict[str, Any]) -> str:
 
 def write_review_context(cache_dir: Path, raw: dict[str, Any]) -> dict[str, Any]:
     cache_dir.mkdir(parents=True, exist_ok=True)
+    # A modeling rerun in another shell must not silently downgrade a deep run.
+    # An explicit AJAY_DEPTH still selects the requested new mode.
+    depth = os.environ.get("AJAY_DEPTH")
+    if not depth:
+        try:
+            previous = json.loads((cache_dir / CONTEXT_FILE).read_text(encoding="utf-8"))
+            depth = previous.get("depth") if isinstance(previous, dict) else None
+        except (OSError, ValueError):
+            pass
+    depth = depth if depth in ("lite", "medium", "deep") else "medium"
     context = {
         "ticker": raw.get("full") or raw.get("ticker"),
         "analysis_input_hash": analysis_input_hash(raw),
         "raw_fetched_at": raw.get("fetched_at"),
-        "depth": os.environ.get("AJAY_DEPTH", "medium"),
+        "depth": depth,
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
     }
     target = cache_dir / CONTEXT_FILE

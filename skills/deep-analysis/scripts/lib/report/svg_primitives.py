@@ -382,62 +382,116 @@ def svg_candlestick(candles: list, width: int = 380, height: int = 180, ma_20: l
 
 
 def svg_pe_band(pe_history: list, bands: dict = None, width: int = 300, height: int = 140) -> str:
-    """PE historical line with percentile bands. bands = {p25, p50, p75, current_idx}"""
-    if not pe_history or len(pe_history) < 2:
-        return ""
-    import numpy as _np
-    import statistics
-    n = len(pe_history)
-    pad_l, pad_r, pad_t, pad_b = 36, 10, 10, 20
-    w = width - pad_l - pad_r
-    h = height - pad_t - pad_b
+    """Render a PE history against an actual numeric PE axis.
 
-    sorted_pe = sorted(pe_history)
-    p25 = sorted_pe[int(n * 0.25)]
-    p50 = sorted_pe[int(n * 0.5)]
-    p75 = sorted_pe[int(n * 0.75)]
-    y_max = max(pe_history) * 1.05
-    y_min = min(pe_history) * 0.95
+    The old implementation inferred p25/p50/p75 from the short display
+    sequence and painted those as a five-year valuation band.  That made a
+    five-point history look like an independently sourced percentile series
+    and could contradict the separate ``pe_quantile`` input.  ``bands`` is
+    retained as a compatibility argument, but inferred percentile bands are
+    intentionally not rendered; callers that have a verified percentile
+    history should present it as a separate, explicitly sourced series.
+    """
+    if not pe_history:
+        return ""
+
+    import math
+
+    # A PE of zero/negative, NaN, or infinity is not a usable valuation
+    # observation.  Filter those values before calculating either the axis or
+    # the line so malformed/missing fixture inputs never leak NaN into SVG.
+    values: list[float] = []
+    for value in pe_history:
+        try:
+            number = float(str(value).strip().replace(",", "").replace("%", ""))
+        except (TypeError, ValueError):
+            continue
+        if math.isfinite(number) and number > 0:
+            values.append(number)
+    if len(values) < 2:
+        return ""
+
+    n = len(values)
+    pad_l, pad_r, pad_t, pad_b = 42, 10, 14, 24
+    w = max(width - pad_l - pad_r, 1)
+    h = max(height - pad_t - pad_b, 1)
+
+    value_min = min(values)
+    value_max = max(values)
+    value_span = value_max - value_min
+    axis_pad = max(value_span * 0.08, value_max * 0.03, 0.5)
+    y_min = max(0.0, value_min - axis_pad)
+    y_max = value_max + axis_pad
     span = max(y_max - y_min, 1e-9)
 
-    def y_of(v):
-        return pad_t + h - (v - y_min) / span * h
+    def y_of(value: float) -> float:
+        return pad_t + h - (value - y_min) / span * h
 
-    # bands (percentile horizontal strips)
-    y25 = y_of(p25)
-    y50 = y_of(p50)
-    y75 = y_of(p75)
-    bands_svg = f'''
-  <rect x="{pad_l}" y="{pad_t}" width="{w}" height="{y75-pad_t:.1f}" fill="#fee2e2" opacity="0.5"/>
-  <rect x="{pad_l}" y="{y75:.1f}" width="{w}" height="{y25-y75:.1f}" fill="#fef3c7" opacity="0.5"/>
-  <rect x="{pad_l}" y="{y25:.1f}" width="{w}" height="{pad_t+h-y25:.1f}" fill="#d1fae5" opacity="0.5"/>
-  <line x1="{pad_l}" y1="{y25:.1f}" x2="{pad_l+w}" y2="{y25:.1f}" stroke="#059669" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="{pad_l}" y1="{y50:.1f}" x2="{pad_l+w}" y2="{y50:.1f}" stroke="#64748b" stroke-width="1" stroke-dasharray="3,3"/>
-  <line x1="{pad_l}" y1="{y75:.1f}" x2="{pad_l+w}" y2="{y75:.1f}" stroke="#dc2626" stroke-width="1" stroke-dasharray="3,3"/>
-  <text x="{pad_l-3}" y="{y25+3:.1f}" text-anchor="end" font-family="Fira Code" font-size="8" fill="#059669">25%</text>
-  <text x="{pad_l-3}" y="{y50+3:.1f}" text-anchor="end" font-family="Fira Code" font-size="8" fill="#64748b">50%</text>
-  <text x="{pad_l-3}" y="{y75+3:.1f}" text-anchor="end" font-family="Fira Code" font-size="8" fill="#dc2626">75%</text>
-    '''
+    # Numeric y-axis ticks are actual PE multiples, not percentile labels.
+    axis = []
+    for fraction, value in (
+        (0.0, y_max),
+        (0.5, (y_max + y_min) / 2),
+        (1.0, y_min),
+    ):
+        y = pad_t + h * fraction
+        axis.append(
+            f'<line x1="{pad_l}" y1="{y:.1f}" x2="{pad_l+w}" y2="{y:.1f}" '
+            f'stroke="{COLOR_GRID}" stroke-width="1" stroke-dasharray="2,3"/>'
+        )
+        axis.append(
+            f'<text x="{pad_l-4}" y="{y+3:.1f}" text-anchor="end" '
+            f'font-family="Fira Code" font-size="8" fill="#64748b">{value:.1f}x</text>'
+        )
+    axis.append(
+        f'<text x="{pad_l}" y="{pad_t-4}" text-anchor="start" '
+        f'font-family="Fira Code" font-size="8" fill="#64748b">PE (x)</text>'
+    )
 
-    # line
     pts = []
-    for i, v in enumerate(pe_history):
-        x = pad_l + i / (n - 1) * w
-        y = y_of(v)
-        pts.append(f"{x:.1f},{y:.1f}")
-    line = f'<polyline points="{" ".join(pts)}" fill="none" stroke="{COLOR_BLUE}" stroke-width="2"/>'
+    for index, value in enumerate(values):
+        x = pad_l + index / (n - 1) * w
+        y = y_of(value)
+        pts.append((x, y))
+    line = (
+        f'<polyline points="{" ".join(f"{x:.1f},{y:.1f}" for x, y in pts)}" '
+        f'fill="none" stroke="{COLOR_BLUE}" stroke-width="2" '
+        f'stroke-linejoin="round" stroke-linecap="round"/>'
+    )
+    dots = "".join(
+        f'<circle cx="{x:.1f}" cy="{y:.1f}" r="2.5" fill="{COLOR_BLUE}"/>'
+        for x, y in pts
+    )
 
-    # current point highlight
-    last_x = pad_l + w
-    last_y = y_of(pe_history[-1])
-    current = f'<circle cx="{last_x:.1f}" cy="{last_y:.1f}" r="5" fill="{COLOR_BLUE}" stroke="#fff" stroke-width="2"/>'
-    cur_label = f'<text x="{last_x:.1f}" y="{last_y-10:.1f}" text-anchor="end" font-family="Fira Code" font-size="10" font-weight="700" fill="{COLOR_BLUE}">{pe_history[-1]:.1f}</text>'
+    # Highlight the latest valid observation; the display sequence has already
+    # removed unusable points, so this is always a finite numeric value.
+    last_x, last_y = pts[-1]
+    current = (
+        f'<circle cx="{last_x:.1f}" cy="{last_y:.1f}" r="5" fill="{COLOR_BLUE}" '
+        f'stroke="#fff" stroke-width="2"/>'
+    )
+    cur_label = (
+        f'<text x="{last_x:.1f}" y="{last_y-10:.1f}" text-anchor="end" '
+        f'font-family="Fira Code" font-size="10" font-weight="700" fill="{COLOR_BLUE}">'
+        f'{values[-1]:.1f}x</text>'
+    )
+    x_labels = []
+    for index in sorted({0, n // 2, n - 1}):
+        x = pad_l + index / (n - 1) * w
+        x_labels.append(
+            f'<text x="{x:.1f}" y="{pad_t+h+15:.1f}" text-anchor="middle" '
+            f'font-family="Fira Code" font-size="8" fill="#64748b">T{index+1}</text>'
+        )
 
-    return f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="width:100%">
-  {bands_svg}
+    return f'''<svg width="{width}" height="{height}" viewBox="0 0 {width} {height}" style="width:100%" data-pe-axis="actual">
+  <title>PE 历史序列（实际倍数轴）</title>
+  <desc>有效 PE 观测：{", ".join(f"{value:.1f}x" for value in values)}</desc>
+  {"".join(axis)}
   {line}
+  {dots}
   {current}
   {cur_label}
+  {"".join(x_labels)}
 </svg>'''
 
 
@@ -599,4 +653,3 @@ def svg_thermometer(value: int, max_val: int = 100, label: str = "") -> str:
     <div style="font-family:Fira Code;font-size:9px;color:#64748b;letter-spacing:.1em">{label}</div>
   </div>
 </div>'''
-

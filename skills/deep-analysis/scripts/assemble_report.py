@@ -6,6 +6,7 @@ Output: reports/{ticker}_{YYYYMMDD}/full-report.html
 from __future__ import annotations
 
 import json
+import base64
 import shutil
 import sys
 from datetime import datetime
@@ -15,6 +16,7 @@ HERE = Path(__file__).parent
 sys.path.insert(0, str(HERE))
 from lib.cache import read_task_output, market_status  # noqa: E402
 from lib.report.security import escape_payload, escape_text  # noqa: E402
+from lib.report.evidence import display_score, finite_number, render_evidence, render_hero_chart  # noqa: E402
 
 ROOT = HERE.parent
 TEMPLATE = ROOT / "assets" / "report-template.html"
@@ -144,7 +146,7 @@ DIM_META = {
     "10_valuation": {
         "id": "10", "title": "估值多维", "en": "Valuation", "weight": 5, "cat": "fin",
         "kpis": ["pe", "pe_quantile", "industry_pe", "dcf"],
-        "kpi_labels": {"pe": "当前 PE", "pe_quantile": "PE 5年分位", "industry_pe": "行业均值", "dcf": "DCF 内在值"},
+        "kpi_labels": {"pe": "当前 PE", "pe_quantile": "PE 分位输入（窗口待核验）", "industry_pe": "行业均值", "dcf": "DCF 内在值"},
     },
     "11_governance": {
         "id": "11", "title": "管理层与治理", "en": "Governance", "weight": 4, "cat": "co",
@@ -216,6 +218,20 @@ from lib.report.dim_viz import (  # noqa: E402, F401
 )
 
 
+def _format_kpi_value(value) -> str:
+    """Readable nested KPI text; values have already crossed escape_payload."""
+    if value is None:
+        return "—"
+    if isinstance(value, list):
+        return "；".join(_format_kpi_value(v) for v in value) or "—"
+    if isinstance(value, dict):
+        primary = [value.get(k) for k in ("date", "title", "event", "name", "expectation") if value.get(k) not in (None, "")]
+        if primary:
+            return " · ".join(_format_kpi_value(v) for v in primary)
+        return " · ".join(f"{k}: {_format_kpi_value(v)}" for k,v in value.items()) or "—"
+    return str(value)
+
+
 def _extract_kpi_value(raw_dim_data: dict, key: str) -> str:
     """Best-effort extraction. Walks nested dict looking for the key, falls back to —."""
     if not isinstance(raw_dim_data, dict):
@@ -223,12 +239,12 @@ def _extract_kpi_value(raw_dim_data: dict, key: str) -> str:
     # direct lookup
     if key in raw_dim_data:
         v = raw_dim_data[key]
-        return str(v) if v is not None else "—"
+        return _format_kpi_value(v)
     # walk one level
     for sub in raw_dim_data.values():
         if isinstance(sub, dict) and key in sub:
             v = sub[key]
-            return str(v) if v is not None else "—"
+            return _format_kpi_value(v)
     return "—"
 
 
@@ -239,10 +255,20 @@ def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict) -> str:
     meta = DIM_META.get(dim_key)
     if not meta:
         return ""
-    score = dim_score.get("score")
+    from lib.data_integrity import _is_missing
+    raw_data = (raw_dim or {}).get("data") or {}
+    status = dim_score.get("score_status")
+    unavailable = status in ("missing", "not_applicable", "stale") or _is_missing(raw_data) or raw_dim.get("source") == "skip"
+    unmeasured = unavailable or status in (None, "heuristic")
+    score = None if unmeasured else dim_score.get("score")
+    if finite_number(score) is None:
+        score = None
     label = _safe(dim_score.get("label"), "—")
     pass_items = dim_score.get("reasons_pass") or []
     fail_items = dim_score.get("reasons_fail") or []
+    if unmeasured:
+        label = {"not_applicable": "不适用", "stale": "证据已过期", "heuristic": "定性启发式 · 非量化评分"}.get(status, "证据不足或旧缓存 · 不显示默认分")
+        pass_items, fail_items = [], []
     weight = dim_score.get("weight") or meta.get("weight", 3)
     score_cls = _score_class(score)
     score_pct = (score or 0) * 10  # 0-100 scale
@@ -251,23 +277,19 @@ def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict) -> str:
     raw_data = (raw_dim or {}).get("data") or {}
     fallback = (raw_dim or {}).get("fallback", False)
     source = (raw_dim or {}).get("source", "—")
-    # Clean up source label: if we have real data, show "官方接口" instead of raw source string
-    if not fallback and source and "web_search" not in str(source).lower():
-        source_label = "官方接口"
-    elif "web_search" in str(source).lower() and not fallback:
-        source_label = "官方接口"  # Has data despite web_search tag = good enough
-    elif fallback:
-        source_label = "web_search"
-    else:
-        source_label = "官方接口"
+    # Preserve provenance; an SDK or web search is not an official filing.
+    source_label = str(source or "来源未记录")
 
     # Specialized viz (overrides KPI grid if available)
     viz_html = ""
-    if dim_key in DIM_VIZ_RENDERERS:
+    if not unavailable and dim_key in DIM_VIZ_RENDERERS:
         try:
             viz_html = f'<div class="dim-viz">{DIM_VIZ_RENDERERS[dim_key](raw_data)}</div>'
-        except Exception as e:
-            viz_html = f'<div class="dim-viz" style="color:#dc2626;font-size:11px">viz error: {e}</div>'
+        except Exception:
+            # Keep renderer internals out of the reader-facing report. The raw
+            # evidence remains available below, so a chart failure is a visual
+            # degradation rather than a loss of research inputs.
+            viz_html = '<div class="dim-viz dim-viz-unavailable">数据图暂不可用，请核对下方原始记录。</div>'
 
     # KPI grid (only render if no specialized viz)
     kpi_html = ""
@@ -292,7 +314,7 @@ def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict) -> str:
         pf_html += '</div>'
 
     badge_cls = "fallback" if fallback else "live"
-    badge_text = "公开信息" if fallback else source_label
+    badge_text = source_label + (" · 备用源" if fallback else "")
 
     # raw data dump (collapsible)
     import json as _j
@@ -361,16 +383,39 @@ from lib.report.institutional import (  # noqa: E402, F401
 )
 
 
-def assemble(ticker: str) -> Path:
+def assemble(ticker: str, layout: str = "continuous") -> Path:
     syn = read_task_output(ticker, "synthesis")
     raw = read_task_output(ticker, "raw_data")
     panel = read_task_output(ticker, "panel")
     if not (syn and raw and panel):
         raise RuntimeError(f"Missing prerequisite cache for {ticker}. Run Tasks 1-4 first.")
 
+    if layout not in {"continuous", "council", "editorial"}:
+        raise ValueError("Unknown report layout")
+    council_raw = raw
+
+    # Evidence fingerprints must use original input, before HTML escaping.
+    from lib.cache import CACHE_ROOT
+    from lib.data_integrity import validate
+    from lib.agent_review import load_fresh_agent_analysis
+    import os
+    evidence_html = render_evidence(raw, panel, CACHE_ROOT / ticker,
+                                    review_skipped=os.environ.get("AJAY_SKIP_REVIEW") == "1")
+    hero_chart_html = render_hero_chart(raw)
+    integrity = validate(raw)
+    dimension_snapshot = read_task_output(ticker, "dimensions") or {}
+    score_valid = not integrity.get("critical_missing", True) and dimension_snapshot.get("fundamental_score_valid", False)
+    overall_display = display_score(syn.get("overall_score")) if score_valid else "—"
+    fresh_analysis, _ = load_fresh_agent_analysis(CACHE_ROOT / ticker, raw)
+
     syn = escape_payload(syn)
     raw = escape_payload(raw)
     panel = escape_payload(panel)
+    if not score_valid:
+        # A hidden number alone is insufficient: strong verdicts must degrade too.
+        syn["verdict_label"] = "证据不足 · 未形成综合判断"
+        syn.pop("verdict_detail", None)
+        syn["dashboard"] = {"core_conclusion": "关键输入缺失或过期。请先补充证据，再形成综合结论；现有规则输出仅供排查输入与假设。"}
 
     # v2.9 · 机械级自查 gate（代替以往"软 HARD-GATE"）
     # HTML 生成前强制跑 self_review；critical != 0 → 拒绝出报告，让 agent 修
@@ -404,11 +449,15 @@ def assemble(ticker: str) -> Path:
     dashboard = syn.get("dashboard") or {}
     dp = dashboard.get("data_perspective") or {}
     intel = dashboard.get("intelligence") or {}
-    bp = dashboard.get("battle_plan") or {}
-    zones = syn.get("buy_zones") or {}
+    # Legacy price multipliers are not a DCF / PE percentile / technical support.
+    reviewed_narrative = (fresh_analysis or {}).get("narrative_override") or {}
+    bp = escape_payload(((reviewed_narrative.get("dashboard") or {}).get("battle_plan") or {})) if score_valid else {}
+    zones = escape_payload(reviewed_narrative.get("buy_zones") or {}) if score_valid else {}
     trap = (raw.get("dimensions", {}).get("18_trap") or {}).get("data") or {}
-    trap_level = trap.get("trap_level") or "🟢 安全"
+    trap_level = trap.get("trap_level") or "证据不足 · 未评估"
     trap_color, trap_emoji = trap_color_emoji(trap_level)
+    if not trap.get("trap_level"):
+        trap_color, trap_emoji = "#8393a7", "—"
 
     bull = debate.get("bull") or {}
     bear = debate.get("bear") or {}
@@ -429,8 +478,16 @@ def assemble(ticker: str) -> Path:
     neut_count = sig_dist.get("neutral", 0)
 
     template = TEMPLATE.read_text(encoding="utf-8")
+    template = template.replace("<!-- INJECT_EDITORIAL_CSS -->", (ROOT / "assets" / "report-editorial.css").read_text(encoding="utf-8"))
+    template = template.replace("<!-- INJECT_EVIDENCE_STRIP -->", evidence_html)
+    template = template.replace("<!-- INJECT_HERO_CHART -->", hero_chart_html)
+    for placeholder, filename in (("{{HERO_IMAGE_URI}}", "manhattan-night.png"), ("{{INTERLUDE_IMAGE_URI}}", "shanghai-night.png"), ("{{BUFFETT_IMAGE_URI}}", "buffett-portrait.png"), ("{{SIMONS_IMAGE_URI}}", "simons-portrait.png")):
+        asset = ROOT / "assets" / "ajay-brand" / filename
+        if not asset.is_file():
+            raise RuntimeError(f"Missing aJay report asset: {asset}")
+        template = template.replace(placeholder, "data:image/png;base64," + base64.b64encode(asset.read_bytes()).decode("ascii"))
 
-    market_state = market_status(_mkt)
+    market_state = {"label": "DEMO / 合成行情快照", "is_open": False} if raw.get("is_demo") else market_status(_mkt)
     replacements = {
         "{{NAME}}": _safe(syn.get("name") or basic.get("name")),
         "{{TICKER}}": _safe(syn.get("ticker") or basic.get("code")),
@@ -443,8 +500,10 @@ def assemble(ticker: str) -> Path:
         "{{PE}}": str(_safe(basic.get("pe_ttm"))),
         "{{PB}}": str(_safe(basic.get("pb"))),
         "{{INDUSTRY}}": str(_safe(basic.get("industry"))),
-        "{{OVERALL_SCORE}}": str(syn.get("overall_score", 0)),
-        "{{OVERALL_SCORE_INT}}": str(int(syn.get("overall_score", 0))),
+        "{{OVERALL_SCORE}}": overall_display,
+        "{{OVERALL_SCORE_INT}}": overall_display,
+        "{{SCORE_STATUS}}": "关键证据完整性检查通过 · 未校准" if score_valid else "关键证据不足，暂不展示综合分",
+        "{{REPORT_MODE}}": "DEMO / 合成样本" if raw.get("is_demo") else "RESEARCH NOTE",
         # v3.4.1 · verdict_label 后追加 detail（基本面/共识精确分）让相近 verdict 段的票仍能区分
         "{{VERDICT_LABEL}}": _safe(syn.get("verdict_label")) + (
             f" · {syn['verdict_detail']}" if syn.get("verdict_detail") else ""
@@ -452,7 +511,7 @@ def assemble(ticker: str) -> Path:
         "{{TRAP_LEVEL}}": trap_level,
         "{{TRAP_COLOR}}": trap_color,
         "{{TRAP_EMOJI}}": trap_emoji,
-        "{{TRAP_RECOMMENDATION}}": _safe(trap.get("recommendation"), "数据正常，未发现异常推广痕迹"),
+        "{{TRAP_RECOMMENDATION}}": _safe(trap.get("recommendation"), "尚无充分证据形成风险结论"),
         "{{CORE_CONCLUSION}}": _safe(dashboard.get("core_conclusion")),
         "{{DP_TREND}}": _safe(dp.get("trend")),
         "{{DP_PRICE}}": _safe(dp.get("price")),
@@ -469,26 +528,26 @@ def assemble(ticker: str) -> Path:
         # 没选出多空代表，应该显示占位而不是错误的头像+空数据
         "{{BULL_ID}}": _safe(bull.get("investor_id"), "_placeholder"),
         "{{BULL_NAME}}": _safe(bull.get("name"), "（未选出）"),
-        "{{BULL_SCORE}}": str(divide.get("bull_score", 0)),
+        "{{BULL_SCORE}}": display_score(divide.get("bull_score")),
         "{{BULL_LAST_SAY}}": _safe(last_round.get("bull_say"), "—"),
         "{{BEAR_ID}}": _safe(bear.get("investor_id"), "_placeholder"),
         "{{BEAR_NAME}}": _safe(bear.get("name"), "（未选出）"),
-        "{{BEAR_SCORE}}": str(divide.get("bear_score", 0)),
+        "{{BEAR_SCORE}}": display_score(divide.get("bear_score")),
         "{{BEAR_LAST_SAY}}": _safe(last_round.get("bear_say"), "—"),
         "{{PUNCHLINE}}": _safe(divide.get("punchline") or debate.get("punchline")),
         "{{ZONE_VALUE_PRICE}}": str(_safe((zones.get("value") or {}).get("price"))),
-        "{{ZONE_VALUE_RATIONALE}}": _safe((zones.get("value") or {}).get("rationale")),
+        "{{ZONE_VALUE_RATIONALE}}": _safe((zones.get("value") or {}).get("rationale"), "估值方法与输入待验证"),
         "{{ZONE_GROWTH_PRICE}}": str(_safe((zones.get("growth") or {}).get("price"))),
-        "{{ZONE_GROWTH_RATIONALE}}": _safe((zones.get("growth") or {}).get("rationale")),
+        "{{ZONE_GROWTH_RATIONALE}}": _safe((zones.get("growth") or {}).get("rationale"), "增长与估值假设待验证"),
         "{{ZONE_TECH_PRICE}}": str(_safe((zones.get("technical") or {}).get("price"))),
-        "{{ZONE_TECH_RATIONALE}}": _safe((zones.get("technical") or {}).get("rationale")),
+        "{{ZONE_TECH_RATIONALE}}": _safe((zones.get("technical") or {}).get("rationale"), "技术触发条件待验证"),
         "{{ZONE_YOUZI_PRICE}}": str(_safe((zones.get("youzi") or {}).get("price"))),
-        "{{ZONE_YOUZI_RATIONALE}}": _safe((zones.get("youzi") or {}).get("rationale")),
+        "{{ZONE_YOUZI_RATIONALE}}": _safe((zones.get("youzi") or {}).get("rationale"), "市场适用性与方法待验证"),
         "{{GENERATED_AT}}": datetime.now().strftime("%Y-%m-%d %H:%M"),
         "{{BULL_COUNT}}": str(bull_count),
         "{{BEAR_COUNT}}": str(bear_count),
         "{{NEUT_COUNT}}": str(neut_count),
-        "{{CONSENSUS_PCT}}": f"{panel.get('panel_consensus', 0):.0f}",
+        "{{CONSENSUS_PCT}}": display_score(panel.get("panel_consensus")) if panel.get("consensus_valid") else "—",
         "{{BULL_TAG}}": _safe((bull.get("group") and GROUP_LABELS.get(bull.get("group"))) or bull.get("tagline"), ""),
         "{{BEAR_TAG}}": _safe((bear.get("group") and GROUP_LABELS.get(bear.get("group"))) or bear.get("tagline"), ""),
         "{{BULL_SIGNAL_CN}}": {"bullish": "看多", "neutral": "中性", "bearish": "看空"}.get(divide.get("bull_signal", ""), "看多"),
@@ -501,6 +560,27 @@ def assemble(ticker: str) -> Path:
     }
     for k, v in replacements.items():
         template = template.replace(k, escape_text(v))
+
+    # A-share limit-up/LHB personas are not a US or HK research perspective.
+    # When the market-specific panel has no F group, remove the empty filter
+    # and its A-share-only decision zone instead of presenting skip records.
+    has_group_f = any(i.get("group") == "F" for i in investors)
+    template = template.replace(
+        "<!-- INJECT_GROUP_F_TAB -->",
+        '<button type="button" class="chat-tab" data-group="F" aria-pressed="false">游资</button>'
+        if has_group_f else "",
+    )
+    tactical_zone = ""
+    if has_group_f:
+        tactical_zone = (
+            '<div class="zone"><div class="zone-label">YOUZI 游资派</div>'
+            f'<div class="zone-price">{escape_text(_currency_symbol)}'
+            f'{escape_text(_safe((zones.get("youzi") or {}).get("price")))}</div>'
+            f'<div class="zone-rationale">'
+            f'{escape_text(_safe((zones.get("youzi") or {}).get("rationale"), "市场适用性与方法待验证"))}'
+            '</div></div>'
+        )
+    template = template.replace("<!-- INJECT_TACTICAL_ZONE -->", tactical_zone)
 
     template = template.replace(
         "<!-- INJECT_JURY_SEATS -->",
@@ -530,23 +610,22 @@ def assemble(ticker: str) -> Path:
     # v2.15.4 · 按流派打分卡片（7 个流派 A-G 各自 consensus/avg/verdict）
     # 注入在 panel_insights 后 · 若模板尚未含 marker 则追加到 panel_insights 末
     school_html = render_school_scores(syn, panel)
-    if school_html:
-        if "<!-- INJECT_SCHOOL_SCORES -->" in template:
-            template = template.replace("<!-- INJECT_SCHOOL_SCORES -->", school_html)
-        else:
-            # 兼容旧模板：拼到 panel-insights 后
+    if "<!-- INJECT_SCHOOL_SCORES -->" in template:
+        template = template.replace("<!-- INJECT_SCHOOL_SCORES -->", school_html or "")
+    elif school_html:
+        # 兼容旧模板：拼到 panel-insights 后
+        template = template.replace(
+            '</div>\n        <!-- Top 3 Bears',
+            f'</div>\n        {school_html}\n        <!-- Top 3 Bears',
+            1,
+        )
+        # 若旧 anchor 也没命中 · 最后兜底拼到 INJECT_DEBATE_ROUNDS 前
+        if school_html not in template:
             template = template.replace(
-                '</div>\n        <!-- Top 3 Bears',
-                f'</div>\n        {school_html}\n        <!-- Top 3 Bears',
+                "<!-- INJECT_DEBATE_ROUNDS -->",
+                school_html + "\n<!-- INJECT_DEBATE_ROUNDS -->",
                 1,
             )
-            # 若旧 anchor 也没命中 · 最后兜底拼到 INJECT_DEBATE_ROUNDS 前
-            if school_html not in template:
-                template = template.replace(
-                    "<!-- INJECT_DEBATE_ROUNDS -->",
-                    school_html + "\n<!-- INJECT_DEBATE_ROUNDS -->",
-                    1,
-                )
     template = template.replace(
         "<!-- INJECT_RISKS -->",
         render_risks(syn.get("risks") or []),
@@ -559,7 +638,8 @@ def assemble(ticker: str) -> Path:
     # Tier 4 友好层
     template = template.replace(
         "<!-- INJECT_FRIENDLY_LAYER -->",
-        render_friendly_layer(syn, raw),
+        render_friendly_layer(syn, raw) if fresh_analysis and (syn.get("friendly") or {}).get("assumptions") and score_valid
+        else '<p class="chapter-intro">情景测算尚无明确假设；不展示默认概率或机械交易指令。</p>',
     )
 
     # 基金经理抄作业面板
@@ -628,7 +708,22 @@ def assemble(ticker: str) -> Path:
     out_dir = Path("reports") / f"{ticker}_{date}"
     out_dir.mkdir(parents=True, exist_ok=True)
     out_file = out_dir / "full-report.html"
+    if layout in {"continuous", "council"}:
+        from lib.report.council_renderer import render_council
+        from lib.report.continuous_renderer import render_continuous
+        analysis = {"dimensions": dimension_snapshot, "dimension_titles": {k: v["title"] for k,v in DIM_META.items()},
+                    "review_skipped": os.environ.get("AJAY_SKIP_REVIEW") == "1",
+                    "critical_missing": integrity.get("critical_missing", True),
+                    "agent_review_current": bool(fresh_analysis),
+                    "rule_coverage": [{"name": p.get("name", ""), "coverage": p.get("rule_coverage_pct"),
+                                       "evaluated_weight": p.get("evaluated_weight"), "possible_weight": p.get("possible_weight")}
+                                      for p in (read_task_output(ticker,"panel") or {}).get("investors", [])]}
+        # Preserve the detailed legacy presentation for audit/compatibility, but not as the main UI.
+        (out_dir / "research-appendix.html").write_text(template, encoding="utf-8")
+        template = render_continuous(council_raw, analysis, template) if layout == "continuous" else render_council(council_raw, analysis)
     out_file.write_text(template, encoding="utf-8")
+    if layout in {"continuous", "council"}:
+        (out_dir / "full-report-standalone.html").write_text(template, encoding="utf-8")
 
     out_avatars = out_dir / "avatars"
     if not out_avatars.exists():
@@ -639,9 +734,9 @@ def assemble(ticker: str) -> Path:
         for key in ("bullish", "neutral", "bearish")
     )
     one_liner = (
-        f"{syn.get('name')} 体检结果：{int(syn.get('overall_score', 0))} 分，"
+        f"{syn.get('name')} aJay 研究分：{overall_display}，"
         f"{syn.get('verdict_label')}。\n"
-        f"{long_active} 位多头评委里 {(panel.get('signal_distribution') or {}).get('bullish', 0)} 人喊买。\n"
+        f"{long_active} 个模拟多头流派角色里 {(panel.get('signal_distribution') or {}).get('bullish', 0)} 个看多；非真实投资者意见或胜率。\n"
         f"💬 {divide.get('punchline') or '—'}\n"
         f"{trap_emoji} {trap_level}\n"
         f"全文 → {out_file}"

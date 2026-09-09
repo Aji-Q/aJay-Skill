@@ -56,9 +56,8 @@ def _pct_change(values: list, n: int = 1) -> float:
 
 
 def _avg(values: list, default: float = 0.0) -> float:
-    # v3.9.4 · 与 _min 对齐：保留 0 值（!= 0），此前只对正值取平均会把亏损年份剔除，
-    # 让 ROE 均值虚高（[-3,-5,15,18,20] 真实均值 9.0 被算成 17.7）
-    vals = [_f(v) for v in values if _f(v) != 0]
+    # Zero-profit/zero-ROE years are observations, not absent records.
+    vals = [n for v in values if (n := _f(v, None)) is not None and math.isfinite(n)]
     return sum(vals) / len(vals) if vals else default
 
 
@@ -69,7 +68,7 @@ def _last(values: list, default: float = 0.0) -> float:
 
 
 def _min(values: list, default: float = 0.0) -> float:
-    vals = [_f(v) for v in values if _f(v) != 0]
+    vals = [n for v in values if (n := _f(v, None)) is not None and math.isfinite(n)]
     return min(vals) if vals else default
 
 
@@ -131,17 +130,25 @@ def extract_features(raw: dict, dims: dict) -> dict:
 
     # ─────────────── FINANCIALS ───────────────
     roe_hist = fin.get("roe_history") or []
+    valid_roe_hist = [
+        number for value in roe_hist
+        if (number := _f(value, None)) is not None and math.isfinite(number)
+    ]
     rev_hist = fin.get("revenue_history") or []
     np_hist = fin.get("net_profit_history") or []
     div_years = fin.get("dividend_years") or []
     div_amounts = fin.get("dividend_amounts") or []
 
-    f["roe_latest"] = _last(roe_hist)
-    f["roe_5y_avg"] = _avg(roe_hist[-5:]) if len(roe_hist) >= 2 else _last(roe_hist)
-    f["roe_5y_min"] = _min(roe_hist[-5:]) if len(roe_hist) >= 2 else _last(roe_hist)
-    f["roe_5y_above_15"] = sum(1 for v in roe_hist[-5:] if _f(v) > 15)
-    f["roe_5y_above_10"] = sum(1 for v in roe_hist[-5:] if _f(v) > 10)
-    f["roe_trend_up"] = _last(roe_hist) > _avg(roe_hist[:-1]) if len(roe_hist) >= 3 else False
+    f["roe_observation_count"] = len(valid_roe_hist)
+    f["roe_latest"] = valid_roe_hist[-1] if valid_roe_hist else _f(fin.get("roe"), None)
+    f["roe_5y_avg"] = _avg(valid_roe_hist[-5:], None)
+    f["roe_5y_min"] = _min(valid_roe_hist[-5:], None)
+    f["roe_5y_above_15"] = sum(1 for value in valid_roe_hist[-5:] if value > 15)
+    f["roe_5y_above_10"] = sum(1 for value in valid_roe_hist[-5:] if value > 10)
+    f["roe_trend_up"] = (
+        valid_roe_hist[-1] > _avg(valid_roe_hist[:-1])
+        if len(valid_roe_hist) >= 3 else None
+    )
 
     revenue_ttm = _f(fin.get("revenue_ttm"), None)
     profit_ttm = _f(fin.get("net_profit_ttm"), None)
@@ -158,7 +165,14 @@ def extract_features(raw: dict, dims: dict) -> dict:
     f["revenue_growth_period"] = fin.get("revenue_growth_period")
     f["revenue_growth_basis"] = fin.get("revenue_growth_basis")
     f["revenue_growth_source"] = fin.get("revenue_growth_source")
-    f["revenue_growth_3y_cagr"] = ((_last(rev_hist) / _f(rev_hist[-4])) ** (1/3) - 1) * 100 if len(rev_hist) >= 4 and _f(rev_hist[-4]) > 0 else 0
+    valid_revenues = [
+        number for value in rev_hist
+        if (number := _f(value, None)) is not None and math.isfinite(number)
+    ]
+    f["revenue_growth_3y_cagr"] = (
+        ((valid_revenues[-1] / valid_revenues[-4]) ** (1 / 3) - 1) * 100
+        if len(valid_revenues) >= 4 and valid_revenues[-4] > 0 else None
+    )
 
     f["net_profit_latest_yi"] = profit_ttm if profit_ttm is not None else _last(np_hist)
     f["net_profit_latest_basis"] = "ttm" if profit_ttm is not None else "annual"
@@ -171,8 +185,16 @@ def extract_features(raw: dict, dims: dict) -> dict:
     f["net_profit_growth_period"] = fin.get("net_profit_growth_period")
     f["net_profit_growth_basis"] = fin.get("net_profit_growth_basis")
     f["net_profit_growth_source"] = fin.get("net_profit_growth_source")
-    f["net_profit_5y_positive"] = sum(1 for v in np_hist[-5:] if _f(v) > 0)
-    f["consecutive_profit_years"] = len([v for v in np_hist if _f(v) > 0])
+    valid_profits = [
+        number for value in np_hist
+        if (number := _f(value, None)) is not None and math.isfinite(number)
+    ]
+    f["net_profit_5y_positive"] = (
+        sum(1 for value in valid_profits[-5:] if value > 0) if valid_profits else None
+    )
+    f["consecutive_profit_years"] = (
+        len([value for value in valid_profits if value > 0]) if valid_profits else None
+    )
 
     # Ratios require a matching period; zero and losses are valid observations.
     if revenue_ttm is not None and profit_ttm is not None:
@@ -191,14 +213,14 @@ def extract_features(raw: dict, dims: dict) -> dict:
 
     # Financial health
     health = fin.get("financial_health") or {}
-    f["current_ratio"] = _f(health.get("current_ratio"))
-    f["debt_ratio"] = _f(health.get("debt_ratio"))
-    f["fcf_margin"] = _f(health.get("fcf_margin"))
+    f["current_ratio"] = _f(health.get("current_ratio"), None)
+    f["debt_ratio"] = _f(health.get("debt_ratio"), None)
+    f["fcf_margin"] = _f(health.get("fcf_margin"), None)
     f["ocf_to_net_income_ratio"] = _f(
         fin.get("ocf_to_net_income_ratio") or health.get("ocf_to_net_income_ratio"),
         default=0,
     )
-    f["roic"] = _f(health.get("roic"))
+    f["roic"] = _f(health.get("roic"), None)
 
     # v3.8.0 · DuPont 杜邦分解 · 暴露给评委/报告 (价值派看 ROE 质量来源)
     _dupont = fin.get("dupont") or {}
@@ -210,8 +232,8 @@ def extract_features(raw: dict, dims: dict) -> dict:
         f["roe_quality"] = str(_dupont.get("roe_quality", ""))  # margin_driven/leverage_driven/balanced
 
     # Dividend
-    f["consecutive_dividend_years"] = len(div_years)
-    f["dividend_yield"] = _f(basic.get("dividend_yield_ttm"))
+    f["consecutive_dividend_years"] = len(div_years) if "dividend_years" in fin else None
+    f["dividend_yield"] = _f(basic.get("dividend_yield_ttm"), None)
     f["total_dividend_5y_per_10"] = sum(_f(v) for v in div_amounts[-5:])
 
     # ─────────────── K-LINE / TECHNICAL ───────────────
@@ -262,7 +284,7 @@ def extract_features(raw: dict, dims: dict) -> dict:
     # Parse "5 年 80 分位" → 80
     q_str = str(valuation.get("pe_quantile", ""))
     m = re.search(r"(\d+)", q_str)
-    f["pe_quantile_5y"] = int(m.group(1)) if m else 50
+    f["pe_quantile_5y"] = int(m.group(1)) if m else None
     f["industry_pe"] = _f(valuation.get("industry_pe"))
     f["pe_vs_industry"] = (f["pe"] - f["industry_pe"]) / f["industry_pe"] * 100 if f["industry_pe"] > 0 else 0
     f["dcf_intrinsic_yi"] = 0
@@ -390,9 +412,20 @@ def extract_features(raw: dict, dims: dict) -> dict:
         f["has_top_fund_holder"] = False
 
     # ─────────────── MACRO ───────────────
-    f["macro_rate_cycle"] = str(macro.get("rate_cycle", "中性"))
-    f["macro_rate_easing"] = "利好" in f["macro_rate_cycle"] or "降息" in f["macro_rate_cycle"] or "宽松" in f["macro_rate_cycle"]
-    f["macro_commodity"] = str(macro.get("commodity", "中性"))
+    macro_container = dim_data.get("3_macro") or {}
+    macro_is_observed = not (
+        macro_container.get("fallback") is True
+        or bool(macro.get("_autofill_failed"))
+        or (macro_container.get("_pipeline") or {}).get("quality") in {"missing", "error"}
+    )
+    rate_cycle = macro.get("rate_cycle") if macro_is_observed else None
+    f["macro_rate_cycle"] = str(rate_cycle) if rate_cycle not in (None, "", "—") else None
+    f["macro_rate_easing"] = (
+        "利好" in f["macro_rate_cycle"] or "降息" in f["macro_rate_cycle"] or "宽松" in f["macro_rate_cycle"]
+        if f["macro_rate_cycle"] is not None else None
+    )
+    commodity = macro.get("commodity") if macro_is_observed else None
+    f["macro_commodity"] = str(commodity) if commodity not in (None, "", "—") else None
 
     # ─────────────── POLICY ───────────────
     f["policy_supportive"] = "积极" in str(policy.get("policy_dir", ""))
@@ -458,7 +491,8 @@ def extract_features(raw: dict, dims: dict) -> dict:
         f["market_share"] = 0.0
     # Dividend yield from valuation/basic (v3.9.4 · 不再用 valuation 覆盖 basic 的真实分红率)
     _div_basic = _f(basic.get("dividend_yield_ttm"))
-    f["dividend_yield"] = _div_basic if _div_basic else _f(valuation.get("dividend_yield"), default=0)
+    _div_valuation = _f(valuation.get("dividend_yield"), None)
+    f["dividend_yield"] = _div_basic if _div_basic else _div_valuation
     # PEG (v3.9.4 · 修孤儿键:rev_growth_3y → revenue_growth_3y_cagr,此前恒取 99)
     _g3y = f.get("revenue_growth_3y_cagr", 0) or 0
     peg_val = f.get("pe", 0) / _g3y if _g3y > 0 else 99
@@ -644,7 +678,7 @@ def extract_features(raw: dict, dims: dict) -> dict:
     f["pe_ttm"] = f.get("pe", 0)                     # 规则用 pe_ttm · 特征层只有 pe
     f["rev_growth_3y"] = f.get("revenue_growth_3y_cagr", 0)   # 规则用 rev_growth_3y
     f["rev_growth_yoy"] = f.get("revenue_growth_latest", 0)   # 规则用 rev_growth_yoy
-    f["roe"] = f.get("roe_latest", 0)                # 规则用裸 roe · 特征层只有 roe_latest
+    f["roe"] = f.get("roe_latest")                   # 规则用裸 roe · 特征层只有 roe_latest
     f["net_profit_growth_3y"] = f.get("net_profit_growth_latest", 0)
 
     # ─────────────── 数据不足标记 · v3.9.4 ───────────────

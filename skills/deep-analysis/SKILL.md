@@ -1,8 +1,8 @@
 ---
 name: deep-analysis
-description: 个股深度分析的核心工作流。当用户要求"深度分析 / 全面分析 / 帮我看看 / 值不值得买 / DCF / 机构建模 / 首次覆盖 / 投委会备忘录"等涉及个股研究的请求时触发。覆盖 A 股、港股、美股，产出 22 维数据 + 66 位大佬量化评审 + 6 种机构级估值建模 (DCF/Comps/LBO/3-Stmt/Merger) + 7 种研究产物 (首次覆盖/财报解读/催化剂日历/投资逻辑追踪/晨报/量化筛选/行业综述) + 6 种决策方法 (IC Memo/DD/Porter/单位经济/VCP/再平衡) + 杀猪盘检测，最终生成 Bloomberg 风格 HTML 报告 + 社交分享战报。关键词：股票、个股、深度分析、估值、DCF、comps、首次覆盖、IC memo、杀猪盘、龙虎榜、akshare。
-version: 1.0.1
-author: FloatFu-true
+description: 个股深度分析的核心工作流。当用户要求"深度分析 / 全面分析 / 帮我看看 / 值不值得买 / DCF / 机构建模 / 首次覆盖 / 投委会备忘录"等涉及个股研究的请求时触发。覆盖 A 股、港股、美股，产出 22 维数据 + 66 位大佬量化评审 + 6 种机构级估值建模 (DCF/Comps/LBO/3-Stmt/Merger) + 7 种研究产物 (首次覆盖/财报解读/催化剂日历/投资逻辑追踪/晨报/量化筛选/行业综述) + 6 种决策方法 (IC Memo/DD/Porter/单位经济/VCP/再平衡) + 杀猪盘检测，最终生成 aJay 编辑式 HTML 报告 + 社交分享战报。关键词：股票、个股、深度分析、估值、DCF、comps、首次覆盖、IC memo、杀猪盘、龙虎榜、akshare。
+version: 1.1.0
+author: aJay
 license: MIT
 metadata:
   hermes:
@@ -10,7 +10,9 @@ metadata:
     related_skills: [investor-panel, lhb-analyzer, trap-detector]
 ---
 
-# Stock Deep Analysis · 深度分析工作流 v2.2
+# aJay Research · 深度分析工作流 1.1.0
+
+> 当前产品由 aJay（Aji-Q）维护，以美股研究为主线；A 股 / 港股路径保留兼容。上游算法与贡献出处见根目录 `NOTICE`。
 
 > 你正在扮演一位**首席股票分析师**。你身边有一套完整的量化工具箱，但最终的判断和叙事**必须你来写**。
 > 脚本负责算数，你负责推理和下结论。
@@ -41,7 +43,7 @@ metadata:
 ### ⛔ HARD-GATE-UPDATE-PROMPT · 新版本提示（v2.14）
 
 <HARD-GATE>
-会话启动 hook 会后台检查 GitHub 最新 release，如果本地版本落后，会在
+仅显式设置 `AJAY_REPO=Aji-Q/aJay-Skill` 时，会话启动 hook 才后台检查本项目 GitHub release；默认关闭。如果本地版本落后，会在
 `skills/deep-analysis/scripts/.cache/_global/update_prompt.md` 写入完整提示文案。
 
 **你必须在第一次回应用户前检查这个文件**：
@@ -52,7 +54,7 @@ metadata:
 4. 调用 `python3 -c "from lib.update_check import handle_answer; print(handle_answer('<ans>', '<latest>'))"` 把用户回答写回状态文件 · latest 从提示文案里的版本号提取
 5. 处理完删除 `.cache/_global/update_prompt.md`，这样同一会话不会重复弹
 6. 根据用户选择：
-   - `y` → 告诉用户按 README 安装章节的命令执行（Claude Code: `/plugin update ajay` · git clone: `cd aJay-Skill && git pull` · Hermes: `hermes skills update wbh604/UZI-Skill/skills/deep-analysis`），然后继续用户原请求
+   - `y` → 告诉用户按 README 安装章节的命令执行（Claude Code: `/plugin update ajay` · git clone: `cd aJay-Skill && git pull --ff-only` · Hermes: `git -C ~/aJay-Skill pull --ff-only`），然后继续用户原请求
    - `s` → 直接继续用户原请求（handle_answer 已记 skip 到 cache）
    - `n` → 直接继续用户原请求
 

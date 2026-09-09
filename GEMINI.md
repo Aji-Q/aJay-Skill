@@ -1,31 +1,25 @@
-# aJay-Skill · Gemini CLI 指令
+# aJay · Gemini CLI 指令
 
-## 安装
+由 aJay（Aji-Q）维护的美股研究工作台，保留 A 股 / 港股兼容路径。
 
-```bash
-gemini extensions install https://github.com/wbh604/UZI-Skill
-```
-
-更新：
+## 安装与更新
 
 ```bash
+gemini extensions install https://github.com/Aji-Q/aJay-Skill
 gemini extensions update ajay
 ```
 
-## 使用
-
-对 Gemini 说"分析 贵州茅台"，或直接执行：
+也可从本仓库安装 Python 3.10+ 依赖，直接执行：
 
 ```bash
-pip install -r requirements.txt
-python run.py 贵州茅台 --no-browser
+python -m pip install -r requirements.txt
+python run.py AAPL --depth medium --no-browser
 ```
 
 ## 完整流程
 
-参考 `AGENTS.md` 和 `skills/deep-analysis/SKILL.md`。
+读 `AGENTS.md` 和 `skills/deep-analysis/SKILL.md`：采集 → 按需美股补数 → 重新建模 / 输入指纹 → agent 证据复核 → aJay 编辑式 HTML 报告。
 
-核心是两段式：
-1. `stage1()` — 数据采集 + 规则引擎骨架分
-2. Agent 分析 — 读 panel.json，逐组 role-play 66 评委
-3. `stage2()` — 生成 Bloomberg 风格 HTML 报告
+模拟评审不是人物真实观点，评分不是收益概率。缺失来源应明确展示；默认报告保留本地。
+
+当前项目入口：[Aji-Q/aJay-Skill](https://github.com/Aji-Q/aJay-Skill)。来源与 MIT 版权见 `NOTICE` / `LICENSE`。

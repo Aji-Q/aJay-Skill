@@ -36,15 +36,41 @@ def _known_fcf(features: dict) -> bool:
     return bool(features.get("fcf_positive"))
 
 
+def _buffett_roe_5y_above_15(features: dict) -> bool:
+    """Require five observed ROE periods, each strictly above 15%.
+
+    ``roe_5y_above_15`` is a count over the latest five observations produced
+    by :func:`lib.stock_features.extract_features`.  Requiring the full count
+    (rather than ``>= 4``) keeps the rule's predicate identical to its label;
+    the minimum check is retained as a second guard for hand-built feature
+    dictionaries and missing values.
+    """
+    observations = features.get("roe_observation_count")
+    if observations is not None and observations < 5:
+        return False
+    return (
+        features.get("roe_5y_above_15", 0) == 5
+        and features.get("roe_5y_min", 0) > 15
+    )
+
+
+def _known_flag(features: dict, key: str) -> bool:
+    """Return an observed boolean, or make the evaluator skip the rule."""
+    value = features.get(key)
+    if value is None:
+        raise ValueError(f"{key} unavailable")
+    return bool(value)
+
+
 # ═══════════════════════════════════════════════════════════════
 # A 组 · 经典价值派 (6 人)
 # ═══════════════════════════════════════════════════════════════
 
 BUFFETT_RULES = [
     Rule("roe_5y_15", "ROE 连续 5 年 > 15%", 5,
-         check=lambda f: f.get("roe_5y_above_15", 0) >= 4 and f.get("roe_5y_min", 0) > 12,
+         check=_buffett_roe_5y_above_15,
          pass_msg="ROE 连续 5 年 > 15% (最低 {roe_5y_min:.1f}%)",
-         fail_msg="ROE 5 年最低 {roe_5y_min:.1f}%，达标率仅 {roe_5y_above_15}/5"),
+         fail_msg="ROE 近 5 期仅 {roe_5y_above_15}/5 期 > 15%，最低记录 {roe_5y_min:.1f}%（需完整 5 期逐年达标）"),
     Rule("net_margin_15", "净利率 > 15%", 3,
          check=lambda f: f.get("net_margin", 0) > 15,
          pass_msg="净利率 {net_margin:.1f}% 高质量",
@@ -324,7 +350,7 @@ SOROS_RULES = [
          pass_msg="研报目标涨幅 {upside_to_target:.0f}% · 未到狂热",
          fail_msg="研报目标涨幅 {upside_to_target:.0f}% · 市场过度狂热 · 索罗斯会考虑做空"),
     Rule("macro_tailwind", "宏观环境配合", 3,
-         check=lambda f: f.get("macro_rate_easing", False),
+         check=lambda f: _known_flag(f, "macro_rate_easing"),
          pass_msg="利率周期 {macro_rate_cycle}",
          fail_msg="宏观中性"),
     Rule("trend_clear", "Stage 2 有趋势", 3,
@@ -335,7 +361,7 @@ SOROS_RULES = [
 
 DALIO_RULES = [
     Rule("rate_cycle_pos", "利率周期友好 (降息期)", 4,
-         check=lambda f: f.get("macro_rate_easing", False),
+         check=lambda f: _known_flag(f, "macro_rate_easing"),
          pass_msg="{macro_rate_cycle}",
          fail_msg="非降息周期"),
     Rule("low_debt", "公司负债率低", 3,
@@ -365,7 +391,7 @@ MARKS_RULES = [
 
 DRUCK_RULES = [
     Rule("liquidity_tailwind", "流动性拐点", 3,
-         check=lambda f: f.get("macro_rate_easing", False),
+         check=lambda f: _known_flag(f, "macro_rate_easing"),
          pass_msg="利率 {macro_rate_cycle}",
          fail_msg="流动性不利"),
     Rule("macro_theme", "宏观主题明确", 3,

@@ -1,47 +1,18 @@
-# aJay-Skill · OpenCode 安装指南
+# aJay · OpenCode 安装与使用
 
-## 安装
+由 aJay（Aji-Q）维护；唯一默认安装目标是 `Aji-Q/aJay-Skill`。
 
 ```bash
-git clone https://github.com/wbh604/UZI-Skill.git
+git clone https://github.com/Aji-Q/aJay-Skill.git
 cd aJay-Skill
-pip install -r requirements.txt
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python run.py AAPL --depth medium --no-browser
 ```
 
-## 使用
+需要 Python 3.10+。打开此仓库，读 `AGENTS.md`，用自然语言请求“用 aJay 深度研究 AAPL”。深度研究按文档完成数据采集、美股补数与 agent 复核；报告路径以实际终端输出为准。
 
-对 OpenCode 说：
+默认本地报告；`--remote` 属于主动公开访问选项。A 股 / 港股保留兼容，不代表相同覆盖能力。
 
-> 分析 贵州茅台
-
-或直接执行：
-
-```bash
-python run.py 贵州茅台 --no-browser
-```
-
-## 两段式深度分析
-
-```bash
-cd skills/deep-analysis/scripts
-
-# Stage 1: 数据采集 + 骨架分
-python -c "from run_real_test import stage1; stage1('600519.SH')"
-
-# Agent 分析（读 .cache/600519.SH/panel.json，逐组分析 51 评委）
-
-# Stage 2: 生成报告
-python -c "from run_real_test import stage2; stage2('600519.SH')"
-```
-
-## 远程查看
-
-```bash
-python run.py 贵州茅台 --remote
-```
-
-## 更多信息
-
-- `AGENTS.md` — Agent 指令
-- `skills/deep-analysis/SKILL.md` — 完整分析师手册
-- `README.md` — 项目介绍
+更新前核对 `origin` 属于 `Aji-Q/aJay-Skill`，再执行 `git pull --ff-only`。详见根目录 `README.md` 与 `NOTICE`；[问题反馈](https://github.com/Aji-Q/aJay-Skill/issues)。

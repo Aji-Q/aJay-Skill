@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{NAME}} · 游资 SKILLS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Fira+Sans:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>{{NAME}} · aJay Research</title>
+<meta name="author" content="aJay">
+<meta name="description" content="aJay 独立研究报告：证据、估值与模拟流派分析。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2308111c'/%3E%3Ctext x='32' y='43' text-anchor='middle' font-family='Georgia,serif' font-size='42' fill='%23f2f1ec'%3Ea%3C/text%3E%3C/svg%3E">
 <style>
 /* ═══════════════════════════════════════════════════════════
-   游资 SKILLS · FloatFu-true
+   aJay RESEARCH · aJay
    Bento + Brutalism + Glassmorphism · OLED Dark
    ═══════════════════════════════════════════════════════════ */
 :root {
@@ -2754,90 +2754,48 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
 }
 
 </style>
+<style id="ajay-editorial-system">
+<!-- INJECT_EDITORIAL_CSS -->
+</style>
 </head>
 <body>
 
-<!-- ─── BOOT OVERLAY ─── -->
-<div class="boot-overlay" id="boot-overlay">
-  <div class="boot-logo">FloatFu-true <em>· 游资 SKILLS</em></div>
-  <div class="boot-eye">O.o</div>
-  <div class="boot-bar"><div class="boot-fill"></div></div>
-  <div class="boot-status">SCANNING · INITIALIZING JURY · LOADING ARENA</div>
-</div>
-
-<div class="container">
-
-  <!-- ─── TOP BAR ─── -->
-  <div class="topbar">
-    <div class="left">
-      <div class="dots"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
-      <div class="brand">FloatFu-true <span>游资 SKILLS</span></div>
-    </div>
-    <div class="status">
-      <span class="pulse"></span>
-      <span class="market-badge {{MARKET_STATUS_CLASS}}">{{MARKET_STATUS}}</span>
-      <span>· DATA @ {{DATA_FETCHED_AT}} · aJay v{{PLUGIN_VERSION}}</span>
-      <button class="theme-toggle" id="theme-toggle" title="切换暗色 / 浅色主题" aria-label="切换主题">🌙</button>
-    </div>
-  </div>
-
+<div class="container" id="report-top">
+  <nav class="ajay-nav" aria-label="aJay 主导航">
+    <a href="#section-core">研究摘要</a><a href="#section-scan" class="nav-secondary">数据</a>
+    <a class="ajay-wordmark" href="#report-top" aria-label="aJay Research 首页"><b>aJay</b><small>RESEARCH JOURNAL</small></a>
+    <a href="#section-modeling">估值模型</a><a href="#section-evidence" class="nav-secondary">证据</a>
+    <button class="theme-toggle" id="theme-toggle" title="切换暗色 / 浅色主题" aria-label="切换主题">◐</button>
+  </nav>
   <!-- v3.6.0 · sticky TOC rail · 左侧导航 + scroll spy -->
   <nav class="toc-rail" id="toc-rail" aria-label="报告章节导航">
     <button class="toc-toggle" id="toc-toggle" type="button" aria-label="折叠导航栏" aria-expanded="true" title="折叠 / 展开导航">◀</button>
     <a href="#section-core" class="toc-item"><span class="toc-num">01</span>核心结论</a>
-    <a href="#section-clash" class="toc-item"><span class="toc-num">02</span>世纪分歧</a>
-    <a href="#section-jury" class="toc-item"><span class="toc-num">03</span>评委打分板</a>
-    <a href="#section-chat" class="toc-item"><span class="toc-num">04</span>大佬群聊</a>
-    <a href="#section-scan" class="toc-item"><span class="toc-num">05</span>22 维 Deep Scan</a>
-    <a href="#section-modeling" class="toc-item"><span class="toc-num">06</span>机构建模</a>
+    <a href="#section-scan" class="toc-item"><span class="toc-num">02</span>数据透视</a>
+    <a href="#section-modeling" class="toc-item"><span class="toc-num">03</span>估值建模</a>
+    <a href="#section-clash" class="toc-item"><span class="toc-num">04</span>分歧与反证</a>
+    <a href="#section-jury" class="toc-item"><span class="toc-num">05</span>模拟方法评审</a>
+    <a href="#section-chat" class="toc-item"><span class="toc-num">06</span>方法讨论</a>
     <a href="#section-risks" class="toc-item"><span class="toc-num">07</span>风险清单</a>
-    <a href="#section-zones" class="toc-item"><span class="toc-num">08</span>买入区间</a>
+    <a href="#section-zones" class="toc-item"><span class="toc-num">08</span>观察区间</a>
   </nav>
 
-  <!-- ─── DATA QUALITY BANNER · v2.3 (only rendered when _data_gaps.json exists) ─── -->
-  <!-- INJECT_DATA_GAP_BANNER -->
-
-  <!-- ─── STYLE CHIP · v2.7 (动态加权风格识别说明) ─── -->
-  <!-- INJECT_STYLE_CHIP -->
-
-  <!-- ─── BENTO HERO ─── -->
-  <div class="bento-hero">
-
-    <!-- name + price + one-liner -->
-    <div class="bento name-card">
-      <div class="ticker-label">// SUBJECT</div>
+  <header class="ajay-hero">
+    <img class="hero-photograph" src="{{HERO_IMAGE_URI}}" alt="AI 生成的曼哈顿风格金融区夜景，仅作视觉设计" fetchpriority="high">
+    <div class="hero-copy">
+      <div class="hero-eyebrow">AJAY / INDEPENDENT RESEARCH <span>{{REPORT_MODE}}</span></div>
       <h1 class="stock-name">{{NAME}}</h1>
       <div class="stock-code">{{TICKER}} · {{INDUSTRY}}</div>
-      <div class="one-liner">{{ONE_LINER}}</div>
-      <div class="price-row">
-        <div class="price">{{CURRENCY}}{{PRICE}}</div>
-        <div class="change {{CHANGE_DIR}}">{{CHANGE_PCT}}</div>
-      </div>
-      <div class="metric-chips">
-        <div class="chip"><strong>MCAP</strong>{{MCAP}}</div>
-        <div class="chip"><strong>PE</strong>{{PE}}</div>
-        <div class="chip"><strong>PB</strong>{{PB}}</div>
-      </div>
+      <p class="one-liner">{{ONE_LINER}}</p>
+      <div class="price-row"><div class="price">{{CURRENCY}}{{PRICE}}</div><div class="change {{CHANGE_DIR}}">{{CHANGE_PCT}}</div></div>
+      <div class="hero-actions"><a class="ajay-button" href="#section-core">阅读研究 <span aria-hidden="true">↗</span></a><a class="hero-link" href="#section-evidence">先看证据边界</a></div>
     </div>
-
-    <!-- BRUTALIST SCORE -->
-    <div class="bento score-card">
-      <div class="score-label">ALPHA SCORE</div>
-      <div class="score-giant">{{OVERALL_SCORE_INT}}</div>
-      <div class="score-verdict">{{VERDICT_LABEL}}</div>
-    </div>
-
-    <!-- SAFETY -->
-    <div class="bento safety-card {{TRAP_COLOR}}">
-      <div class="safety-icon">{{TRAP_EMOJI}}</div>
-      <div class="safety-text">
-        <strong>杀猪盘体检 · {{TRAP_LEVEL}}</strong>
-        <span>{{TRAP_RECOMMENDATION}}</span>
-      </div>
-    </div>
-
-  </div>
-
+    <div class="hero-footnote"><span>{{MARKET_STATUS}} · DATA / {{DATA_FETCHED_AT}}</span><span>AJAY v{{PLUGIN_VERSION}} · AI-GENERATED COVER</span></div>
+  </header>
+  <!-- INJECT_EVIDENCE_STRIP -->
+  <div class="report-notices"><!-- INJECT_DATA_GAP_BANNER --><!-- INJECT_STYLE_CHIP --></div>
+  <main>
+<section class="report-chapter">
   <!-- ─── DASHBOARD 4-SECTION ─── -->
   <div class="section-head" id="section-core">
     <div class="section-tag">01 / CORE</div>
@@ -2845,6 +2803,7 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <div class="section-line"></div>
   </div>
 
+  <div class="core-overview"><div class="core-score"><span class="score-giant">{{OVERALL_SCORE_INT}}</span><div class="score-context"><strong>{{VERDICT_LABEL}}</strong>启发式研究分 / 非胜率<br>{{SCORE_STATUS}}</div></div><div class="hero-visual"><!-- INJECT_HERO_CHART --></div></div>
   <div class="dashboard-bento">
     <div class="core-conclusion">
       <div class="label">// ONE-SHOT CONCLUSION</div>
@@ -2855,12 +2814,12 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <div class="data-cell"><div class="icon">💰</div><div class="key">价位 PRICE</div><div class="value">{{DP_PRICE}}</div></div>
     <div class="data-cell"><div class="icon">📊</div><div class="key">量能 VOLUME</div><div class="value">{{DP_VOLUME}}</div></div>
     <div class="data-cell"><div class="icon">🎯</div><div class="key">筹码 CHIPS</div><div class="value">{{DP_CHIPS}}</div></div>
-    <div class="data-cell" style="grid-column: span 2;"><div class="icon">📰</div><div class="key">新闻 NEWS</div><div class="value">{{INTEL_NEWS}}</div></div>
+    <div class="data-cell"><div class="icon">📰</div><div class="key">新闻 NEWS</div><div class="value">{{INTEL_NEWS}}</div></div>
     <div class="data-cell"><div class="icon">⚠️</div><div class="key">风险 RISKS</div><div class="value">{{INTEL_RISKS}}</div></div>
     <div class="data-cell"><div class="icon">🚀</div><div class="key">催化 CATALYSTS</div><div class="value">{{INTEL_CATALYSTS}}</div></div>
 
     <div class="battle-plan">
-      <div class="plan-label">BATTLE PLAN</div>
+      <div class="plan-label">CONDITIONAL SCENARIOS</div>
       <div class="plan-field"><span class="k">Entry</span><span class="v">{{BP_ENTRY}}</span></div>
       <div class="plan-field"><span class="k">Position</span><span class="v">{{BP_POSITION}}</span></div>
       <div class="plan-field"><span class="k">Stop</span><span class="v">{{BP_STOP}}</span></div>
@@ -2868,10 +2827,65 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     </div>
   </div>
 
+
+</section>
+<section class="report-chapter">
+  <!-- ─── 19 维 DEEP SCAN ─── -->
+  <div class="section-head" id="section-scan">
+    <div class="section-tag">02 / DEEP SCAN</div>
+    <h2 class="section-title">全维深度透视</h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="deep-scan">
+    <details class="research-category" open><summary class="cat-label">财务面 · FUNDAMENTALS</summary><div class="dim-row">
+      <!-- INJECT_DIM_FINANCIAL -->
+    </div></details>
+
+    <details class="research-category" open><summary class="cat-label">行情面 · MARKET ACTION</summary><div class="dim-row">
+      <!-- INJECT_DIM_MARKET -->
+    </div></details>
+
+    <details class="research-category" open><summary class="cat-label">行业面 · INDUSTRY CHAIN</summary><div class="dim-row">
+      <!-- INJECT_DIM_INDUSTRY -->
+    </div></details>
+
+    <details class="research-category" open><summary class="cat-label">公司面 · COMPANY</summary><div class="dim-row">
+      <!-- INJECT_DIM_COMPANY -->
+    </div></details>
+
+    <details class="research-category" open><summary class="cat-label">环境面 · ENVIRONMENT</summary><div class="dim-row">
+      <!-- INJECT_DIM_ENV -->
+    </div></details>
+
+    <details class="research-category" open><summary class="cat-label">安全面 · SAFETY & SENTIMENT</summary><div class="dim-row">
+      <!-- INJECT_DIM_SAFETY -->
+    </div></details>
+  </div>
+
+
+</section>
+<section class="report-chapter">
+  <!-- ─── INSTITUTIONAL MODELING · v2.0 ─── -->
+  <div class="section-head" id="section-modeling">
+    <div class="section-tag">03 / INSTITUTIONAL MODELING</div>
+    <h2 class="section-title">机构级估值建模</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="inst-modeling-wrap" style="padding:0 4px">
+    <!-- INJECT_INSTITUTIONAL_MODELING -->
+  </div>
+
+  <!-- v3.3 · 分业务收入模型 (segmental_model.json 存在时才渲染) -->
+  <!-- INJECT_SEGMENTAL -->
+
+
+</section>
+<section class="photo-interlude" aria-label="长期研究视角"><img src="{{INTERLUDE_IMAGE_URI}}" alt="AI 生成的上海风格金融区夜景，仅作章节视觉" loading="lazy"><div><span>THE LONG VIEW</span><h2>看清价值，<br>也看见未知。</h2><p>Facts first. Conviction follows.</p></div><small>AI-GENERATED VISUAL / AJAY</small></section><section class="report-chapter">
   <!-- ─── THE GREAT DIVIDE ─── -->
   <div class="section-head" id="section-clash">
-    <div class="section-tag">02 / CLASH</div>
-    <h2 class="section-title">世纪分歧</h2>
+    <div class="section-tag">04 / CLASH</div>
+    <h2 class="section-title">分歧与反证</h2>
     <div class="section-line"></div>
   </div>
 
@@ -2879,7 +2893,8 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <div class="divide-header">
       <div class="tag">THE GREAT DIVIDE</div>
       <h2>最看多 VS 最看空</h2>
-      <div class="round-info">⚡ <strong>3 ROUNDS</strong> · 隔空辩论 · 最后由 PUNCHLINE 一锤定音</div>
+      <div class="round-info">模拟流派的条件推演 · 不代表真实投资者观点</div>
+    <p class="chapter-intro">自动规则草稿可能包含默认特征与不一致文案。以下用于列出待检验问题，不是经过核实的专家结论。</p>
     </div>
 
     <div class="arena">
@@ -2894,7 +2909,7 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       </div>
 
       <div class="vs-bolt">
-        ⚡<div class="sub">VS</div>
+        <div class="sub">VS</div>
       </div>
 
       <div class="fighter bear">
@@ -2922,9 +2937,16 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <!-- INJECT_SCHOOL_SCORES -->
   </div>
 
+
+</section>
+<section class="report-chapter">
+  <div class="perspective-portraits">
+    <figure><img src="{{BUFFETT_IMAGE_URI}}" alt="AI 生成的 Warren Buffett 巴菲特黑白肖像，非本人背书" loading="lazy"><figcaption><span>01 / VALUE &amp; DURABILITY</span><h3>Warren Buffett</h3><p>价格、价值与安全边际</p></figcaption></figure>
+    <figure><img src="{{SIMONS_IMAGE_URI}}" alt="AI 生成的 Jim Simons 西蒙斯黑白肖像，非本人背书" loading="lazy"><figcaption><span>02 / PATTERNS &amp; PROBABILITY</span><h3>Jim Simons</h3><p>数据、模式与可检验假设</p></figcaption></figure>
+  </div><p class="portrait-disclosure">AI-GENERATED PORTRAITS · 方法论视觉参考，非实拍、非本人观点或背书。</p>
   <!-- ─── 50 INVESTORS · JUDGE PANEL ─── -->
   <div class="section-head" id="section-jury">
-    <div class="section-tag">03 / JURY</div>
+    <div class="section-tag">05 / JURY</div>
     <h2 class="section-title">评委打分板</h2>
     <div class="section-line"></div>
   </div>
@@ -2934,22 +2956,25 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       <div class="stat-tile bull"><div class="num">{{BULL_COUNT}}</div><div class="label">Bullish · 看多</div></div>
       <div class="stat-tile neut"><div class="num">{{NEUT_COUNT}}</div><div class="label">Neutral · 观望</div></div>
       <div class="stat-tile bear"><div class="num">{{BEAR_COUNT}}</div><div class="label">Bearish · 看空</div></div>
-      <div class="stat-tile total"><div class="num">{{CONSENSUS_PCT}}%</div><div class="label">Consensus · 共识</div></div>
+      <div class="stat-tile total"><div class="num">{{CONSENSUS_PCT}}%</div><div class="label">Agreement · 模拟一致度</div></div>
     </div>
 
     <!-- JUDGING SEATS · 50 灯 -->
     <div class="jury-board">
-      <div class="jury-row-label">JUDGE SEATS · {{TOTAL_COUNT}} 位评委实时投票 (亮绿 = 看多, 亮红 = 看空, 灰 = 中性)</div>
+      <div class="jury-row-label">JUDGE SEATS · {{TOTAL_COUNT}} 个流派角色模拟输出 (亮绿 = 看多, 亮红 = 看空, 灰 = 中性)</div>
       <div class="jury-seats" id="jury-seats">
         <!-- INJECT_JURY_SEATS -->
       </div>
     </div>
   </div>
 
+
+</section>
+<section class="report-chapter">
   <!-- ─── CHAT ROOM MODE ─── -->
   <div class="section-head" id="section-chat">
-    <div class="section-tag">04 / CHAT</div>
-    <h2 class="section-title">大佬群聊现场</h2>
+    <div class="section-tag">06 / DISCUSSION</div>
+    <h2 class="section-title">流派研究笔记</h2>
     <div class="section-line"></div>
   </div>
 
@@ -2958,19 +2983,19 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       <div class="chat-title">
         <div class="chat-room-icon">💬</div>
         <div>
-          <div class="chat-room-name">Alpha Terminal · 群贤议事厅</div>
+          <div class="chat-room-name">aJay / Perspective notes</div>
           <div class="chat-room-meta">{{TOTAL_COUNT}} 位成员 · {{BULL_COUNT}} 看多 · {{BEAR_COUNT}} 看空 · 正在讨论 <strong>{{NAME}}</strong></div>
         </div>
       </div>
       <div class="chat-filter-tabs">
-        <span class="chat-tab active" data-group="all">全部</span>
-        <span class="chat-tab" data-group="A">价值</span>
-        <span class="chat-tab" data-group="B">成长</span>
-        <span class="chat-tab" data-group="C">宏观</span>
-        <span class="chat-tab" data-group="D">技术</span>
-        <span class="chat-tab" data-group="E">中国</span>
-        <span class="chat-tab" data-group="F">游资</span>
-        <span class="chat-tab" data-group="G">量化</span>
+        <button type="button" class="chat-tab active" data-group="all" aria-pressed="true">全部</button>
+        <button type="button" class="chat-tab" data-group="A" aria-pressed="false">价值</button>
+        <button type="button" class="chat-tab" data-group="B" aria-pressed="false">成长</button>
+        <button type="button" class="chat-tab" data-group="C" aria-pressed="false">宏观</button>
+        <button type="button" class="chat-tab" data-group="D" aria-pressed="false">技术</button>
+        <button type="button" class="chat-tab" data-group="E" aria-pressed="false">中国</button>
+        <!-- INJECT_GROUP_F_TAB -->
+        <button type="button" class="chat-tab" data-group="G" aria-pressed="false">量化</button><button type="button" class="chat-tab" data-group="H" aria-pressed="false">科技</button><button type="button" class="chat-tab" data-group="I" aria-pressed="false">卡位</button>
       </div>
     </div>
 
@@ -2981,13 +3006,13 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       <button class="chat-action-btn" id="scroll-bear">⬇ 跳到看空最强</button>
     </div>
     <div class="chat-messages" id="chat-messages">
-      <div class="chat-system">— 系统通知 · {{GENERATED_AT}} · {{TOTAL_COUNT}} 位大佬已进入群聊 ·  Tab 切换流派 / 点评委席跳转个人结论 —</div>
+      <div class="chat-system">— 系统通知 · {{GENERATED_AT}} · {{TOTAL_COUNT}} 个模拟角色已生成研究笔记 ·  Tab 切换流派 / 点评委席跳转个人结论 —</div>
       <!-- INJECT_CHAT_MESSAGES -->
     </div>
 
     <div class="chat-footer">
       <div class="chat-footer-avatar oo-eye">O.o</div>
-      <div class="chat-footer-text">Alpha Terminal 正在监听... 讨论基于 {{GENERATED_AT}} 数据</div>
+      <div class="chat-footer-text">aJay 静态研究快照 · 采集于 {{DATA_FETCHED_AT}} · 非实时对话</div>
     </div>
   </div>
 
@@ -2998,8 +3023,8 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
 
   <!-- ─── FUND MANAGERS · 抄作业面板 ─── -->
   <div class="section-head">
-    <div class="section-tag">04 / LEGENDS</div>
-    <h2 class="section-title">大佬抄作业</h2>
+    <div class="section-tag">METHOD / HOLDINGS</div>
+    <h2 class="section-title">公开持仓观察</h2>
     <div class="section-line"></div>
   </div>
 
@@ -3007,58 +3032,9 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <!-- INJECT_FUND_MANAGERS -->
   </div>
 
-  <!-- ─── 19 维 DEEP SCAN ─── -->
-  <div class="section-head" id="section-scan">
-    <div class="section-tag">05 / DEEP SCAN</div>
-    <h2 class="section-title">全维深度透视</h2>
-    <div class="section-line"></div>
-  </div>
 
-  <div class="deep-scan">
-    <div class="cat-label">💰 财务面 · FUNDAMENTALS</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_FINANCIAL -->
-    </div>
-
-    <div class="cat-label">📈 行情面 · MARKET ACTION</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_MARKET -->
-    </div>
-
-    <div class="cat-label">🏭 行业面 · INDUSTRY CHAIN</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_INDUSTRY -->
-    </div>
-
-    <div class="cat-label">🏢 公司面 · COMPANY</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_COMPANY -->
-    </div>
-
-    <div class="cat-label">🌍 环境面 · ENVIRONMENT</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_ENV -->
-    </div>
-
-    <div class="cat-label">🛡️ 安全面 · SAFETY & SENTIMENT</div>
-    <div class="dim-row">
-      <!-- INJECT_DIM_SAFETY -->
-    </div>
-  </div>
-
-  <!-- ─── INSTITUTIONAL MODELING · v2.0 ─── -->
-  <div class="section-head" id="section-modeling">
-    <div class="section-tag">06 / INSTITUTIONAL MODELING</div>
-    <h2 class="section-title">机构级估值建模</h2>
-    <div class="section-line"></div>
-  </div>
-  <div class="inst-modeling-wrap" style="padding:0 4px">
-    <!-- INJECT_INSTITUTIONAL_MODELING -->
-  </div>
-
-  <!-- v3.3 · 分业务收入模型 (segmental_model.json 存在时才渲染) -->
-  <!-- INJECT_SEGMENTAL -->
-
+</section>
+<section class="report-chapter">
   <!-- ─── RISKS ─── -->
   <div class="section-head" id="section-risks">
     <div class="section-tag">07 / RISKS</div>
@@ -3074,114 +3050,42 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
   <!-- ─── BUY ZONES ─── -->
   <div class="section-head" id="section-zones">
     <div class="section-tag">08 / ZONES</div>
-    <h2 class="section-title">四派系买入区间</h2>
+    <h2 class="section-title">条件价格与观察区间</h2>
     <div class="section-line"></div>
   </div>
   <div class="zones-grid">
     <div class="zone"><div class="zone-label">VALUE 价值派</div><div class="zone-price">{{CURRENCY}}{{ZONE_VALUE_PRICE}}</div><div class="zone-rationale">{{ZONE_VALUE_RATIONALE}}</div></div>
     <div class="zone"><div class="zone-label">GROWTH 成长派</div><div class="zone-price">{{CURRENCY}}{{ZONE_GROWTH_PRICE}}</div><div class="zone-rationale">{{ZONE_GROWTH_RATIONALE}}</div></div>
     <div class="zone"><div class="zone-label">TECH 技术派</div><div class="zone-price">{{CURRENCY}}{{ZONE_TECH_PRICE}}</div><div class="zone-rationale">{{ZONE_TECH_RATIONALE}}</div></div>
-    <div class="zone"><div class="zone-label">YOUZI 游资派</div><div class="zone-price">{{CURRENCY}}{{ZONE_YOUZI_PRICE}}</div><div class="zone-rationale">{{ZONE_YOUZI_RATIONALE}}</div></div>
+    <!-- INJECT_TACTICAL_ZONE -->
   </div>
 
-  <!-- v3.6.0 · 分享卡 + QR · 报告链接二维码 + 一句话总结 -->
-  <div class="share-qr-card">
-    <canvas class="qr-canvas" id="report-qr-canvas" width="200" height="200" aria-label="报告链接二维码"></canvas>
-    <div class="qr-text">
-      <div class="qr-title">📱 SHARE · 扫码看完整报告</div>
-      <div class="qr-desc"><strong>{{NAME}}</strong> · {{TICKER}} · 总评 <strong>{{OVERALL_SCORE_INT}}/100</strong> · {{VERDICT_LABEL}}</div>
-      <div class="qr-url" id="report-qr-url">本地路径 · 用 <code>--remote</code> 生成可扫公网链接</div>
-    </div>
-  </div>
 
-  <!-- ─── 一键分享 + QR Code ─── -->
-  <div style="text-align:center;padding:30px 0 20px;border-top:1px solid #e5e7eb;margin-top:30px">
-    <button onclick="document.getElementById('share-overlay').style.display='flex'" style="background:linear-gradient(135deg,#06b6d4,#8b5cf6);color:#fff;border:none;padding:14px 36px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(6,182,212,0.3);letter-spacing:1px;transition:transform .15s">
-      📤 一键分享报告
-    </button>
-    <div style="margin-top:12px;font-size:12px;color:#9ca3af">截图分享到朋友圈 / 微信群 / 社区</div>
-  </div>
-
-  <!-- Share overlay modal — 包含完整分析摘要 -->
-  <div id="share-overlay" onclick="if(event.target===this)this.style.display='none'" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:9999;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
-    <div style="background:#fff;border-radius:16px;padding:28px 24px;max-width:380px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);max-height:90vh;overflow-y:auto">
-      <!-- 标题 -->
-      <div style="font-size:22px;font-weight:900;color:#111">{{NAME}}</div>
-      <div style="font-size:14px;color:#6b7280;margin:4px 0 12px">{{TICKER}} · {{CURRENCY}}{{PRICE}}</div>
-
-      <!-- 评分 -->
-      <div style="background:linear-gradient(135deg,#fef3c7,#fff7ed);border:2px solid #f59e0b;border-radius:16px;padding:16px;margin-bottom:16px">
-        <div style="font-size:48px;font-weight:900;color:#d97706">{{OVERALL_SCORE_INT}}<span style="font-size:20px;color:#92400e">/100</span></div>
-        <div style="font-size:16px;font-weight:700;color:#92400e">{{VERDICT_LABEL}}</div>
-      </div>
-
-      <!-- 投票分布 -->
-      <div style="text-align:left;margin-bottom:14px;padding:12px;background:#f9fafb;border-radius:10px">
-        <div style="font-size:11px;color:#6b7280;margin-bottom:8px;letter-spacing:1px">51 位大佬投票</div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:11px;color:#6b7280;width:40px">看多</span>
-          <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
-            <div style="height:100%;background:#10b981;width:calc({{BULL_COUNT}} / {{TOTAL_COUNT}} * 100%)"></div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#10b981;width:30px">{{BULL_COUNT}}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
-          <span style="font-size:11px;color:#6b7280;width:40px">中性</span>
-          <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
-            <div style="height:100%;background:#94a3b8;width:calc({{NEUT_COUNT}} / {{TOTAL_COUNT}} * 100%)"></div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#6b7280;width:30px">{{NEUT_COUNT}}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:11px;color:#6b7280;width:40px">看空</span>
-          <div style="flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden">
-            <div style="height:100%;background:#ef4444;width:calc({{BEAR_COUNT}} / {{TOTAL_COUNT}} * 100%)"></div>
-          </div>
-          <span style="font-size:12px;font-weight:700;color:#ef4444;width:30px">{{BEAR_COUNT}}</span>
-        </div>
-      </div>
-
-      <!-- Punchline -->
-      <div style="padding:10px;background:#fef2f2;border-left:3px solid #f59e0b;text-align:left;margin-bottom:14px;border-radius:0 8px 8px 0">
-        <div style="font-size:12px;font-weight:700;color:#92400e">💬 {{PUNCHLINE}}</div>
-      </div>
-
-      <!-- 杀猪盘 -->
-      <div style="margin-bottom:14px;font-size:12px">
-        <span style="color:{{TRAP_COLOR}}">{{TRAP_EMOJI}} 杀猪盘检测：{{TRAP_LEVEL}}</span>
-      </div>
-
-      <!-- QR -->
-      <div style="margin-bottom:12px">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://github.com/wbh604/UZI-Skill&color=06b6d4" alt="QR" style="width:80px;height:80px;border-radius:6px" />
-        <div style="font-size:10px;color:#9ca3af;margin-top:4px">扫码获取分析工具</div>
-      </div>
-
-      <a href="https://github.com/wbh604/UZI-Skill" target="_blank" style="font-size:12px;color:#06b6d4;text-decoration:none;font-weight:600">github.com/wbh604/UZI-Skill</a>
-      <div style="margin-top:12px;padding-top:10px;border-top:1px solid #f3f4f6">
-        <div style="font-size:9px;color:#d1d5db;letter-spacing:2px">POWERED BY FloatFu-true · 不构成投资建议</div>
-      </div>
-      <button onclick="this.parentElement.parentElement.style.display='none'" style="margin-top:10px;background:#f3f4f6;border:none;padding:8px 20px;border-radius:8px;color:#6b7280;cursor:pointer;font-size:12px">关闭</button>
-    </div>
-  </div>
-
+</section>
+  </main>
+  <div class="report-tools"><p>研究属于 aJay。证据、假设与生成视觉保持清晰分离。</p><button type="button" class="ajay-button" id="open-share">导出与分享 <span aria-hidden="true">↗</span></button></div>
+  <dialog id="share-overlay" class="share-dialog" aria-labelledby="share-title">
+    <h2 id="share-title">{{NAME}} / 研究摘要</h2><div class="score-giant">{{OVERALL_SCORE_INT}}</div><p>{{VERDICT_LABEL}}</p><p>{{CORE_CONCLUSION}}</p>
+    <p>模拟角色：{{BULL_COUNT}} 看多 / {{BEAR_COUNT}} 看空 / {{NEUT_COUNT}} 中性。共识与研究分不是上涨概率。</p>
+    <div class="share-qr-card"><canvas id="report-qr-canvas" width="200" height="200" aria-label="本地分享状态"></canvas><span id="report-qr-url">file:// 本地报告；不会自动上传或生成 --remote 链接。</span></div>
+    <p>打印可保存 PDF；分享本文件前，请自行核查其中的研究数据。报告不会自动发送给二维码服务。</p>
+    <a href="https://github.com/Aji-Q/aJay-Skill" target="_blank" rel="noopener noreferrer">aJay-Skill / GitHub</a>
+    <form method="dialog"><button type="button" class="ajay-button" id="print-report">打印报告</button> <button class="ajay-button" value="close">关闭</button></form>
+  </dialog>
   <footer>
-    <strong>⚠️ DISCLAIMER · 免责声明</strong><br>
-    本报告由 AI 模型基于公开信息生成，所有数据通过 akshare / yfinance / 公开数据接口获取，可能存在滞后或误差。
-    报告中的评分和建议均为模拟，不代表任何真实投资者的实际观点。
-    本报告不构成任何投资建议，投资者应独立判断并承担投资风险。<br><br>
-    Generated by <strong>FloatFu-true · aJay-Skill {{PLUGIN_VERSION}}</strong> · {{GENERATED_AT}} · <span class="oo-eye">O.o</span><br>
-    <a href="https://github.com/wbh604/UZI-Skill" target="_blank" style="color:#06b6d4;text-decoration:none;font-size:13px;margin-top:6px;display:inline-block">⭐ GitHub · 点击查看最新版本 → github.com/wbh604/UZI-Skill</a><br>
-    <span style="font-size:10px;color:#d1d5db;letter-spacing:2px">POWERED BY FloatFu-true</span>
+    <div class="footer-title">aJay</div><div class="footer-columns"><div><strong>INDEPENDENT RESEARCH, CLEARLY ATTRIBUTED.</strong>
+    <p>本报告由 AI 与规则引擎基于采集信息生成，数据可能存在滞后、缺失或误差。投资流派为模拟角色，不代表本人观点或独立专家投票。研究分、规则覆盖与共识均不是预测概率，也未经过样本外校准。本报告不构成投资建议。</p></div>
+    <div><p>Created for aJay · Aji-Q<br>aJay-Skill v{{PLUGIN_VERSION}}<br>{{GENERATED_AT}}</p><a href="https://github.com/Aji-Q/aJay-Skill" target="_blank" rel="noopener noreferrer">项目与来源声明 ↗</a></div></div>
+    <p>© 2026 aJay — modifications &amp; report design. 上游 MIT 许可与作者声明见仓库 LICENSE / NOTICE。</p>
   </footer>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- HIDDEN SHARE-CARD · 1080×1920 · 朋友圈竖图                   -->
 <!-- ═══════════════════════════════════════════════════════════ -->
-<div id="share-card">
+<div id="share-card" aria-hidden="true">
   <div class="sc-topbar">
-    <div class="sc-brand">FloatFu-true <em>· 游资 SKILLS</em></div>
+    <div class="sc-brand">aJay <em>· aJay RESEARCH</em></div>
     <div class="sc-badge">DEEP SCAN</div>
   </div>
 
@@ -3199,7 +3103,7 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     <div class="sc-verdict">{{VERDICT_LABEL}}</div>
   </div>
 
-  <div class="sc-section-title">// 50 位大佬投票</div>
+  <div class="sc-section-title">// {{TOTAL_COUNT}} 个模拟角色</div>
   <div class="sc-votes">
     <!-- INJECT_VOTE_BARS -->
   </div>
@@ -3226,22 +3130,22 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
   </div>
 
   <div style="text-align:center;margin:20px 0 10px">
-    <img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=https://github.com/wbh604/UZI-Skill&color=06b6d4" alt="QR" style="width:100px;height:100px;border-radius:6px" />
-    <div style="font-size:18px;color:#999;margin-top:6px">扫码获取分析工具</div>
+    <span style="font-size:32px;font-family:Georgia,serif">aJay</span>
+    <div style="font-size:18px;color:#999;margin-top:6px">aJay / 私人研究工作台</div>
   </div>
 
   <div class="sc-footer">
-    <span>{{GENERATED_AT}} · POWERED BY FloatFu-true · 不构成投资建议</span>
-    <span class="oo-big">O.o</span>
+    <span>{{GENERATED_AT}} · POWERED BY aJay · 不构成投资建议</span>
+    <span class="oo-big">aJay</span>
   </div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════ -->
 <!-- HIDDEN WAR REPORT · 1920×1080 · 微信群横图                    -->
 <!-- ═══════════════════════════════════════════════════════════ -->
-<div id="war-report">
+<div id="war-report" aria-hidden="true">
   <div class="wr-top">
-    <div class="wr-brand">FloatFu-true <em>· 游资 SKILLS</em></div>
+    <div class="wr-brand">aJay <em>· aJay RESEARCH</em></div>
     <div class="wr-date">{{GENERATED_AT}}</div>
   </div>
   <div class="wr-body">
@@ -3259,15 +3163,15 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       </div>
     </div>
     <div class="wr-right">
-      <div class="wr-score-label">ALPHA SCORE</div>
+      <div class="wr-score-label">RESEARCH SCORE</div>
       <div class="wr-score">{{OVERALL_SCORE_INT}}</div>
       <div class="wr-verdict">{{VERDICT_LABEL}}</div>
       <div class="wr-trap">{{TRAP_EMOJI}} {{TRAP_LEVEL}}</div>
     </div>
   </div>
   <div class="wr-footer">
-    <span>Stock Deep Analyzer · 不构成投资建议 · 数据仅供参考</span>
-    <span class="wr-oo">O.o</span>
+    <span>aJay Research · 不构成投资建议 · 数据仅供参考</span>
+    <span class="wr-oo">aJay</span>
   </div>
 </div>
 
@@ -3275,57 +3179,16 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
 (function() {
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ─── Boot overlay dismiss ───
-  setTimeout(() => {
-    const o = document.getElementById('boot-overlay');
-    if (o) o.classList.add('done');
-    setTimeout(() => o && o.remove(), 700);
-  }, reduced ? 0 : 1700);
-
-  // ─── Score counter animation: count up from 0 ───
-  function animateCount(el, target, duration = 1400) {
-    if (reduced) { el.textContent = target; return; }
-    const start = performance.now();
-    const ease = t => 1 - Math.pow(1 - t, 3);
-    function tick(now) {
-      const p = Math.min(1, (now - start) / duration);
-      el.textContent = Math.floor(ease(p) * target);
-      if (p < 1) requestAnimationFrame(tick);
-      else el.textContent = target;
-    }
-    requestAnimationFrame(tick);
-  }
-  setTimeout(() => {
-    document.querySelectorAll('.score-giant, .fighter .confidence').forEach(el => {
-      const target = parseInt(el.textContent.trim(), 10);
-      if (!isNaN(target)) animateCount(el, target);
-    });
-    // animate HP bars
-    document.querySelectorAll('.hp-fill').forEach(el => {
-      const hp = parseInt(el.dataset.hp || '0', 10);
-      el.style.width = Math.max(0, Math.min(100, hp)) + '%';
-    });
-  }, reduced ? 0 : 1700);
-
-  // ─── Jury seats: stagger light-up like a stadium ───
-  const seats = document.querySelectorAll('.seat');
-  seats.forEach((seat, i) => {
-    seat.style.animationDelay = (1700 + i * 35) + 'ms';
+  // Static financial values: no counter animation that temporarily misstates data.
+  document.querySelectorAll('.hp-fill').forEach(el => {
+    const hp = Number(el.dataset.hp || 0);
+    el.style.width = Math.max(0, Math.min(100, hp)) + '%';
   });
-
-  // ─── Chat messages: cascade in (shorter + capped) ───
-  const msgs = document.querySelectorAll('.chat-msg');
-  msgs.forEach((m, i) => {
-    // Cap the cascade at 1.8 seconds total so later messages don't hide forever
-    const delay = Math.min(1800, 1000 + i * 15);
-    m.style.animationDelay = delay + 'ms';
-  });
-
   // ─── Chat room filter tabs ───
   document.querySelectorAll('.chat-tab').forEach(t => {
     t.addEventListener('click', () => {
-      document.querySelectorAll('.chat-tab').forEach(x => x.classList.remove('active'));
-      t.classList.add('active');
+      document.querySelectorAll('.chat-tab').forEach(x => {x.classList.remove('active');x.setAttribute('aria-pressed','false');});
+      t.classList.add('active');t.setAttribute('aria-pressed','true');
       const g = t.dataset.group;
       document.querySelectorAll('.chat-msg').forEach(c => {
         c.style.display = (g === 'all' || c.dataset.group === g) ? '' : 'none';
@@ -3338,9 +3201,9 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     const msg = document.getElementById(targetId);
     if (!msg) return;
     // Reset tab filter to "all"
-    document.querySelectorAll('.chat-tab').forEach(x => x.classList.remove('active'));
+    document.querySelectorAll('.chat-tab').forEach(x => {x.classList.remove('active');x.setAttribute('aria-pressed','false');});
     const allTab = document.querySelector('.chat-tab[data-group="all"]');
-    if (allTab) allTab.classList.add('active');
+    if (allTab) {allTab.classList.add('active');allTab.setAttribute('aria-pressed','true');}
     // Force ALL chat messages to be visible AND bypass any lingering animation
     document.querySelectorAll('.chat-msg').forEach(c => {
       c.style.display = '';
@@ -3350,7 +3213,8 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     const det = msg.querySelector('details');
     if (det) det.open = true;
     // Smooth scroll + flash
-    msg.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.querySelectorAll('.chat-messages').forEach(box => { box.scrollTop = Math.max(0, msg.offsetTop - box.offsetTop - 24); });
+    window.scrollTo({top: document.getElementById('section-chat').getBoundingClientRect().top + window.scrollY - 100, behavior: reduced ? 'auto' : 'smooth'});
     msg.classList.remove('flash-highlight');
     void msg.offsetWidth;
     msg.classList.add('flash-highlight');
@@ -3385,22 +3249,22 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
   // 1) Dark mode toggle · 持久化到 localStorage · 跟随 prefers-color-scheme 初始化
   const KEY = 'ajay-theme';
   const root = document.documentElement;
-  const stored = localStorage.getItem(KEY);
+  let stored = null; try {stored = localStorage.getItem(KEY);} catch (_) {}
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const initial = stored || (prefersDark ? 'dark' : 'light');
+  const initial = stored || 'dark'; // aJay financial editorial default; explicit reader preference wins.
   root.setAttribute('data-theme', initial);
 
   const btn = document.getElementById('theme-toggle');
   function syncIcon() {
     if (!btn) return;
-    btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☀️' : '🌙';
+    btn.textContent = root.getAttribute('data-theme') === 'dark' ? '☼' : '◐';
   }
   syncIcon();
   btn?.addEventListener('click', () => {
     const cur = root.getAttribute('data-theme');
     const next = cur === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
-    localStorage.setItem(KEY, next);
+    try {localStorage.setItem(KEY, next);} catch (_) {}
     syncIcon();
   });
 
@@ -3432,7 +3296,7 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
     const el = document.getElementById(id);
     if (el) {
       e.preventDefault();
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 100, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
       history.replaceState(null, '', '#' + id);
     }
   }));
@@ -3448,63 +3312,24 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
       tocToggle.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
       tocToggle.setAttribute('aria-label', collapsed ? '展开导航栏' : '折叠导航栏');
     };
-    applyTocState(localStorage.getItem(TOC_KEY) === '1');
+    try {applyTocState(localStorage.getItem(TOC_KEY) !== '0');} catch (_) {applyTocState(true);}
     tocToggle.addEventListener('click', () => {
       const collapsed = !tocRail.classList.contains('collapsed');
       applyTocState(collapsed);
-      localStorage.setItem(TOC_KEY, collapsed ? '1' : '0');
+      try {localStorage.setItem(TOC_KEY, collapsed ? '1' : '0');} catch (_) {}
     });
   }
 
-  // 3) Count-up animation · 给指定数字加 .count-up 类 · 进入视口时动画
-  function animateNumber(el) {
-    const target = parseFloat(el.dataset.value || el.textContent);
-    if (isNaN(target)) return;
-    const decimals = el.dataset.decimals ? parseInt(el.dataset.decimals) : 0;
-    const duration = 900;
-    const start = performance.now();
-    const easeOut = (t) => 1 - Math.pow(1 - t, 3);
-    function tick(now) {
-      const p = Math.min(1, (now - start) / duration);
-      const val = target * easeOut(p);
-      el.textContent = decimals ? val.toFixed(decimals) : Math.round(val);
-      if (p < 1) requestAnimationFrame(tick);
-      else el.textContent = decimals ? target.toFixed(decimals) : target;
-    }
-    requestAnimationFrame(tick);
-  }
-  // 自动给已有大数字加 count-up（不强制：用户已用模板的话不需要改）
-  const bigScores = document.querySelectorAll(
-    '.score-giant, .sc-score-giant, .hero-score-num, .confidence'
-  );
-  if ('IntersectionObserver' in window) {
-    const io2 = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting && !e.target.dataset.animated) {
-          e.target.dataset.animated = '1';
-          animateNumber(e.target);
-          io2.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.4 });
-    bigScores.forEach(el => {
-      const v = parseFloat(el.textContent);
-      if (!isNaN(v)) {
-        el.dataset.value = v;
-        io2.observe(el);
-      }
-    });
-  }
-
+  // .count-up deliberately disabled: financial scores stay at their final values.
   // 4) 名词悬浮 tooltip · 自动给术语包 .jargon · 文档加载完扫描内容并替换
   const TERMS = {
-    'PE': 'Price/Earnings · 市盈率 = 股价 / 每股盈利。10x 便宜 · 30x 平均 · 80x+ 高估值需要高增长支撑。',
-    'PEG': 'PE / 增长率。<1 通常便宜 · 林奇经典指标。',
-    'PB': 'Price/Book · 市净率 = 股价 / 每股净资产。<1 是历史地板 · >5 看 ROE 是否撑得起。',
-    'ROE': '净资产收益率 = 净利润 / 净资产。巴菲特红线 15% · 连续 10 年 >20% 是真护城河。',
+    'PE': '市盈率 = 股价 / 每股收益；适用性取决于盈利质量、行业与增长假设。',
+    'PEG': '市盈率除以盈利增长率；增长期限、基数和行业会影响解释。',
+    'PB': '市净率 = 股价 / 每股净资产；低于1不自动代表便宜。',
+    'ROE': '净资产收益率；需结合杠杆、行业、财务口径与持续性。',
     'DCF': 'Discounted Cash Flow · 现金流折现。把未来 10 年自由现金流折回今天给一个内在价值。',
     'IRR': '内部回报率 · LBO/PE 视角下"我用 5x 杠杆能赚多少年化"。20%+ 是 PE 买方门槛。',
-    'WACC': '加权平均资本成本 · DCF 折现率。A 股科技 ~9% · 公用 ~6%。',
+    'WACC': '加权平均资本成本；DCF 对折现率与终值假设敏感。',
     'EV/EBITDA': '企业价值 / 息税折旧前利润 · 跨杠杆可比。',
     'LBO': 'Leveraged Buyout · 杠杆收购。PE 基金标准估值法 · 测能不能 5 年退出赚 IRR 20%+。',
     'YTD': 'Year-to-date · 年初至今涨跌幅。',
@@ -3564,51 +3389,17 @@ section[id], div[id^="dim-"], .dim-card[id] { scroll-margin-top: 20px; }
   // defer · 等 INJECT_* 注入完毕
   setTimeout(tooltipify, 50);
 
-  // 5) Report QR code · 用 location.href 生成 · 仅在 http(s) 协议下显示有意义内容
-  function drawQR(canvas, text) {
-    // 极简 QR · 用 Google Chart API（远程）· 失败 fallback 文本
-    if (!canvas) return;
-    const url = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=' +
-                encodeURIComponent(text);
-    const img = new Image();
-    img.crossOrigin = 'anonymous';
-    img.onload = () => {
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#fff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    };
-    img.onerror = () => {
-      const ctx = canvas.getContext('2d');
-      ctx.fillStyle = '#f3f4f6';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#6b7280';
-      ctx.font = '11px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('QR offline', canvas.width / 2, canvas.height / 2);
-    };
-    img.src = url;
-  }
+  // Sharing is local by default; never send location.href to a remote QR API.
   const qrCanvas = document.getElementById('report-qr-canvas');
-  const qrUrl = document.getElementById('report-qr-url');
-  if (qrCanvas) {
-    const proto = location.protocol;
-    if (proto === 'http:' || proto === 'https:') {
-      drawQR(qrCanvas, location.href);
-      if (qrUrl) qrUrl.textContent = location.href;
-    } else {
-      // file:// · 二维码无意义 · 提示走 --remote
-      const ctx = qrCanvas.getContext('2d');
-      ctx.fillStyle = '#f3f4f6';
-      ctx.fillRect(0, 0, qrCanvas.width, qrCanvas.height);
-      ctx.fillStyle = '#9ca3af';
-      ctx.font = '10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText('本地 file://', qrCanvas.width / 2, qrCanvas.height / 2 - 6);
-      ctx.fillText('用 --remote', qrCanvas.width / 2, qrCanvas.height / 2 + 8);
-      ctx.fillText('生成公网链接', qrCanvas.width / 2, qrCanvas.height / 2 + 22);
-    }
-  }
+  if (qrCanvas) { const ctx = qrCanvas.getContext('2d'); if (ctx) ctx.clearRect(0,0,200,200); }
+  const dialog = document.getElementById('share-overlay');
+  document.getElementById('open-share')?.addEventListener('click', () => dialog?.showModal());
+  dialog?.addEventListener('click', e => {if (e.target === dialog) dialog.close();});
+  document.getElementById('print-report')?.addEventListener('click', () => { dialog.close(); window.print(); });
+  document.querySelectorAll('.seat').forEach(s => {
+    s.setAttribute('role','button'); s.tabIndex=0;
+    s.addEventListener('keydown', e => {if(e.key==='Enter'||e.key===' ') {e.preventDefault();s.click();}});
+  });
 })();
 </script>
 </body>

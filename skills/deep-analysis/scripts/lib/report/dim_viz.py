@@ -103,13 +103,13 @@ def _viz_valuation(raw: dict) -> str:
     dcf = raw.get("dcf", "—")
 
     # Gauge
-    viz = f'<div style="text-align:center">{svg_gauge(val, 100, "PE 5 年分位数", color=color, unit="%")}</div>'
+    viz = f'<div style="text-align:center">{svg_gauge(val, 100, "PE 分位输入（窗口/来源待核验）", color=color, unit="%")}</div>'
 
     # PE Band historical chart
     pe_hist = raw.get("pe_history", [])
     if pe_hist:
         viz += '<div style="margin-top:12px">'
-        viz += '<div style="font-family:Fira Code;font-size:10px;color:#64748b;margin-bottom:4px">📉 PE 历史 Band · 红区=偏贵 / 黄区=合理 / 绿区=便宜</div>'
+        viz += '<div style="font-family:Fira Code;font-size:10px;color:#64748b;margin-bottom:4px">PE 历史序列 · 纵轴=实际 PE · 横轴=有效观测顺序（期间未标注；独立分位输入见上方）</div>'
         viz += svg_pe_band(pe_hist, width=320, height=160)
         viz += '</div>'
 
@@ -157,10 +157,29 @@ def _viz_valuation(raw: dict) -> str:
 
 def _viz_financials(raw: dict) -> str:
     """营收柱状 + 增速线 + ROE/净利趋势 + 分红历史 + 财务健康"""
-    rev_hist = raw.get("revenue_history", [])
-    roe_hist = raw.get("roe_history", [])
-    np_hist = raw.get("net_profit_history", [])
-    years = raw.get("financial_years", [f"{i}Y" for i in range(1, len(rev_hist) + 1)])
+    import math
+
+    def _finite_series(values, labels=None):
+        """Drop missing/non-finite observations without breaking label alignment."""
+        clean_values = []
+        clean_labels = []
+        labels = labels or []
+        for index, value in enumerate(values or []):
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                continue
+            number = float(value)
+            if not math.isfinite(number):
+                continue
+            clean_values.append(number)
+            if labels:
+                clean_labels.append(labels[index] if index < len(labels) else "")
+        return clean_values, clean_labels
+
+    raw_rev_hist = raw.get("revenue_history", [])
+    raw_years = raw.get("financial_years", [f"{i}Y" for i in range(1, len(raw_rev_hist) + 1)])
+    rev_hist, years = _finite_series(raw_rev_hist, raw_years)
+    roe_hist, _ = _finite_series(raw.get("roe_history", []))
+    np_hist, _ = _finite_series(raw.get("net_profit_history", []))
 
     # Part 1: revenue bars + growth rate overlay
     viz = ""
@@ -176,7 +195,8 @@ def _viz_financials(raw: dict) -> str:
 
     # Part 2: sparkline rows for ROE + net profit
     def _spark_row(label: str, values: list, unit: str, color: str) -> str:
-        if not values or len(values) < 2:
+        values, _ = _finite_series(values)
+        if len(values) < 2:
             return ""
         last = values[-1]
         first = values[0]

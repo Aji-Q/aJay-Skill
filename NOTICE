@@ -1,0 +1,53 @@
+aJay-Skill 1.1.0
+Maintained by aJay (Aji-Q)
+Canonical repository: https://github.com/Aji-Q/aJay-Skill
+
+PROVENANCE
+This project is derived from stock-deep-analyzer 3.9.4, distributed through
+https://github.com/wbh604/UZI-Skill under the MIT License.
+The inherited copyright notice is retained verbatim in LICENSE:
+Copyright (c) 2026 Float Future
+Original author/contributor aliases include FloatFu-true; historical contributor
+and release records remain in docs/UPSTREAM-CONTRIBUTORS.md and
+docs/UPSTREAM-RELEASE-NOTES.md.
+
+Copyright (c) 2026 aJay (Aji-Q), for aJay-specific additions and modifications.
+This notice does not transfer upstream copyright, erase third-party credit or
+claim that all inherited software was originally authored by aJay. The project
+continues to use the MIT License; the aJay identity does not make inherited
+MIT-licensed code exclusively owned by aJay.
+
+PROJECT IDENTITY
+The current project name, maintained distribution and user-facing report brand
+are aJay. aJay is not an official upstream release or an endorsement by upstream
+contributors, simulated investors, market-data providers or UI reference sites.
+Installation, updates and project-support links should point to Aji-Q/aJay-Skill.
+
+DESIGN REFERENCE
+The editorial report layout takes inspiration from Vantara (https://vantara.in/en).
+Vantara logos, photographs, copy and source assets are not redistributed as aJay
+assets. No Vantara affiliation, sponsorship or endorsement is claimed.
+
+HISTORICAL MATERIAL
+Snapshots under docs/archive/, upstream history documents and existing screenshots
+are retained for provenance. Their old links, branding and version claims are not
+current aJay product instructions. Inherited third-party assets retain the rights
+and attribution of their respective owners; retaining an asset is not a claim of
+original aJay authorship or an independent license grant for that asset.
+
+CURRENT VISUAL AND RUNTIME ASSETS
+The financial photography sources and AI-edited derivatives are listed in
+skills/deep-analysis/assets/ajay-council/photography.json and
+docs/PHOTOGRAPHY-PROVENANCE.md. They are NOT relicensed under this project's MIT
+license: three originals use the Unsplash License and Shanghai Tower uses CC BY
+4.0, with attribution/source/license/change notices retained in the report.
+GSAP 3.15.0 remains copyright Webflow, under its Standard No Charge License
+(https://gsap.com/standard-license/), not MIT. Original bundle notices retained.
+Lucide SVG icons retain their ISC license in assets/vendor/LUCIDE-LICENSE.txt.
+These notices do not imply endorsement of aJay by people, photographers or firms.
+
+CURRENT RELEASE CONTRIBUTION ALLOCATION
+aJay (Aji-Q) directs and owns the current product decisions and contributes 75%+
+of the aJay-specific release work. OpenAI Codex is credited for up to 25% as an
+implementation and compilation assistant. This allocation does not alter the
+upstream MIT history or third-party rights described above. See CONTRIBUTORS.md.

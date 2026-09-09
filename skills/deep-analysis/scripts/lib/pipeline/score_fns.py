@@ -31,6 +31,7 @@ from pathlib import Path
 from lib.investor_db import INVESTORS
 from lib.investor_personas import get_comment as _persona_comment
 from lib.investor_evaluator import evaluate as _evaluate_investor
+from lib.investor_knowledge import market_match
 from lib.stock_features import extract_features
 from lib.market_router import parse_ticker
 
@@ -48,6 +49,50 @@ def _f(v, default=0.0):
         return default
 
 
+def _dimension_score_status(raw: dict, dim_key: str) -> str:
+    """Describe legacy scores without mistaking numeric defaults for evidence.
+
+    data_backed means formula inputs exist, not that sources or predictions
+    were independently verified. Keep numeric scores for downstream compatibility.
+    """
+    from lib.pipeline.validators import _has_meaningful_data
+
+    dim = (raw.get("dimensions") or {}).get(dim_key) or {}
+    data = dim.get("data") or {}
+    quality = (dim.get("_pipeline") or {}).get("quality") or dim.get("quality")
+    if (dim.get("source") == "skip" or dim.get("not_applicable") is True
+            or dim.get("applicable") is False or quality == "not_applicable"):
+        return "not_applicable"
+    if dim.get("stale") is True or quality == "stale":
+        return "stale"
+    if quality in ("missing", "error") or dim.get("fallback") is True:
+        return "missing"
+    # Notes/source labels by themselves are not observations.
+    content = {k: v for k, v in data.items() if not k.startswith("_")
+               and k not in {"note", "source", "error", "description"}} if isinstance(data, dict) else {}
+    if not _has_meaningful_data(content):
+        return "missing"
+    # These branches use fixed legacy scores even when qualitative text exists.
+    if dim_key in {"3_macro", "7_industry", "8_materials", "9_futures",
+                   "13_policy", "14_moat", "18_trap"}:
+        return "heuristic"
+    inputs = {
+        "1_financials": ("roe", "roe_history", "net_margin", "financial_health", "revenue_history"),
+        "2_kline": ("stage", "ma_align", "kline_stats"),
+        "4_peers": ("peer_table", "global_peer_comparison"),
+        "5_chain": ("main_business_breakdown",),
+        "6_research": ("report_count", "rating_distribution"),
+        "10_valuation": ("pe_quantile",),
+        "11_governance": ("pledge", "insider_trades_1y"),
+        "12_capital_flow": ("main_fund_flow_20d", "unlock_schedule"),
+        "15_events": ("news", "recent_notices"),
+        "16_lhb": ("lhb_count_30d", "matched_youzi"),
+        "17_sentiment": ("hot_rank",),
+        "19_contests": ("summary",),
+    }.get(dim_key, tuple(content))
+    return "data_backed" if any(_has_meaningful_data(data.get(key)) for key in inputs) else "missing"
+
+
 def score_dimensions(raw: dict) -> dict:
     dims = raw.get("dimensions", {})
     out = {}
@@ -57,31 +102,47 @@ def score_dimensions(raw: dict) -> dict:
 
     # 1 · 财报
     fin = _get("1_financials")
-    roe = _f(fin.get("roe"))
-    last_roe = (fin.get("roe_history") or [0])[-1] if fin.get("roe_history") else roe
-    net_margin = _f(fin.get("net_margin"))
+    roe = _f(fin.get("roe"), None)
+    valid_roes = [_f(value, None) for value in (fin.get("roe_history") or [])]
+    valid_roes = [value for value in valid_roes if value is not None]
+    last_roe = valid_roes[-1] if valid_roes else roe
+    net_margin = _f(fin.get("net_margin"), None)
     health = fin.get("financial_health") or {}
-    debt = _f(health.get("debt_ratio"))
+    debt = _f(health.get("debt_ratio"), None)
     rev_hist = fin.get("revenue_history") or []
-    growth = ((rev_hist[-1] - rev_hist[-2]) / rev_hist[-2] * 100) if len(rev_hist) >= 2 and rev_hist[-2] else 0
+    explicit_growth = _f(fin.get("revenue_growth_yoy"), None)
+    growth = explicit_growth
+    if growth is None:
+        valid_revenues = [_f(value, None) for value in rev_hist]
+        valid_revenues = [value for value in valid_revenues if value is not None]
+        if len(valid_revenues) >= 2 and valid_revenues[-2]:
+            growth = (valid_revenues[-1] - valid_revenues[-2]) / valid_revenues[-2] * 100
     score_1 = 5
-    if last_roe >= 15: score_1 += 2
-    elif last_roe >= 10: score_1 += 1
-    elif last_roe < 5: score_1 -= 2
-    if net_margin >= 15: score_1 += 1
-    if growth >= 20: score_1 += 1
-    if debt >= 60: score_1 -= 1
+    if last_roe is not None:
+        if last_roe >= 15: score_1 += 2
+        elif last_roe >= 10: score_1 += 1
+        elif last_roe < 5: score_1 -= 2
+    if net_margin is not None and net_margin >= 15: score_1 += 1
+    if growth is not None and growth >= 20: score_1 += 1
+    if debt is not None and debt >= 60: score_1 -= 1
     score_1 = max(1, min(10, score_1))
     reasons_pass_1 = []
     reasons_fail_1 = []
-    if last_roe >= 15: reasons_pass_1.append(f"ROE 最新 {last_roe:.1f}%")
-    elif last_roe < 8: reasons_fail_1.append(f"ROE 最新 {last_roe:.1f}% 偏低")
-    if growth >= 20: reasons_pass_1.append(f"营收增速 {growth:.1f}%")
-    elif growth < 5: reasons_fail_1.append(f"营收增速 {growth:.1f}% 停滞")
-    if debt < 40: reasons_pass_1.append(f"资产负债率 {debt:.0f}% 健康")
-    elif debt > 60: reasons_fail_1.append(f"资产负债率 {debt:.0f}% 偏高")
+    if last_roe is not None:
+        if last_roe >= 15: reasons_pass_1.append(f"ROE 最新 {last_roe:.1f}%")
+        elif last_roe < 8: reasons_fail_1.append(f"ROE 最新 {last_roe:.1f}% 偏低")
+    if growth is not None:
+        if growth >= 20: reasons_pass_1.append(f"营收增速 {growth:.1f}%")
+        elif growth < 5: reasons_fail_1.append(f"营收增速 {growth:.1f}% 停滞")
+    if debt is not None:
+        if debt < 40: reasons_pass_1.append(f"资产负债率 {debt:.0f}% 健康")
+        elif debt > 60: reasons_fail_1.append(f"资产负债率 {debt:.0f}% 偏高")
+    label_parts = []
+    if last_roe is not None: label_parts.append(f"ROE {last_roe:.1f}%")
+    if growth is not None: label_parts.append(f"营收增速 {growth:+.1f}%")
+    if debt is not None: label_parts.append(f"负债率 {debt:.0f}%")
     out["1_financials"] = {"score": score_1, "weight": 5,
-                            "label": f"ROE {last_roe:.1f}% · 营收增速 {growth:+.1f}% · 负债率 {debt:.0f}%",
+                            "label": " · ".join(label_parts) or "财务输入不足",
                             "reasons_pass": reasons_pass_1, "reasons_fail": reasons_fail_1}
 
     # 2 · K 线
@@ -180,7 +241,7 @@ def score_dimensions(raw: dict) -> dict:
     elif pe_q < 85: score_10 = 3
     else: score_10 = 2
     out["10_valuation"] = {"score": score_10, "weight": 5,
-                            "label": f"PE {val.get('pe', '—')} · 5 年 {pe_q} 分位 · 行业均值 {val.get('industry_pe', '—')}",
+                            "label": f"PE {val.get('pe', '—')} · 分位输入 {pe_q}%（窗口待核验） · 行业均值 {val.get('industry_pe', '—')}",
                             "reasons_pass": ["PE 在 5 年中位数以下"] if pe_q < 50 else [],
                             "reasons_fail": ["PE 已在 5 年高位区"] if pe_q >= 75 else []}
 
@@ -268,7 +329,21 @@ def score_dimensions(raw: dict) -> dict:
     total_weight = sum(v["weight"] for v in out.values())
     fundamental = (total_weighted / total_weight * 10) if total_weight else 0
 
-    return {"ticker": raw["ticker"], "fundamental_score": round(fundamental, 1), "dimensions": out}
+    for dim_key, scored in out.items():
+        scored["score_status"] = _dimension_score_status(raw, dim_key)
+    from lib.data_integrity import validate as validate_integrity
+    integrity = validate_integrity(raw)
+    # Minimum input sufficiency only; it is not a calibration/accuracy verdict.
+    score_valid = (
+        not integrity["critical_missing"] and integrity["coverage_pct"] >= 60
+        and all(out[key]["score_status"] == "data_backed" for key in ("1_financials", "2_kline"))
+    )
+    return {
+        "ticker": raw["ticker"], "fundamental_score": round(fundamental, 1),
+        "fundamental_score_valid": score_valid,
+        "fundamental_score_status": "heuristic" if score_valid else "insufficient_evidence",
+        "dimensions": out,
+    }
 
 
 # ─────────── PANEL GENERATION (rule-based) ───────────
@@ -326,12 +401,44 @@ COMMENT_TEMPLATES = {
 }
 
 
+def _panel_market(raw: dict, features: dict) -> str:
+    """Normalize report market to the vocabulary used by persona mandates."""
+    basic = ((raw.get("dimensions") or {}).get("0_basic") or {}).get("data") or {}
+    market = str(features.get("market") or raw.get("market") or basic.get("market") or "").upper()
+    if market in {"U", "USA", "NASDAQ", "NYSE"}:
+        return "US"
+    if market in {"H", "HKEX"}:
+        return "HK"
+    if market in {"A", "CN", "CHINA", "SSE", "SZSE"}:
+        return "A"
+    try:
+        parsed = parse_ticker(str(raw.get("ticker") or basic.get("code") or ""))
+        return {"U": "US", "H": "HK", "A": "A"}.get(parsed.market, parsed.market)
+    except Exception:
+        return "US"
+
+
+def _panel_roster(raw: dict, features: dict) -> tuple[list[dict], list[dict], str]:
+    """Return only personas whose documented mandate covers this market.
+
+    Inapplicable personas used to be emitted as dozens of ``skip`` messages.
+    They add no independent view and make US/HK discussions look larger than
+    they are, so exclusion now happens before evaluation and aggregation.
+    """
+    market = _panel_market(raw, features)
+    included, excluded = [], []
+    for investor in INVESTORS:
+        (included if market_match(investor["id"], market) else excluded).append(investor)
+    return included, excluded, market
+
+
 def generate_panel(dims_scored: dict, raw: dict) -> dict:
     """Rule-engine-based panel — each investor's verdict cites specific
     criteria from investor_criteria.py that were hit or missed.
     """
-    # Build the flat feature dict once for all 51 investors
+    # Build the flat feature dict once, then remove out-of-mandate personas.
     features = extract_features(raw, raw.get("dimensions", {}))
+    roster, excluded_roster, panel_market = _panel_roster(raw, features)
 
     basic_ctx = (raw.get("dimensions", {}).get("0_basic") or {}).get("data") or {}
     kline_ctx = (raw.get("dimensions", {}).get("2_kline") or {}).get("data") or {}
@@ -353,7 +460,7 @@ def generate_panel(dims_scored: dict, raw: dict) -> dict:
         # neutral
         return "关注" if score >= 50 else "观望"
 
-    for inv in INVESTORS:
+    for inv in roster:
         inv_id = inv["id"]
         mandate = inv.get("mandate", "long")
         verdict_obj = _evaluate_investor(inv_id, features)
@@ -408,6 +515,10 @@ def generate_panel(dims_scored: dict, raw: dict) -> dict:
             "avatar": f"avatars/{inv_id}.svg",
             "signal": sig,
             "confidence": confidence,
+            "confidence_kind": verdict_obj.get("confidence_kind", "legacy_heuristic"),
+            "rule_coverage_pct": verdict_obj.get("rule_coverage_pct"),
+            "rule_weight_evaluated": verdict_obj.get("rule_weight_evaluated"),
+            "rule_weight_possible": verdict_obj.get("rule_weight_possible"),
             "score": score,
             "verdict": verdict,
             "reasoning": reasoning,
@@ -565,28 +676,46 @@ def generate_panel(dims_scored: dict, raw: dict) -> dict:
     ]
     hollow_ids = [
         investor.get("investor_id") for investor in active_long
-        if (investor.get("score") or 0) == 0
-        and not investor.get("pass")
+        if not investor.get("pass")
         and not investor.get("fail")
+        and not investor.get("weight_total")
     ]
     hollow_pct = round(len(hollow_ids) / len(active_long) * 100, 0) if active_long else 0
-    consensus_valid = hollow_pct < 20
+    consensus_valid = bool(active_long) and hollow_pct < 20
+    coverage_values = [
+        investor["rule_coverage_pct"] for investor in active_long
+        if investor.get("rule_coverage_pct") is not None
+    ]
+    rule_coverage_pct = (
+        round(sum(coverage_values) / len(coverage_values), 1)
+        if coverage_values else None
+    )
 
     return {
         "ticker": raw["ticker"],
         "panel_consensus": round(consensus, 1),
         "consensus_valid": consensus_valid,
+        "consensus_kind": "simulated_persona_agreement",
+        "independent_evidence": False,
+        "rule_coverage_pct": rule_coverage_pct,
+        "confidence_kind": "rule_coverage",
         "hollow_verdicts": len(hollow_ids),
         "hollow_pct": hollow_pct,
         "hollow_ids": hollow_ids,
         "consensus_warning": (
-            None if consensus_valid else
+            None if consensus_valid else "没有适用的多头流派观点，共识分不具备解释基础。" if not active_long else
             f"共识分不可采信：{len(hollow_ids)}/{len(active_long)} 位多头评委（{hollow_pct:.0f}%）"
             "没有任何有效规则证据。"
         ),
         "vote_distribution": vote_dist,
         "signal_distribution": sig_dist,
         "investors": investors_out,
+        "roster_policy": "market_applicable_only",
+        "roster_market": panel_market,
+        "roster_available": len(INVESTORS),
+        "roster_included": len(roster),
+        "roster_excluded": len(excluded_roster),
+        "roster_excluded_ids": [item["id"] for item in excluded_roster],
         # v2.15.4 · 按流派分数 · 7 个 school 各自 consensus/avg_score/verdict
         "school_scores": school_scores,
         "long_active": active_count,
@@ -703,7 +832,7 @@ def _auto_summarize_dim(dim_key: str, label: str, dim: dict, score: float) -> st
     if dim_key == "10_valuation":
         pe_q = _v("pe_quantile_5y", "pe_quantile")
         pb_q = _v("pb_quantile_5y", "pb_quantile")
-        return f"{label}：PE 5 年分位 {pe_q}，PB 5 年分位 {pb_q}。得分 {score}/10。"
+        return f"{label}：PE 分位输入 {pe_q}，PB 分位输入 {pb_q}（窗口/来源待核验）。得分 {score}/10。"
 
     if dim_key == "11_governance":
         ctrl = _v("actual_controller")
@@ -1232,11 +1361,11 @@ def generate_synthesis(raw: dict, dims_scored: dict, panel: dict, agent_analysis
         except Exception:
             pe_val, debt_val, roe_min, industry = 0, 0, 0, "所属行业"
 
-        if pe_val > 30:
+        if pe_val is not None and pe_val > 30:
             risks.append(f"当前 PE {pe_val:.0f}x，估值偏高")
-        if debt_val > 50:
+        if debt_val is not None and debt_val > 50:
             risks.append(f"资产负债率 {debt_val:.0f}%，财务杠杆偏高")
-        if roe_min < 5:
+        if roe_min is not None and roe_min < 5:
             risks.append(f"ROE 最低 {roe_min:.1f}%，盈利稳定性不足")
         risks.append(f"{industry}行业竞争加剧风险")
         risks.append("宏观经济或政策环境变化")

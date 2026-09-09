@@ -68,11 +68,11 @@ def test_install_script_handles_existing_clone():
     assert "git -C" in body and "pull" in body
 
 
-def test_install_script_cleans_old_hub_install():
-    """user 之前 hermes skills install 装过 · 必须先清理 · 否则 symlink 会失败."""
+def test_install_script_preserves_old_hub_install():
+    """aJay 1.1: preserve conflicting user/upstream skills before linking aJay."""
     body = SCRIPT.read_text(encoding="utf-8")
-    assert "rm -rf" in body
-    # 清理目标必须是 hermes skills dir 下的 4 个 skill · 不能 rm 错地方
+    assert 'mv "$target" "$BACKUP_DIR/$s"' in body
+    assert "rm -rf" not in body
     assert "HERMES_SKILLS_DIR" in body
 
 

@@ -69,10 +69,11 @@ def test_toc_responsive_hidden_below_1280():
 
 # ─── #3 · Count-up 动画 ───────────────────────────────────
 
-def test_count_up_animation_present():
-    assert ".count-up" in TEMPLATE
-    assert "easeOut" in TEMPLATE or "ease-out" in TEMPLATE.lower()
-    assert "requestAnimationFrame" in TEMPLATE
+def test_financial_scores_stay_static_in_editorial_report():
+    # aJay 1.1 intentionally removes both competing counters.
+    assert "Static financial values" in TEMPLATE
+    assert "function animateCount" not in TEMPLATE
+    assert "function animateNumber" not in TEMPLATE
 
 
 def test_count_up_targets_big_score_elements():

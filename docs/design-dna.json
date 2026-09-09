@@ -1,0 +1,261 @@
+{
+  "brand": "aJay",
+  "owner": "Aji-Q",
+  "version": "2.0.0",
+  "status": "current preview verified; screen-reader and print-cleanup checks pending",
+  "audience": "financial and investment research",
+  "mode": "continuous task-led research",
+  "structure": "six-chapter continuous investment research",
+  "navigation": {
+    "default_layout": "continuous",
+    "compatibility_layouts": [
+      "council",
+      "editorial"
+    ],
+    "chapter_count": 6,
+    "city_switcher": false,
+    "stable_anchors": [
+      "section-core",
+      "section-scan",
+      "section-modeling",
+      "section-clash",
+      "section-risks",
+      "section-library",
+      "section-evidence"
+    ]
+  },
+  "chapters": [
+    {
+      "id": "01",
+      "anchor": "section-core",
+      "task": "investment brief",
+      "location": "New York / Wall Street",
+      "composition": "street sign, limestone diagonal, shallow foreground depth",
+      "role": "identity, executive brief, evidence boundary, report tools"
+    },
+    {
+      "id": "02",
+      "anchor": "section-scan",
+      "task": "business beneath the price",
+      "location": "Shanghai / Lujiazui",
+      "composition": "tall real Shanghai Tower photograph retained across multiple screens",
+      "role": "19 dimensions, quality, growth, moat, company and industry foundation"
+    },
+    {
+      "id": "03",
+      "anchor": "section-modeling",
+      "task": "price is an assumption",
+      "location": "London / Canary Wharf",
+      "composition": "compressed office facade grid with irregular real office light",
+      "role": "DCF, WACC, sensitivity, comps, LBO and institutional model workspace"
+    },
+    {
+      "id": "04",
+      "anchor": "section-clash",
+      "task": "the market has another view",
+      "location": "Hong Kong / Central",
+      "composition": "wide Victoria Harbour depth with financial buildings and ferry foreground",
+      "role": "divergence, rebuttal, method perspectives, panel and note search"
+    },
+    {
+      "id": "05",
+      "anchor": "section-risks",
+      "task": "what would change the decision",
+      "location": null,
+      "composition": "continuous risk, condition and scenario reading",
+      "role": "risks, invalidation conditions, zones and public-holdings boundaries"
+    },
+    {
+      "id": "06",
+      "anchor": "section-library",
+      "task": "the research record",
+      "location": null,
+      "composition": "traceability-first research archive",
+      "role": "evidence index, raw inputs, expand, download, print and share"
+    }
+  ],
+  "data_contract": {
+    "base_dimensions": 19,
+    "dimension_groups": 6,
+    "dimension_statuses": [
+      "available",
+      "missing",
+      "not_applicable",
+      "stale",
+      "heuristic"
+    ],
+    "institutional_modeling": {
+      "existing_renderer": [
+        "DCF",
+        "Comps",
+        "Quick LBO",
+        "Initiating Coverage",
+        "IC Memo",
+        "Catalyst Calendar",
+        "Competitive Analysis"
+      ],
+      "supplement_renderer": "lib/report/model_supplement.py",
+      "supplement_status": "integrated in the continuous main page; current preview shows 11 blocks (10 products plus segment status); algorithm calibration remains a separate question",
+      "missing_segment_state": "尚未建立"
+    }
+  },
+  "people": {
+    "method_profiles": 8,
+    "names": [
+      "Warren Buffett",
+      "Benjamin Graham",
+      "Charlie Munger",
+      "Peter Lynch",
+      "George Soros",
+      "Ray Dalio",
+      "Jesse Livermore",
+      "Jim Simons"
+    ],
+    "topics": 3,
+    "disclosure": "methodological simulations on shared inputs; not real quotations, independent witnesses, advice or endorsements"
+  },
+  "colors": {
+    "dark": {
+      "bg_void": "#080e14",
+      "bg_deep": "#0a1119",
+      "bg_card": "#101b26",
+      "bg_elevated": "#14202c",
+      "text_bright": "#f0f1ee",
+      "text_main": "#dbe1e3",
+      "text_mid": "#acb9c2",
+      "text_dim": "#9cabb7",
+      "metallic_silver": "#c5c3b0",
+      "cool_cyan": "#9bc3d8",
+      "bull_green": "#93c0b2",
+      "bear_red": "#dfaaa4"
+    },
+    "light": {
+      "bg_void": "#e5e9eb",
+      "bg_deep": "#edf0f1",
+      "bg_card": "#f6f7f7",
+      "bg_elevated": "#ffffff",
+      "text_bright": "#12232f",
+      "text_main": "#223641",
+      "text_mid": "#435d6d",
+      "metallic_silver": "#676a5a",
+      "cool_cyan": "#285e79",
+      "bull_green": "#23604c",
+      "bear_red": "#983d38"
+    }
+  },
+  "typography": {
+    "heading": [
+      "Iowan Old Style",
+      "Songti SC",
+      "STSong",
+      "Georgia"
+    ],
+    "body": [
+      "Avenir Next",
+      "PingFang SC",
+      "Microsoft YaHei",
+      "sans-serif"
+    ],
+    "remote_fonts": false
+  },
+  "interaction": {
+    "motion": "local GSAP for restrained heading reveal; no false numeric animation",
+    "navigation": "sticky six-chapter nav, scroll spy and reading progress",
+    "evidence": "native dialog with source, period, collection time, facts and raw record",
+    "research_notes": "group tabs plus client-side keyword filter",
+    "controls": [
+      "theme toggle",
+      "details disclosure",
+      "expand all research dimensions",
+      "download inputs",
+      "print/share dialog"
+    ],
+    "reduced_motion": true,
+    "scroll_hijack": false,
+    "automatic_scene_switching": false,
+    "automatic_carousel": false
+  },
+  "responsive": {
+    "desktop": "continuous document flow with Shanghai's multi-screen vertical relationship",
+    "mobile": "single-column reading order; preserve each photo's composition and local table readability",
+    "verified_viewports": [
+      "1280 desktop",
+      "390 mobile"
+    ],
+    "priority": [
+      "financial facts",
+      "evidence status",
+      "rebuttal conditions",
+      "portrait"
+    ],
+    "whole_page_horizontal_overflow": false
+  },
+  "verification": {
+    "as_of": "2026-09-09",
+    "current_preview": {
+      "main_html_pair": "full-report.html and full-report-standalone.html are identical inline HTML; approximately 35MB each",
+      "base_dimensions": 19,
+      "method_people": 8,
+      "research_notes": 66,
+      "model_supplement_blocks": 11,
+      "model_supplement_products": 10,
+      "segment_state": "尚未建立",
+      "search_sequence": [
+        "Buffett: 1/66",
+        "G group: 0/66",
+        "seat reset: 66/66"
+      ],
+      "evidence_focus_return": true,
+      "share_dialog": true,
+      "edge_download_bytes": 89813,
+      "edge_download_checked": [
+        "ticker",
+        "schema"
+      ],
+      "edge_print_to_pdf": true,
+      "embedded_browser_print_to_pdf": "unsupported",
+      "theme_switch_390px": true,
+      "theme_contrast_390px": "background and text contrast checked",
+      "reduced_motion": "score stable at 59; chat-msg animationName none",
+      "desktop_1280x720": "checked"
+    },
+    "regression": {
+      "pytest": "992 passed; 5 dependency warnings",
+      "node_check": "passed",
+      "git_diff_check": "passed"
+    },
+    "visual_review": {
+      "astra_low_rounds": 2,
+      "blockers_fixed": 3,
+      "new_blockers": 0,
+      "record": "docs/research/CONTINUOUS-REPORT-VISUAL-REVIEW.md"
+    },
+    "print_notes": "Edge Page.printToPDF path tested. Final print-media colors and raw JSON omission verified. Full final PDF not manually reviewed page by page. Embedded browser PDF API unsupported.",
+    "open_items": [
+      "screen-reader pass",
+      "full financial algorithm audit"
+    ]
+  },
+  "image_strategy": "recent real financial photography with restrained image-tool edits; AI-generated portrait raster for methodological wayfinding",
+  "photography_manifest": "skills/deep-analysis/assets/ajay-council/photography.json",
+  "exclusions": [
+    "city-switch background tabs",
+    "same room with changed skyline",
+    "same crop for every location",
+    "tourist street scenes",
+    "generic card grid as the primary IA",
+    "emoji as information encoding",
+    "fake winning probability",
+    "celebrity endorsement",
+    "uncalibrated certainty",
+    "unlicensed third-party asset claims"
+  ],
+  "provenance": {
+    "photography_records": "docs/PHOTOGRAPHY-PROVENANCE.md",
+    "ownership_records": "docs/OWNERSHIP.md",
+    "upstream_rights": "original open-source code, libraries, photography and licenses remain with their respective rights holders",
+    "aJay_scope": "new report orchestration, visual arrangement, implementation changes and project-authored copy",
+    "reference": "https://vantara.in/en",
+    "reference_boundary": "layout and rhythm research only; no claim of source-code, brand, photo, font or copy reuse"
+  }
+}

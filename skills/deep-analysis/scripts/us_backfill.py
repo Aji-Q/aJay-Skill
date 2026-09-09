@@ -245,15 +245,9 @@ if chan:
     kl = dims["2_kline"]["data"] if "data" in dims["2_kline"] else dims["2_kline"]
     kl["chan"] = chan  # 结构+买卖点候选+中文摘要;技术派评委简报与 dim_commentary 直接引用
 
+from lib.data_integrity import refresh_recovery_artifact
+# A touched dimension is not necessarily complete. Revalidate each field instead
+# of clearing all critical gaps (including unrelated missing price/industry).
+refresh_recovery_artifact(raw, TICKER, CACHE / "_data_gaps.json")
 raw_path.write_text(json.dumps(raw, ensure_ascii=False, indent=1), encoding="utf-8")
-gaps_path = CACHE / "_data_gaps.json"
-if gaps_path.exists():
-    gaps = json.loads(gaps_path.read_text(encoding="utf-8"))
-    fixed_dims = {"1_financials", "10_valuation", "4_peers"} | ({"12_capital_flow"} if flow_rows else set()) | ({"6_research"} if research_data else set())
-    for t in gaps.get("tasks", []):
-        if t["dim"] in fixed_dims:
-            t["status"] = "resolved"
-            t["resolution"] = f"us_backfill.py {date.today()}"
-    gaps["critical_missing"] = False
-    gaps_path.write_text(json.dumps(gaps, ensure_ascii=False, indent=1), encoding="utf-8")
 print(f"\n已写入 {raw_path}\n下一步(指纹已变,顺序不能乱):\n  python3 -c \"from run_real_test import stage1_modeling; stage1_modeling('{TICKER}')\"\n  → agent 覆盖 panel → agent_analysis.json 带新 hash → stage2('{TICKER}')")

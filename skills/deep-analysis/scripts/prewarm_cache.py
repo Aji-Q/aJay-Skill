@@ -14,7 +14,8 @@
     # 打包: tar czf prewarm-v2.10.tar.gz prewarm/
 
 用户侧使用:
-    curl -L https://github.com/wbh604/UZI-Skill/releases/download/v2.10.2/prewarm-v2.10.tar.gz | tar xz
+    # 使用本地生成的预热缓存；历史上游 release 缓存不作为 aJay 安装源。
+    python prewarm_cache.py
     mv prewarm/api_cache/* skills/deep-analysis/scripts/.cache/_global/api_cache/
 
 安全保证（绝不打包）:
