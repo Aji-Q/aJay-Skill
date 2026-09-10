@@ -75,6 +75,15 @@ def test_copyright_and_provenance_are_preserved_not_claimed_exclusively():
     assert (ROOT / "docs/archive/PRE-1.1.0-README_EN.md").is_file()
 
 
+def test_active_distribution_has_no_removed_contributor_manifest_links():
+    assert not (ROOT / "CONTRIBUTORS.md").exists()
+    assert "(CONTRIBUTORS.md)" not in (ROOT / "README.md").read_text()
+    assert "(CONTRIBUTORS.md)" not in (ROOT / "README_EN.md").read_text()
+    assert "See CONTRIBUTORS.md." not in (ROOT / "NOTICE").read_text()
+    assert "(../CONTRIBUTORS.md)" not in (ROOT / "docs/OWNERSHIP.md").read_text()
+    assert "contributors" not in json.loads((ROOT / "package.json").read_text())
+
+
 def test_version_bump_manifest_tracks_current_files_including_root_skill_and_hook():
     data = json.loads((ROOT / ".version-bump.json").read_text())
     assert data["version"] == VERSION

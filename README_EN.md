@@ -150,7 +150,7 @@ The v1.1 release was exercised through a real AAPL report flow: generation, the 
 
 ## Built by aJay
 
-**aJay (Aji-Q) owns and maintains the aJay identity, product direction and project modifications.** See [CONTRIBUTORS.md](CONTRIBUTORS.md), [OWNERSHIP.md](docs/OWNERSHIP.md) and [NOTICE](NOTICE) for contribution attribution, maintenance boundaries and software provenance.
+**aJay (Aji-Q) owns and maintains the aJay identity, product direction and project modifications.** See [OWNERSHIP.md](docs/OWNERSHIP.md) and [NOTICE](NOTICE) for maintenance boundaries and software provenance.
 
 The project derives from MIT-licensed stock-deep-analyzer 3.9.4 and preserves upstream copyright and contributor records. Photography and image-tool transformations have provenance records. Simulated investment methods are not statements, votes or endorsements by real people.
 

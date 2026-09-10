@@ -4,10 +4,6 @@
   "description": "aJay 美股研究工作台 · 可追溯数据、模拟投资方法评审与编辑式 HTML 报告 | US-focused equity research by aJay",
   "type": "module",
   "author": "aJay",
-  "contributors": [
-    "aJay (Aji-Q) — project owner and product direction (75%+)",
-    "OpenAI Codex — implementation and compilation assistance (up to 25%)"
-  ],
   "license": "MIT",
   "keywords": [
     "stock-analysis",

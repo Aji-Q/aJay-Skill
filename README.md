@@ -41,7 +41,7 @@
 | **Cursor** | `/add-plugin ajay`，然后说“用 aJay 深度研究 AAPL” |
 | **Gemini CLI** | `gemini extensions install https://github.com/Aji-Q/aJay-Skill` |
 | **OpenCode** | `按 https://raw.githubusercontent.com/Aji-Q/aJay-Skill/main/.opencode/INSTALL.md 安装 aJay，然后研究 AAPL` |
-| **Hermes** | 按 [INSTALL-HERMES.md](INSTALL-HERMES.md) 安装，再用自然语言触发 aJay |
+| **Hermes** | 克隆仓库后执行 `bash install-hermes.sh "$PWD"`；完整说明见 [INSTALL-HERMES.md](INSTALL-HERMES.md) |
 | **纯 CLI** | `git clone https://github.com/Aji-Q/aJay-Skill.git && cd aJay-Skill && pip install -r requirements.txt && python run.py AAPL` |
 
 Claude Code 中最常用的四句话：
@@ -289,7 +289,7 @@ python run.py AAPL --depth medium --no-browser
 gemini extensions install https://github.com/Aji-Q/aJay-Skill
 ```
 
-OpenCode、Hermes 和其他环境见 [.opencode/INSTALL.md](.opencode/INSTALL.md)、[INSTALL-HERMES.md](INSTALL-HERMES.md) 与 [AGENTS.md](AGENTS.md)。
+OpenCode、Hermes 和其他环境见 [.opencode/INSTALL.md](.opencode/INSTALL.md)、[INSTALL-HERMES.md](INSTALL-HERMES.md) 与 [AGENTS.md](AGENTS.md)。Hermes 从仓库根目录运行 `bash install-hermes.sh "$PWD"`，脚本会明确显示本地安装与验证步骤。
 
 ### 只想看产品演示
 
@@ -344,7 +344,7 @@ aJay 的任务是提高研究质量，不是替你承担决策。评分不是收
 
 ## aJay 出品
 
-**aJay（Aji-Q）拥有并维护 aJay 项目的品牌、产品方向与本项目修改。** 贡献归属、维护边界、上游版权与软件来源见 [CONTRIBUTORS.md](CONTRIBUTORS.md)、[OWNERSHIP.md](docs/OWNERSHIP.md) 与 [NOTICE](NOTICE)。
+**aJay（Aji-Q）拥有并维护 aJay 项目的品牌、产品方向与本项目修改。** 维护边界、上游版权与软件来源见 [OWNERSHIP.md](docs/OWNERSHIP.md) 与 [NOTICE](NOTICE)。
 
 本项目派生自 MIT 许可的 stock-deep-analyzer 3.9.4，并保留上游版权和贡献记录。摄影与图像工具重构素材均有来源记录；报告对真实投资者不构成关联声明。
 
