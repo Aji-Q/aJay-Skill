@@ -5,6 +5,7 @@
 # A 股 / 港股 / 美股核心数据 (免费、零 key)
 akshare>=1.14.0
 yfinance>=0.2.40
+czsc==1.0.1          # chan.v1兼容版本
 baostock>=0.9.1    # K 线 fallback (官方接口，无需 key) · 旧版服务端登录已失效
 
 # 数据处理

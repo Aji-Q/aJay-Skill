@@ -163,10 +163,11 @@ def test_yahoo_v8_chart_retries_on_429():
 def test_kline_us_chain_falls_through_to_yahoo_v8(monkeypatch):
     """yf + ak 全失败时，应调 _yahoo_v8_chart."""
     import lib.data_sources as ds
-    called = {"v8": 0}
+    called = {"v8": 0, "adjusted": []}
 
-    def fake_v8(sym, range_="2y"):
+    def fake_v8(sym, range_="2y", adjusted=False):
         called["v8"] += 1
+        called["adjusted"].append(adjusted)
         return [{"日期": "2026-04-19", "收盘": 100}]
 
     monkeypatch.setattr(ds, "_yahoo_v8_chart", fake_v8)
@@ -177,6 +178,7 @@ def test_kline_us_chain_falls_through_to_yahoo_v8(monkeypatch):
     ti = MagicMock(code="AAPL")
     rows = ds._kline_us_chain(ti)
     assert called["v8"] == 1
+    assert called["adjusted"] == [True]
     assert rows[0]["收盘"] == 100
 
 

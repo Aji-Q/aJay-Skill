@@ -203,7 +203,8 @@ def test_partial_institutional_numeric_data_does_not_crash_renderers():
     assert "退出 IRR" in lbo_html
     assert "三情景回报分析" in memo_html
     assert "Porter 5 Forces" in competitive_html
-    assert "50%" in comps_html
+    assert "data-percentile-status=\"missing\"" in comps_html
+    assert "50%" not in comps_html
     assert "RATING" in coverage_html
     assert "财报" in catalyst_html
 

@@ -248,7 +248,7 @@ def _extract_kpi_value(raw_dim_data: dict, key: str) -> str:
     return "—"
 
 
-def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict) -> str:
+def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict, market: str = None) -> str:
     """Render one dimension card (data-driven from DIM_META)."""
     dim_score = escape_payload(dim_score)
     raw_dim = escape_payload(raw_dim)
@@ -284,7 +284,13 @@ def render_dim_card(dim_key: str, dim_score: dict, raw_dim: dict) -> str:
     viz_html = ""
     if not unavailable and dim_key in DIM_VIZ_RENDERERS:
         try:
-            viz_html = f'<div class="dim-viz">{DIM_VIZ_RENDERERS[dim_key](raw_data)}</div>'
+            # K-line candle direction is market-specific.  Dimension payloads
+            # historically omitted market, so inject the top-level context
+            # without mutating the raw cache or changing other renderers.
+            viz_data = raw_data
+            if dim_key == "2_kline" and market:
+                viz_data = {**raw_data, "market": market}
+            viz_html = f'<div class="dim-viz">{DIM_VIZ_RENDERERS[dim_key](viz_data)}</div>'
         except Exception:
             # Keep renderer internals out of the reader-facing report. The raw
             # evidence remains available below, so a chart failure is a visual
@@ -351,9 +357,10 @@ def render_dim_category(cat: str, dimensions: dict, raw: dict) -> str:
     """Render all cards in one category."""
     raw_dims = raw.get("dimensions", {}) if raw else {}
     dim_scores = dimensions.get("dimensions", {}) if dimensions else {}
+    market = (raw or {}).get("market") or (raw or {}).get("exchange")
     cards = []
     for key in CAT_GROUPS.get(cat, []):
-        cards.append(render_dim_card(key, dim_scores.get(key, {}), raw_dims.get(key, {})))
+        cards.append(render_dim_card(key, dim_scores.get(key, {}), raw_dims.get(key, {}), market=market))
     return "\n".join(cards)
 
 

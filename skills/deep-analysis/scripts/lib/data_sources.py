@@ -47,6 +47,21 @@ except ImportError:
     requests = None
 
 
+class KlineRows(list):
+    """List-compatible OHLCV result carrying ephemeral source metadata.
+
+    The public ``fetch_kline`` API historically returns a plain list.  Keeping
+    metadata on this list subclass lets the provider chain expose provenance
+    to the standard Chan path without breaking callers that iterate, index or
+    JSON-serialize the old result.  Cache entries use an explicit wrapper so
+    metadata survives a cache round-trip as well.
+    """
+
+    def __init__(self, rows=(), *, provenance: dict | None = None):
+        super().__init__(rows)
+        self.provenance = dict(provenance or {})
+
+
 # ─────────────────────────────────────────────────────────────
 # v2.6 · Tencent qt 通用价格兜底 — 适用于 A/H/U 三市场，简洁稳定
 # qt.gtimg.cn 不需 key、无反爬历史，是 push2 挂掉时的可靠备选
@@ -892,13 +907,102 @@ def _fetch_basic_us(ti: TickerInfo) -> dict:
 # ─────────────────────────────────────────────────────────────
 # 1. K-line (OHLCV)
 # ─────────────────────────────────────────────────────────────
-def fetch_kline(ti: TickerInfo, period: str = "daily", start: str = "20240101", adjust: str = "qfq") -> list[dict]:
-    """K-line OHLCV. TTL = 5min during day, naturally serves stale-OK after close."""
-    key = f"kline__{ti.code}__{period}__{start}__{adjust}"
-    return cached(ti.full, key, lambda: _fetch_kline_impl(ti, period, start, adjust), ttl=TTL_INTRADAY)
+def fetch_kline(
+    ti: TickerInfo,
+    period: str = "daily",
+    start: str = "20240101",
+    adjust: str = "qfq",
+    history_years: int | None = None,
+) -> list[dict]:
+    """K-line OHLCV.
+
+    ``history_years`` is an opt-in extension used by the Chan adapter.  The
+    ordinary fetcher keeps its historical two-year behaviour; callers that
+    need a longer context (currently the US Chan path) request one source
+    window explicitly.  Keeping the window in the cache key prevents a
+    six-year response from being mistaken for the legacy two-year payload.
+    """
+    history_tag = f"__history{int(history_years)}y" if history_years else ""
+    key = f"kline__{ti.code}__{period}__{start}__{adjust}{history_tag}"
+    return cached(
+        ti.full,
+        key,
+        lambda: _fetch_kline_impl(ti, period, start, adjust, history_years=history_years),
+        ttl=TTL_INTRADAY,
+    )
 
 
-def _fetch_kline_impl(ti: TickerInfo, period: str, start: str, adjust: str) -> list[dict]:
+def _unknown_kline_provenance(*, requested_adjustment: str = "qfq", window: str | None = None) -> dict:
+    """Return an explicit, non-optimistic provenance record."""
+    return {
+        "source": "unknown",
+        "source_id": None,
+        "adjustment_requested": requested_adjustment,
+        "adjustment_status": "unknown",
+        "adjusted": None,
+        "price_basis": "unspecified",
+        "window": window,
+    }
+
+
+def _rows_provenance(rows: list[dict], *, requested_adjustment: str = "qfq", window: str | None = None) -> dict:
+    """Extract provider metadata while accepting legacy plain-list results."""
+    raw = getattr(rows, "provenance", None)
+    out = _unknown_kline_provenance(requested_adjustment=requested_adjustment, window=window)
+    if isinstance(raw, dict):
+        out.update({k: v for k, v in raw.items() if v is not None})
+    out.setdefault("adjustment_requested", requested_adjustment)
+    out.setdefault("window", window)
+    # ``adjusted`` is derived from an explicit status only.  A source that
+    # returned raw OHLCV after a qfq request must never be labelled adjusted.
+    if out.get("adjusted") not in (True, False):
+        status = out.get("adjustment_status")
+        out["adjusted"] = True if status == "applied" else False if status in {"raw", "not_applied"} else None
+    if out.get("price_basis") in (None, "", "unspecified"):
+        out["price_basis"] = (
+            "adjusted_ohlcv" if out.get("adjusted") is True
+            else "raw_ohlcv" if out.get("adjusted") is False
+            else "unspecified"
+        )
+    return out
+
+
+def fetch_kline_with_metadata(
+    ti: TickerInfo,
+    period: str = "daily",
+    start: str = "20240101",
+    adjust: str = "qfq",
+    history_years: int | None = None,
+) -> dict:
+    """Return ``{"rows": [...], "provenance": {...}}`` for new callers.
+
+    The historical :func:`fetch_kline` function remains list-returning.  This
+    sidecar API uses a separate cache key so provider identity and adjustment
+    status survive cache reads without changing that old contract.
+    """
+    history_tag = f"__history{int(history_years)}y" if history_years else ""
+    key = f"kline__{ti.code}__{period}__{start}__{adjust}{history_tag}__meta"
+    payload = cached(
+        ti.full,
+        key,
+        lambda: _fetch_kline_impl_with_metadata(ti, period, start, adjust, history_years=history_years),
+        ttl=TTL_INTRADAY,
+    )
+    if isinstance(payload, dict) and isinstance(payload.get("rows"), list):
+        payload.setdefault("provenance", _unknown_kline_provenance(requested_adjustment=adjust))
+        return payload
+    # Be tolerant of a hand-created/legacy cache entry containing just rows.
+    rows = payload if isinstance(payload, list) else []
+    return {"rows": rows, "provenance": _rows_provenance(rows, requested_adjustment=adjust)}
+
+
+def _fetch_kline_impl(
+    ti: TickerInfo,
+    period: str,
+    start: str,
+    adjust: str,
+    history_years: int | None = None,
+) -> list[dict]:
     """K-line with multi-source fallback chain.
 
     A-share fallback order:
@@ -913,7 +1017,36 @@ def _fetch_kline_impl(ti: TickerInfo, period: str, start: str, adjust: str) -> l
         return _kline_a_share_chain(ti, period, start, adjust)
     if ti.market == "H":
         return _kline_hk_chain(ti, period, start, adjust)
+    # Keep the legacy no-argument call intact: a few integrations monkeypatch
+    # this function as ``lambda ti: ...``.  The Chan path opts into the longer
+    # window explicitly and therefore uses the extended signature.
+    if history_years:
+        return _kline_us_chain(ti, range_=f"{int(history_years)}y", adjust=adjust)
     return _kline_us_chain(ti)
+
+
+def _fetch_kline_impl_with_metadata(
+    ti: TickerInfo,
+    period: str,
+    start: str,
+    adjust: str,
+    history_years: int | None = None,
+) -> dict:
+    """Metadata-aware implementation; ordinary callers still receive lists."""
+    if ti.market == "U":
+        range_ = f"{int(history_years)}y" if history_years else "2y"
+        rows, provenance = _kline_us_chain_with_metadata(ti, range_=range_, adjust=adjust)
+        return {"rows": rows, "provenance": provenance}
+    if ti.market == "A":
+        rows = _kline_a_share_chain(ti, period, start, adjust)
+    elif ti.market == "H":
+        rows = _kline_hk_chain(ti, period, start, adjust)
+    else:
+        rows = []
+    return {
+        "rows": rows,
+        "provenance": _rows_provenance(rows, requested_adjustment=adjust),
+    }
 
 
 def _kline_a_share_chain(ti: TickerInfo, period: str, start: str, adjust: str) -> list[dict]:
@@ -1128,7 +1261,7 @@ def _kline_hk_chain(ti: TickerInfo, period: str, start: str, adjust: str) -> lis
     return [{"_kline_fetch_error": "; ".join(errors) or "no HK source available"}]
 
 
-def _yahoo_v8_chart(symbol: str, range_: str = "2y") -> list[dict]:
+def _yahoo_v8_chart(symbol: str, range_: str = "2y", adjusted: bool = False) -> list[dict]:
     """v2.13.7 · Yahoo Chart v8 HTTP fallback · Grok 清单验证 · 零 Key.
 
     URL: query1.finance.yahoo.com/v8/finance/chart/{sym}?interval=1d&range={range}
@@ -1158,72 +1291,193 @@ def _yahoo_v8_chart(symbol: str, range_: str = "2y") -> list[dict]:
             return []
         res0 = result[0]
         ts_arr = res0.get("timestamp") or []
-        q = ((res0.get("indicators") or {}).get("quote") or [{}])[0]
+        indicators = res0.get("indicators") or {}
+        q = (indicators.get("quote") or [{}])[0]
+        adj_q = (indicators.get("adjclose") or [{}])[0] if adjusted else {}
         opens = q.get("open") or []
         closes = q.get("close") or []
         highs = q.get("high") or []
         lows = q.get("low") or []
         vols = q.get("volume") or []
+        adj_closes = adj_q.get("adjclose") or []
         from datetime import datetime as _dt
         rows: list[dict] = []
         for i, ts in enumerate(ts_arr):
             if i >= len(closes) or closes[i] is None:
                 continue
+            close = closes[i]
+            open_ = opens[i] if i < len(opens) and opens[i] is not None else close
+            high = highs[i] if i < len(highs) and highs[i] is not None else close
+            low = lows[i] if i < len(lows) and lows[i] is not None else close
+            # Yahoo's chart endpoint exposes adjusted close separately.  When
+            # requested, apply its ratio to OHLC so the fallback has the same
+            # price basis as yfinance(auto_adjust=True).  If adjclose is not
+            # present, retain raw OHLC rather than inventing an adjustment.
+            if adjusted and i < len(adj_closes) and adj_closes[i] is not None and close:
+                factor = float(adj_closes[i]) / float(close)
+                open_, high, low, close = (v * factor for v in (open_, high, low, close))
             rows.append({
                 "日期": _dt.fromtimestamp(ts).strftime("%Y-%m-%d"),
-                "开盘": opens[i] if i < len(opens) and opens[i] is not None else closes[i],
-                "收盘": closes[i],
-                "最高": highs[i] if i < len(highs) and highs[i] is not None else closes[i],
-                "最低": lows[i] if i < len(lows) and lows[i] is not None else closes[i],
+                "开盘": open_, "收盘": close, "最高": high, "最低": low,
                 "成交量": vols[i] if i < len(vols) and vols[i] is not None else 0,
             })
-        return rows
+        if adjusted:
+            has_adjclose = any(
+                i < len(adj_closes) and adj_closes[i] is not None and closes[i] not in (None, 0)
+                for i in range(len(closes))
+            )
+            adjustment_status = "applied" if has_adjclose else "unknown"
+            adjusted_value = True if has_adjclose else None
+            price_basis = "adjusted_ohlcv" if has_adjclose else "unspecified"
+        else:
+            adjustment_status = "raw"
+            adjusted_value = False
+            price_basis = "raw_ohlcv"
+        return KlineRows(rows, provenance={
+            "source": "yahoo.chart.v8",
+            "source_id": "yahoo_v8",
+            "adjustment_requested": "qfq" if adjusted else "",
+            "adjustment_status": adjustment_status,
+            "adjusted": adjusted_value,
+            "price_basis": price_basis,
+            "window": range_,
+        })
     except Exception:
         return []
 
 
-def _kline_us_chain(ti: TickerInfo) -> list[dict]:
-    """US K-line: yfinance → akshare → yahoo v8 → stooq HTTP fallback."""
+def _range_start_date(range_: str, *, now: datetime | None = None) -> str:
+    """Translate a Yahoo-style year range into a dynamic YYYYMMDD date."""
+    match = re.fullmatch(r"\s*(\d+)y\s*", str(range_ or ""))
+    years = int(match.group(1)) if match else 2
+    anchor = now or datetime.now()
+    return (anchor - timedelta(days=365 * years + 7)).strftime("%Y%m%d")
+
+
+def _kline_us_chain_with_metadata(
+    ti: TickerInfo,
+    range_: str = "2y",
+    adjust: str = "qfq",
+) -> tuple[list[dict], dict]:
+    """US K-line chain returning rows and the actual hit/price basis."""
     from .global_peers import to_yahoo_symbol
+
     symbol = to_yahoo_symbol(ti)
+    requested = adjust or ""
+    source_chain = ["yfinance", "akshare.stock_us_hist", "yahoo.chart.v8", "stooq"]
+
     if yf:
         try:
             t = yf.Ticker(symbol)
-            df = _retry(lambda: t.history(period="2y", interval="1d"), attempts=2)
+
+            def _history():
+                try:
+                    return t.history(
+                        period=range_, interval="1d", auto_adjust=(adjust == "qfq")
+                    )
+                except TypeError as exc:
+                    # Small test/provider doubles may expose the pre-existing
+                    # two-argument history API.  Their basis is unknown rather
+                    # than optimistically labelled adjusted.
+                    if "auto_adjust" not in str(exc):
+                        raise
+                    return t.history(period=range_, interval="1d")
+
+            df = _retry(_history, attempts=2)
             if df is not None and len(df) > 0:
                 df = df.reset_index()
-                return df.to_dict("records")
+                rows = KlineRows(df.to_dict("records"), provenance={
+                    "source": "yfinance.Ticker.history",
+                    "source_id": "yfinance",
+                    "adjustment_requested": requested,
+                    "adjustment_status": "applied" if adjust == "qfq" else "raw" if not adjust else "unknown",
+                    "adjusted": True if adjust == "qfq" else False if not adjust else None,
+                    "price_basis": "adjusted_ohlcv" if adjust == "qfq" else "raw_ohlcv" if not adjust else "unspecified",
+                    "window": range_,
+                })
+                return rows, _rows_provenance(rows, requested_adjustment=requested, window=range_)
         except Exception:
             pass
+
     if ak:
         try:
-            df = ak.stock_us_hist(symbol=symbol, period="daily", start_date="20240101", adjust="qfq")
+            # Do not keep a stale calendar date here: Chan requests a six-year
+            # source window and the ordinary path can request a different one.
+            start_date = _range_start_date(range_)
+            ak_adjust = adjust if adjust in {"qfq", "hfq"} else ""
+            df = ak.stock_us_hist(
+                symbol=symbol,
+                period="daily",
+                start_date=start_date,
+                adjust=ak_adjust,
+            )
             if df is not None and len(df) > 0:
-                return df.to_dict("records")
+                rows = KlineRows(df.to_dict("records"), provenance={
+                    "source": "akshare.stock_us_hist",
+                    "source_id": "akshare_us_hist",
+                    "adjustment_requested": requested,
+                    "adjustment_status": "applied" if ak_adjust in {"qfq", "hfq"} else "raw",
+                    "adjusted": True if ak_adjust in {"qfq", "hfq"} else False,
+                    "price_basis": "adjusted_ohlcv" if ak_adjust in {"qfq", "hfq"} else "raw_ohlcv",
+                    "window": range_,
+                    "start_date": start_date,
+                })
+                return rows, _rows_provenance(rows, requested_adjustment=requested, window=range_)
         except Exception:
             pass
+
     # v2.13.7 · Yahoo Chart v8 HTTP（绕开 yfinance cookie/crumb 机制，更稳）
-    rows = _yahoo_v8_chart(symbol, range_="2y")
+    try:
+        rows = _yahoo_v8_chart(symbol, range_=range_, adjusted=(adjust == "qfq"))
+    except TypeError as exc:
+        # Keep compatibility with older test/integration stubs that only
+        # accepted (symbol, range_); the real helper above supports adjusted.
+        if "adjusted" not in str(exc):
+            raise
+        rows = _yahoo_v8_chart(symbol, range_=range_)
     if rows:
-        return rows
+        provenance = _rows_provenance(rows, requested_adjustment=requested, window=range_)
+        provenance.setdefault("source_chain", source_chain)
+        return rows, provenance
+
     if requests:
         try:
             url = f"https://stooq.com/q/d/l/?s={symbol.lower()}.us&i=d"
             r = requests.get(url, timeout=12)
             lines = r.text.strip().splitlines()
             if len(lines) > 1:
-                rows = []
+                parsed = []
                 for line in lines[1:]:
                     parts = line.split(",")
                     if len(parts) >= 6:
-                        rows.append({
+                        parsed.append({
                             "Date": parts[0], "Open": float(parts[1]), "High": float(parts[2]),
                             "Low": float(parts[3]), "Close": float(parts[4]), "Volume": float(parts[5]),
                         })
-                return rows
+                if parsed:
+                    rows = KlineRows(parsed, provenance={
+                        "source": "stooq.daily_csv",
+                        "source_id": "stooq",
+                        "adjustment_requested": requested,
+                        "adjustment_status": "raw",
+                        "adjusted": False,
+                        "price_basis": "raw_ohlcv",
+                        "window": range_,
+                    })
+                    return rows, _rows_provenance(rows, requested_adjustment=requested, window=range_)
         except Exception:
             pass
-    return []
+
+    return KlineRows(), {
+        **_unknown_kline_provenance(requested_adjustment=requested, window=range_),
+        "source_chain": source_chain,
+    }
+
+
+def _kline_us_chain(ti: TickerInfo, range_: str = "2y", adjust: str = "qfq") -> list[dict]:
+    """US K-line: list-compatible legacy wrapper around the metadata chain."""
+    rows, _ = _kline_us_chain_with_metadata(ti, range_=range_, adjust=adjust)
+    return rows
 
 
 # ─────────────────────────────────────────────────────────────

@@ -9,8 +9,12 @@
   • 形态: VCP/突破/三角收敛 (简易标记)
   • 筹码分布 stock_cyq_em
 """
+from __future__ import annotations
+
 import json
+import inspect
 import sys
+from datetime import datetime, timedelta
 from statistics import mean
 
 import akshare as ak  # type: ignore
@@ -275,9 +279,124 @@ def _extract_for_viz(klines: list[dict]) -> dict:
     }
 
 
+def _supports_history_years(fetch_fn) -> bool:
+    """Check whether the data-source adapter exposes the Chan history opt-in.
+
+    Tests and downstream integrations historically monkeypatch ``fetch_kline``
+    with a one-argument callable.  Signature detection keeps that compatibility
+    without swallowing real provider errors.
+    """
+    try:
+        params = inspect.signature(fetch_fn).parameters
+    except (TypeError, ValueError):
+        return False
+    return "history_years" in params or any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values())
+
+
+def _date_from_row(row: dict) -> datetime | None:
+    value = row.get("日期") or row.get("date") or row.get("Date") or row.get("datetime") or row.get("Datetime")
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.replace(tzinfo=None)
+    if hasattr(value, "to_pydatetime"):
+        try:
+            return value.to_pydatetime().replace(tzinfo=None)
+        except Exception:
+            return None
+    text = str(value).strip()
+    for candidate in (text, text[:10]):
+        try:
+            return datetime.fromisoformat(candidate.replace("Z", "+00:00")).replace(tzinfo=None)
+        except ValueError:
+            continue
+    return None
+
+
+def _tail_years(rows: list[dict], years: int = 2) -> list[dict]:
+    """Keep the ordinary K-line view at the historical two-year window."""
+    dated = [(idx, _date_from_row(row)) for idx, row in enumerate(rows or [])]
+    valid_dates = [dt for _, dt in dated if dt is not None]
+    if not valid_dates:
+        return rows
+    cutoff = max(valid_dates) - timedelta(days=365 * years)
+    return [row for row, (_, dt) in zip(rows, dated) if dt is None or dt >= cutoff]
+
+
+def _fetch_rows_for_analysis(ti):
+    """Fetch one source window and preserve provider provenance when available."""
+    fetch_fn = ds.fetch_kline
+    if ti.market == "U" and _supports_history_years(fetch_fn):
+        metadata_fn = getattr(ds, "fetch_kline_with_metadata", None)
+        if callable(metadata_fn):
+            payload = metadata_fn(ti, adjust="qfq", history_years=6)
+            if isinstance(payload, dict) and isinstance(payload.get("rows"), list):
+                return payload["rows"], payload.get("provenance") or {}
+        return fetch_fn(ti, adjust="qfq", history_years=6), {}
+    return fetch_fn(ti), {}
+
+
+def _build_chan(
+    ti,
+    daily_rows: list[dict],
+    source: str,
+    *,
+    adjusted: bool | None = None,
+    provenance: dict | None = None,
+) -> dict | None:
+    """Build Chan data without making a second request or breaking K-line."""
+    try:
+        from chan_signals import build_chan_v1
+
+        # Chan receives the full six-year daily source window; the normal
+        # K-line cards below still use only the latest two years.
+        return build_chan_v1(
+            ti.full,
+            daily_rows,
+            market=ti.market,
+            source=source,
+            adjusted=adjusted,
+        )
+    except Exception as exc:
+        # A missing/failed optional Chan dependency must not remove ordinary
+        # OHLCV output. Keep a machine-readable unavailable result for the
+        # report evidence panel and preserve the exception for diagnostics.
+        return {
+            "schema_version": "chan.v1",
+            "status": "unavailable",
+            "engine": "czsc",
+            "engine_version": None,
+            "ticker": ti.full,
+            "market": ti.market,
+            "source": source,
+            "adjusted": adjusted,
+            "price_basis": "adjusted_ohlcv" if adjusted is True else "raw_ohlcv" if adjusted is False else "unspecified",
+            "computed_at": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+            "as_of": None,
+            "quality": {"error": f"{type(exc).__name__}: {str(exc)[:160]}"},
+            "levels": {},
+            "capabilities": {
+                "fractals": False,
+                "strokes": False,
+                "centers": False,
+                "segments": False,
+                "macd_divergence": False,
+                "official_signals": False,
+            },
+        }
+
+
 def main(ticker: str) -> dict:
     ti = parse_ticker(ticker)
-    klines = ds.fetch_kline(ti)
+    fetched = _fetch_rows_for_analysis(ti)
+    if isinstance(fetched, tuple) and len(fetched) == 2:
+        source_rows, source_provenance = fetched
+    else:
+        # Compatibility with integrations that still return only a list.
+        source_rows, source_provenance = fetched, {}
+    # Keep indicators and the existing chart payload backward-compatible while
+    # allowing the Chan adapter to consume the same source's six-year window.
+    klines = _tail_years(source_rows, years=2) if ti.market == "U" else source_rows
     indicators = compute_indicators(klines)
     chips = fetch_chip_distribution(ti)
     viz_shape = _extract_for_viz(klines)
@@ -291,25 +410,68 @@ def main(ticker: str) -> dict:
     )
     rsi_val = indicators.get("rsi_14")
     rsi_label = f"{rsi_val:.0f}" if rsi_val is not None else "—"
-    source = {
+    source_chain = {
         "A": "akshare/baostock/Eastmoney/Sina/Tencent A-share history fallback chain",
         "H": "akshare/yfinance/Yahoo HK history fallback chain",
         "U": "yfinance/akshare/Yahoo/Stooq US history fallback chain",
     }.get(ti.market, "market history provider")
 
+    source_provenance = dict(source_provenance or {})
+    actual_source = source_provenance.get("source") or "unknown"
+    adjusted = source_provenance.get("adjusted")
+    if adjusted not in (True, False):
+        adjusted = None
+    chan = _build_chan(
+        ti,
+        source_rows,
+        actual_source,
+        adjusted=adjusted,
+        provenance=source_provenance,
+    )
+    chan_window = (chan or {}).get("input_window") if isinstance(chan, dict) else {}
+    provenance = {
+        # ``source`` is the actual provider hit; ``source_chain`` preserves
+        # the historical human-readable fallback description.
+        "source": actual_source,
+        "source_id": source_provenance.get("source_id"),
+        "source_chain": source_provenance.get("source_chain") or source_chain,
+        "requested_adjustment": "qfq",
+        "adjustment_status": source_provenance.get("adjustment_status", "unknown"),
+        "adjusted": adjusted,
+        "price_basis": source_provenance.get("price_basis") or (
+            "adjusted_ohlcv" if adjusted is True else "raw_ohlcv" if adjusted is False else "unspecified"
+        ),
+        "daily_window": "2y",
+        "chan_history_window": "6y" if ti.market == "U" else None,
+        "weekly_last_bar_date": chan_window.get("weekly_last_bar_date") if isinstance(chan_window, dict) else None,
+        "weekly_last_bar_status": chan_window.get("weekly_last_bar_status", "unavailable") if isinstance(chan_window, dict) else "unavailable",
+        "weekly_last_bar_is_complete": chan_window.get("weekly_last_bar_is_complete") if isinstance(chan_window, dict) else None,
+        "warnings": list((chan or {}).get("warnings", [])) if isinstance(chan, dict) else [],
+        "as_of": max((_date_from_row(r) for r in source_rows if _date_from_row(r)), default=None),
+    }
+    if provenance["as_of"] is not None:
+        provenance["as_of"] = provenance["as_of"].date().isoformat()
+
+    # Deterministic price-action evidence shares the exact Chan bar coordinates.
+    from price_action import enrich_chan_price_action
+    price_action = enrich_chan_price_action(chan) if isinstance(chan, dict) else {}
+
     return {
         "ticker": ti.full,
         "data": {
             "kline_count": len(klines),
+            "price_action": price_action,
             "indicators": indicators,
             "stage": stage_label,
             "ma_align": ma_align,
             "macd": macd_label,
             "rsi": rsi_label,
             "chip_distribution": chips,
+            "kline_provenance": provenance,
+            **({"chan": chan} if chan is not None else {}),
             **viz_shape,
         },
-        "source": source,
+        "source": source_chain,
         "fallback": False,
     }
 

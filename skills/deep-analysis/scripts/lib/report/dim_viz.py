@@ -22,6 +22,7 @@ from lib.report.global_peers import render_global_peer_comparison
 from lib.report.svg_primitives import (
     COLOR_BULL, COLOR_BEAR, COLOR_GOLD, COLOR_CYAN,
     COLOR_BLUE, COLOR_PINK, COLOR_INDIGO, COLOR_MUTED, COLOR_GRID,
+    finite_number, finite_series,
     svg_sparkline, svg_h_bar_compare, svg_donut, svg_gauge, svg_radar,
     svg_signal_lights, svg_supply_flow, svg_timeline, svg_bars,
     svg_candlestick, svg_pe_band, svg_progress_row, svg_peer_table,
@@ -35,6 +36,36 @@ def _safe(v, default="—"):
     if v is None or v == "" or v == "—":
         return default
     return v
+
+
+def _parse_percent_input(value):
+    """Parse a 0–100 percentile without inventing a neutral default."""
+    number = finite_number(value)
+    if number is not None and 0 <= number <= 100:
+        return number
+    if value is None:
+        return None
+    import re
+    text = str(value)
+    # Prefer the number explicitly attached to a percent/rank marker.  This
+    # avoids reading a leading lookback window (for example, ``5 年 60 分位``)
+    # as the percentile itself.
+    marked = re.findall(r"(?<![\d.])(\d+(?:\.\d+)?)\s*%", text)
+    if not marked:
+        marked = re.findall(r"(?<![\d.])(\d+(?:\.\d+)?)\s*(?:分位|percentile|percentile rank)", text, flags=re.IGNORECASE)
+    marked_values = [parsed for token in marked if (parsed := finite_number(token)) is not None and 0 <= parsed <= 100]
+    if marked_values:
+        return marked_values[-1]
+    candidates = []
+    for token in re.findall(r"(?<![\d.])\d+(?:\.\d+)?", text):
+        parsed = finite_number(token)
+        if parsed is not None and 0 <= parsed <= 100:
+            candidates.append(parsed)
+    if not candidates:
+        return None
+    if len(candidates) > 1 and candidates[0] <= 10 and ("年" in text or "year" in text.lower()):
+        return candidates[-1]
+    return candidates[0]
 
 
 def _score_class(score: int) -> str:
@@ -93,17 +124,23 @@ def _viz_trap(raw: dict) -> str:
 
 
 def _viz_valuation(raw: dict) -> str:
-    import re
-    q_str = str(raw.get("pe_quantile", ""))
-    m = re.search(r'(\d+)', q_str)
-    val = int(m.group(1)) if m else 50
-    color = COLOR_BULL if val < 30 else (COLOR_GOLD if val < 70 else COLOR_BEAR)
+    val = _parse_percent_input(raw.get("pe_quantile"))
     pe = raw.get("pe", "—")
     industry_pe = raw.get("industry_pe", "—")
     dcf = raw.get("dcf", "—")
 
-    # Gauge
-    viz = f'<div style="text-align:center">{svg_gauge(val, 100, "PE 分位输入（窗口/来源待核验）", color=color, unit="%")}</div>'
+    # Gauge: missing percentile is an explicit missing state, not a fabricated
+    # neutral 50th percentile.
+    if val is None:
+        quantile_viz = '''<div data-quantile-status="missing" style="text-align:center;padding:18px 8px;color:#64748b">
+  <div style="font-family:Fira Code;font-size:10px">PE 分位输入</div>
+  <div style="font-family:Fira Sans;font-size:30px;font-weight:800;color:#0f172a">—</div>
+  <div style="font-family:Fira Code;font-size:10px">窗口/来源待核验</div>
+</div>'''
+    else:
+        color = COLOR_BULL if val < 30 else (COLOR_GOLD if val < 70 else COLOR_BEAR)
+        quantile_viz = f'<div data-quantile-status="valid" style="text-align:center">{svg_gauge(val, 100, "PE 分位输入（窗口/来源待核验）", color=color, unit="%")}</div>'
+    viz = quantile_viz
 
     # PE Band historical chart
     pe_hist = raw.get("pe_history", [])
@@ -239,13 +276,15 @@ def _viz_financials(raw: dict) -> str:
             ("roic", "ROIC %", 30, True),
         ]:
             v = health.get(k)
-            if v is None:
+            numeric = finite_number(v)
+            if numeric is None:
                 continue
-            pct = min(100, v / max_v * 100)
+            pct = max(0, min(100, numeric / max_v * 100))
             if not good_high:
                 pct = 100 - pct
             color = COLOR_BULL if pct > 66 else COLOR_GOLD if pct > 33 else COLOR_BEAR
-            viz += svg_progress_row(label, v, color=color, suffix="")
+            display_suffix = "%" if k in {"debt_ratio", "fcf_margin", "roic"} else ""
+            viz += svg_progress_row(label, pct, color=color, suffix=display_suffix, display_value=numeric)
         viz += '</div>'
 
     if not viz:
@@ -253,12 +292,13 @@ def _viz_financials(raw: dict) -> str:
     return viz
 
 
-def _viz_kline(raw: dict) -> str:
+def _viz_kline(raw: dict, market: str = None) -> str:
     """Real SVG candlestick (60 days) with MA20/MA60 overlay"""
     candles = raw.get("candles_60d", [])
     ma20 = raw.get("ma20_60d", [])
     ma60 = raw.get("ma60_60d", [])
-    closes = raw.get("close_60d", [])
+    closes = finite_series(raw.get("close_60d", []))
+    market = market or raw.get("market") or raw.get("exchange")
 
     stage = raw.get("stage", "—")
     ma_align = raw.get("ma_align", "—")
@@ -267,7 +307,7 @@ def _viz_kline(raw: dict) -> str:
 
     viz = ""
     if candles and len(candles) >= 10:
-        viz += svg_candlestick(candles, width=340, height=200, ma_20=ma20, ma_60=ma60)
+        viz += svg_candlestick(candles, width=340, height=200, ma_20=ma20, ma_60=ma60, market=market)
     elif closes:
         viz += svg_sparkline(closes, width=320, height=80, color=COLOR_BULL if closes[-1] > closes[0] else COLOR_BEAR)
 
@@ -414,11 +454,15 @@ def _viz_industry(raw: dict) -> str:
     tam = raw.get("tam", "—")
     penetration = raw.get("penetration", "—")
     lifecycle = raw.get("lifecycle", "—")
-    # parse growth pct
-    import re
-    m = re.search(r'(\d+)', str(growth))
-    growth_val = int(m.group(1)) if m else 0
-    gauge = svg_gauge(min(growth_val, 100), 100, "行业增速 %", color=COLOR_BULL if growth_val > 15 else COLOR_GOLD)
+    # Parse growth pct; missing/non-finite input stays a missing gauge rather
+    # than being presented as a fabricated zero.
+    growth_val = _parse_percent_input(growth)
+    gauge = svg_gauge(
+        growth_val,
+        100,
+        "行业增速 %",
+        color=COLOR_BULL if growth_val is not None and growth_val > 15 else COLOR_GOLD,
+    )
     tail = f'''<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px;text-align:center">
   <div style="padding:6px;background:#ffffff;border:1px solid #e2e8f0;border-radius:6px">
     <div style="font-family:Fira Code;font-size:9px;color:#64748b">TAM</div>
@@ -441,9 +485,9 @@ def _viz_materials(raw: dict) -> str:
     trend_str = raw.get("price_trend", "—")
     cost_share = raw.get("cost_share", "—")
     import_dep = raw.get("import_dep", "—")
-    trend_vals = raw.get("price_history_12m", [])
+    trend_vals = finite_series(raw.get("price_history_12m", []))
     spark_html = ""
-    if trend_vals:
+    if len(trend_vals) >= 2:
         color = COLOR_BULL if trend_vals[-1] < trend_vals[0] else COLOR_BEAR
         spark_html = svg_sparkline(trend_vals, width=260, height=48, color=color)
     return f'''{spark_html}
@@ -517,7 +561,8 @@ def _viz_capital_flow(raw: dict) -> str:
     """4 mini sparklines + 机构持仓变化 + 解禁时间表"""
     def _mini(label, values, summary, color):
         summary = _safe(summary, "数据暂缺")  # v3.9.4 · None → 数据暂缺（不再显示 "None"）
-        if not values or len(values) < 2:
+        values = finite_series(values)
+        if len(values) < 2:
             return f'''<div style="padding:10px;background:#ffffff;border:1px solid #e2e8f0;border-radius:8px">
   <div style="font-family:Fira Code;font-size:9px;color:#64748b">{label}</div>
   <div style="font-family:Fira Code;font-size:12px;font-weight:700;color:#64748b;margin-top:2px">{summary}</div>
@@ -532,11 +577,23 @@ def _viz_capital_flow(raw: dict) -> str:
 </div>'''
     # 北向已关停，用主力资金流向替代
     main_flow = raw.get("main_fund_flow_20d") or []
-    main_values = [abs(float(r.get("主力净流入-净额", 0))) for r in main_flow[:20] if isinstance(r, dict)] if isinstance(main_flow, list) else []
+    main_values = []
+    if isinstance(main_flow, list):
+        for record in main_flow[:20]:
+            if not isinstance(record, dict):
+                continue
+            number = finite_number(record.get("主力净流入-净额"))
+            if number is not None:
+                main_values.append(abs(number))
     main_5d_summary = raw.get("main_5d", "—")
     if main_5d_summary == "—" and main_flow and isinstance(main_flow, list):
         recent = main_flow[:5]
-        net = sum(float(r.get("主力净流入-净额", 0)) for r in recent if isinstance(r, dict))
+        net_values = [
+            number for record in recent
+            if isinstance(record, dict)
+            and (number := finite_number(record.get("主力净流入-净额"))) is not None
+        ]
+        net = sum(net_values)
         main_5d_summary = f"{'净流入' if net > 0 else '净流出'} {abs(net)/1e8:.1f}亿" if abs(net) > 0 else "—"
 
     # 大宗交易
@@ -544,7 +601,14 @@ def _viz_capital_flow(raw: dict) -> str:
     block_summary = f"近期 {len(block)} 笔" if isinstance(block, list) and block else "无近期大宗"
 
     holders_hist = raw.get("holder_count_history") or []
-    holders_vals = [r.get("股东户数-本次", 0) for r in holders_hist[:10] if isinstance(r, dict)] if isinstance(holders_hist, list) else []
+    holders_vals = []
+    if isinstance(holders_hist, list):
+        for record in holders_hist[:10]:
+            if not isinstance(record, dict):
+                continue
+            number = finite_number(record.get("股东户数-本次"))
+            if number is not None:
+                holders_vals.append(number)
 
     north = _mini("主力资金 20日", main_values, main_5d_summary, COLOR_CYAN)
     margin = _mini("大宗交易", [], block_summary, COLOR_BLUE)
@@ -602,8 +666,9 @@ def _viz_moat(raw: dict) -> str:
     for k, lbl in cats.items():
         raw_v = raw.get(k, "")
         score = 5
-        if isinstance(raw_v, (int, float)):
-            score = float(raw_v)
+        numeric = finite_number(raw_v)
+        if numeric is not None:
+            score = numeric
         elif "强" in str(raw_v) or "高" in str(raw_v) or "最" in str(raw_v):
             score = 8
         elif "弱" in str(raw_v) or "低" in str(raw_v):
@@ -709,10 +774,7 @@ def _viz_lhb(raw: dict) -> str:
 
 
 def _viz_sentiment(raw: dict) -> str:
-    import re
-    heat_str = str(raw.get("xueqiu_heat", "50"))
-    m = re.search(r'(\d+)', heat_str)
-    heat_val = int(m.group(1)) if m else 50
+    heat_val = _parse_percent_input(raw.get("xueqiu_heat"))
     thermo = svg_thermometer(heat_val, 100, "雪球热度")
     big_v = raw.get("big_v_mentions", "—")
     positive = raw.get("positive_pct", "—")

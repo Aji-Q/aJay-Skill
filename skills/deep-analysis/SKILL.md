@@ -1105,3 +1105,7 @@ echo "${CODEX:-${OPENAI_API_KEY:+codex_via_openai}}"
 ---
 
 **现在开始**：从第 0 步识别股票开始。记住 — **你是分析师，不是脚本运行器。**
+
+## 独立价格结构图（缠论 + 价格行为）
+
+只研究价格图时，可在仓库根运行 `python skills/deep-analysis/scripts/chart_stock.py <TICKER> --input /absolute/path/input.json --output /absolute/path/chart.html`；明确刷新行情才使用 `--refresh`。读取输出 JSON 的实际坐标、来源、截止时间、`price_action` 证据与失效条件后讲解；HTML 可离线交互。标准 `fetch_kline` 已自动生成此层，无需手工补数。该入口不修改已有 `raw_data.json` / `panel.json` / 审核状态，也不代替完整基本面深度分析。契约、算法边界及完整流程见仓库根 `docs/CHART-WORKFLOW.md`。

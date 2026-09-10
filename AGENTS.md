@@ -400,3 +400,7 @@ browser_sources = playwright_sources_for("4_peers", "A")
 - 美股：`AAPL`
 - 不需要 API key（但**建议设置 `MX_APIKEY`** 提高稳定性，特别是 Codex/海外环境）
 - v2.6 默认 `--resume` · 强制重抓加 `--no-resume`
+
+### 专项价格结构图入口（J Trader）
+
+用户只需要缠论 / 价格行为 / 可交互 K 线图时，在仓库根运行 `python skills/deep-analysis/scripts/chart_stock.py <TICKER> --input /absolute/path/input.json --output /absolute/path/chart.html`；显式联网使用 `--refresh` 替代 `--input`。程序输出离线 HTML + `jtrader.chart.v1` JSON，标准 K 线采集也自动接入同一数据层。按实际结构 ID、日期、价格和失效条件讲解，先检查来源/复权/截止与缺口；不覆盖旧财务/评审文件，不把启发式价格行为写成严格缠论信号或回测。细节见 `docs/CHART-WORKFLOW.md`。

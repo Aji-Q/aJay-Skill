@@ -68,15 +68,22 @@
     "license_url": "https://creativecommons.org/licenses/by/4.0/",
     "composition": "陆家嘴超高层：168mm长焦、完整扭转轮廓、极窄竖幅",
     "architecture_credit": "Shanghai Tower / Gensler; design team led by Jun Xia",
-    "asset": "shanghai-photography.png",
+    "asset": "shanghai-original-highres.webp",
     "prompt": "Make a very restrained architectural-photography finishing edit to THIS supplied real Shanghai Tower photograph by Supanut Arunoprayote, photographed 2025-11-26. Retain this unusual tall 0.44:1 aspect ratio (do not expand to generic skyline), exact 168mm telephoto perspective, centered full height twisted glass facade, slender setback tower behind left side, low foreground buildings and trees, existing early dusk light. Reconstruct no buildings. Improve only tonal exposure: reduce the bright blue sky by about one half stop to a more sober slate blue, retain the physical cool ambient sky/warm interior-light separation, keep every glass-floor pattern sharp but optical and irregular; reduce low-mid haze gently, do not add bloom or sharpen a fake grid. Maintain the same time of day, all architectural shapes, object positions, crop, and camera geometry. The result should read as a careful professional RAW development of the given photograph, a silvery architectural study for a financial research experience. No added city towers, no floating charts, no interior room/window frame, no new signage/text, no glossy render, no cyan neon, no cinematic fog, no symmetrical panorama. One portrait photo; no design labels or border.",
     "tool": "image_gen.imagegen",
     "model_version": "not returned by tool",
     "edited_at": "2026-09-09",
-    "credit": "Supanut Arunoprayote · 拍摄 2025-11-26 · CC BY 4.0。aJay 经 image 工具轻微重构，非未经编辑的纪实原片。",
+    "credit": "Supanut Arunoprayote · 拍摄 2025-11-26 · CC BY 4.0。本版采用 4994×11270 实拍原片，转换为 WebP 并通过页面轻微调色；不使用低分辨率 AI 衍生图放大，不改动建筑构图。",
     "source_sha256": "c7b0983b7dba373b4cbc2ccbd719526785891b8c0538020dc0b435c488e3eb8b",
     "edited_sha256": "996de1ee7cf0d37104f36f7440ae1183ca7977837bd4df2c8b4efbe9be899702",
-    "original_storage": "not distributed; verify via source_url and source_sha256"
+    "original_storage": "not distributed; verify via source_url and source_sha256",
+    "previous_derivative_asset": "shanghai-photography.png",
+    "render_method": "Original photograph, full 4994 x 11270 pixels, WebP encoding; restrained CSS tonal treatment, no AI reconstruction or upscaling.",
+    "rendered_sha256": "88b068e9caa42b6c5ccbb4f5bc85775fbdea7876ce2c87c620bd0ddfe95515c5",
+    "rendered_dimensions": [
+      4994,
+      11270
+    ]
   },
   {
     "id": "hong-kong",

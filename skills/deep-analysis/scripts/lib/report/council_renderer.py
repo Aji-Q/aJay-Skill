@@ -13,7 +13,10 @@ def json_safe(value):
     return value
 
 def uri(path):
-    return 'data:image/png;base64,'+base64.b64encode(path.read_bytes()).decode('ascii')
+    if path is None:
+        return ''
+    mime={'.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.svg':'image/svg+xml'}.get(path.suffix.lower(),'image/png')
+    return f'data:{mime};base64,'+base64.b64encode(path.read_bytes()).decode('ascii')
 
 def render_council(raw, analysis=None):
     from html import escape

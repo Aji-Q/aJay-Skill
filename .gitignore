@@ -57,5 +57,8 @@ output/playwright/
 docs/wechat-article.md
 docs/*.local.md
 
+# Retired virtual analyst source; no longer used by the report UI.
+skills/deep-analysis/assets/ajay-speakers/chan-analyst-source.png
+
 # v2.10.2 · prewarm_cache 生成的预热数据（release 附件，不进 repo）
 skills/deep-analysis/scripts/prewarm/

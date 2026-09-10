@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from lib.report.svg_primitives import (
     COLOR_BULL, COLOR_BEAR, COLOR_GOLD, COLOR_CYAN, COLOR_MUTED,
+    finite_number,
     svg_gauge, svg_progress_row,
     svg_sparkline,  # v3.3.2 · issue #50 修复 · institutional 块用了但 v3.2 拆分时漏 import
     svg_radar,      # v3.3.3 · PR #54/#59 · _render_competitive_analysis Porter radar 用 · v3.2 拆分时漏 import
@@ -195,15 +196,21 @@ def _render_comps_block(dim20: dict) -> str:
     for m in ("pe", "pb", "ps", "ev_ebitda", "roe", "net_margin"):
         s = stats.get(m)
         if not s: continue
-        pct = max(0.0, min(100.0, _number(target_pct.get(m), 50)))
-        bar = f'<div style="background:#e5e7eb;height:6px;border-radius:3px;overflow:hidden"><div style="background:{_pct_color(pct)};height:100%;width:{pct}%"></div></div>'
+        pct = finite_number(target_pct.get(m))
+        if pct is None:
+            pct_label = "—"
+            bar = '<div data-percentile-status="missing" style="color:#6b7280;font-size:11px">分位待核验</div>'
+        else:
+            pct = max(0.0, min(100.0, pct))
+            pct_label = f"{pct:.0f}%"
+            bar = f'<div style="background:#e5e7eb;height:6px;border-radius:3px;overflow:hidden"><div style="background:{_pct_color(pct)};height:100%;width:{pct}%"></div></div>'
         metric_rows += f'''
         <tr>
           <td style="padding:8px;font-weight:600">{m.upper().replace("_", "-")}</td>
           <td style="padding:8px;text-align:right">{s.get("min", "—")}</td>
           <td style="padding:8px;text-align:right">{s.get("median", "—")}</td>
           <td style="padding:8px;text-align:right">{s.get("max", "—")}</td>
-          <td style="padding:8px;text-align:center"><span style="color:{_pct_color(pct)};font-weight:700">{pct:.0f}%</span><br>{bar}</td>
+          <td style="padding:8px;text-align:center"><span style="color:{_pct_color(pct) if pct is not None else '#6b7280'};font-weight:700">{pct_label}</span><br>{bar}</td>
         </tr>'''
 
     implied_rows = "".join(

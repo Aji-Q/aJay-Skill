@@ -1,0 +1,452 @@
+{
+  "status": "eight_local_rgba_cutouts_complete",
+  "note": "Local matting explicitly authorized by the user. Original RGB pixels preserved exactly; true alpha background and soft lower-torso fade. Prior rejected image-generation attempts retained below as provenance.",
+  "attempts": [
+    {
+      "prompt": "Edit this existing black-and-white Warren Buffett portrait for the J Trader research report. Preserve exactly the same recognizable face, pose, clothing, crop, monochrome photographic detail and lighting. Remove ONLY the dark background and output a real transparent-background PNG with alpha (not a checkerboard drawn in pixels). Face, glasses, hair and torso fully opaque and crisp. Natural soft hair and shoulder alpha edges, very slight feathered fade only at the bottom edge of the suit. No whole-image opacity, ghosting, glow, blur, new objects or text. Keep original portrait composition and 1024x1536 portrait dimensions.",
+      "id": "buffett",
+      "source": "ajay-brand/buffett-portrait.png",
+      "source_sha256": "450753beb54084bc4fb0b75da91f61926bd856e37781cd534e161272a3c01d37",
+      "output": "local-only-generated/exec-167f3917-491d-4191-a890-c83928256e0f.png",
+      "status": "rejected_no_alpha",
+      "has_alpha": false,
+      "tool": "image_gen.imagegen",
+      "model_version": null,
+      "output_sha256": "93c8e90d2145b8b63031808043360515ee5b2bae72ad45c6764c301ae36a9568",
+      "distributed": false
+    },
+    {
+      "prompt": "Background removal asset edit: deliver Warren Buffett from the source as an actual RGBA PNG file with a fully transparent background (alpha channel zero outside the person). The previous result failed because it painted gray-and-white checkerboard into an RGB image. DO NOT draw any checkerboard, white backdrop, gray backdrop, or transparency visualization. Set real file alpha transparency. Preserve source identity, pose, crisp black-white photographic face, suit, glasses and lighting without redesign. Fully opaque face and torso, natural alpha only on hair/shoulder silhouette and subtle bottom-edge feather. Portrait 1024x1536. Only this one asset.",
+      "id": "buffett",
+      "source": "ajay-brand/buffett-portrait.png",
+      "source_sha256": "450753beb54084bc4fb0b75da91f61926bd856e37781cd534e161272a3c01d37",
+      "output": "local-only-generated/exec-77268f1e-d4e2-49fb-ae7f-38b308653da0.png",
+      "status": "rejected_no_alpha",
+      "has_alpha": false,
+      "tool": "image_gen.imagegen",
+      "model_version": null,
+      "output_sha256": "41b827080220e77450a62d5d32de656e02e8e37d89cb5276e3efa6ac6d13391a",
+      "distributed": false
+    }
+  ],
+  "not_started": [],
+  "original_assets": [
+    {
+      "id": "chan-analyst-source",
+      "prompt": "Create one original fictional J Trader Chan-theory market-structure analyst portrait, NOT resembling any specific real person or celebrity. Mature East Asian male financial researcher in his late 50s, thoughtful calm expression, neatly groomed short salt-and-pepper hair, dark tailored suit and subtle charcoal tie, three-quarter half-body professional studio photograph. Fine realistic skin texture, natural facial proportions, crisp eyes and clothing detail, premium black-and-white slightly cool photographic finish consistent with serious financial researcher portraits. Clean completely uniform very dark charcoal background, no texture, no objects, no charts, no text, no logos. Opaque normal photograph, not transparent, no checkerboard. Keep head and shoulders entirely inside the frame with comfortable margin, arms relaxed, lower torso visible, vertical 1024x1536 composition. Soft controlled side lighting, no halo, no blurred face, no theatrical effects.",
+      "source": null,
+      "generated_source": "local-only-generated/exec-0be4a1df-c7d0-4e5f-8801-ef764907a870.png",
+      "output": "ajay-speakers/chan-analyst-source.png",
+      "output_sha256": "5439c916f4c13fea0102a038154562e1aff471d0e90b7ed92ac48c25b2ceffa7",
+      "status": "archived_not_distributed",
+      "background": "dark charcoal, opaque; not transparent",
+      "tool": "image_gen.imagegen",
+      "model_version": null,
+      "distributed": false
+    }
+  ],
+  "updated_at": "2026-09-10T22:37:35.103989+00:00",
+  "method_documentation": "https://developer.apple.com/documentation/vision/vngeneratepersonsegmentationrequest",
+  "speakers": [
+    {
+      "id": "buffett",
+      "source": "ajay-brand/buffett-portrait.png",
+      "source_sha256": "450753beb54084bc4fb0b75da91f61926bd856e37781cd534e161272a3c01d37",
+      "output": "ajay-speakers/buffett.png",
+      "output_sha256": "24645480b84c364cb55eb80d2360d20a04755c2ad33770f332d69fad219edad3",
+      "mask_sha256": "0e088934319b2ac07b10186c8a6e5f8c305f5c8464de8b320918bc09f466eff2",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 34.019,
+      "opaque_percent": 45.826,
+      "soft_edge_and_bottom_percent": 20.155,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 945,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 848,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "simons",
+      "source": "ajay-brand/simons-portrait.png",
+      "source_sha256": "f40abadcf8ef5b4c36fee2ca76dbc9afa6c740d118455a2b0f07a2c2d3cda8bb",
+      "output": "ajay-speakers/simons.png",
+      "output_sha256": "22f6822da79f7fceb0d3dad7986e45a6dd5814585eeda27cddc4723871683f92",
+      "mask_sha256": "c5a6045bca73d02b4a8cae3ea62c7089e324c56ac6d23b376fca12436754464b",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 33.524,
+      "opaque_percent": 47.034,
+      "soft_edge_and_bottom_percent": 19.442,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": null,
+          "curve_applied": false,
+          "frame_feather_fraction": 0.012
+        },
+        "right": {
+          "frame_crop_y": 686,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "graham",
+      "source": "ajay-council/graham-portrait.png",
+      "source_sha256": "28247d7cf8e855fdf0b530a4bd1edc4aee4dee1803dc13a97cd756242b7e851f",
+      "output": "ajay-speakers/graham.png",
+      "output_sha256": "1846d11b8130ab5de4ee166f8f0b27940ca7f36b344094d6c521dbe8f5a2afe9",
+      "mask_sha256": "b5b2145880556d6c45dcfbabc7860f0fe1eac70923c6a7b97ccd1cfcd9c10467",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 34.452,
+      "opaque_percent": 46.397,
+      "soft_edge_and_bottom_percent": 19.151,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 719,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 1355,
+          "curve_applied": false,
+          "frame_feather_fraction": 0.012
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "lynch",
+      "source": "ajay-council/lynch-portrait.png",
+      "source_sha256": "834e60cc3d76b4968e07b94def6e071a28c5c9fb0223f4b409dafb3bcc8b597d",
+      "output": "ajay-speakers/lynch.png",
+      "output_sha256": "71a0c60fea150fcacb5a30bc010fae30399070d94dd5e10912a34d0c9eef77c6",
+      "mask_sha256": "added0a3e6bb20a8e8e19238e68c1fd5d2ac4441249a02e8dc6af4d1e29c06b4",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 37.887,
+      "opaque_percent": 44.133,
+      "soft_edge_and_bottom_percent": 17.98,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 1495,
+          "curve_applied": false,
+          "frame_feather_fraction": 0.012
+        },
+        "right": {
+          "frame_crop_y": 748,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "munger",
+      "source": "ajay-council/munger-portrait.png",
+      "source_sha256": "33b20b6592d6aeda5e948c00524339b5cfd33cf11f5a220024c3d8e4ed1fa66a",
+      "output": "ajay-speakers/munger.png",
+      "output_sha256": "023736b00528e884de1dd32a80324d86d51c4854567cec08e2dad4308104105a",
+      "mask_sha256": "bcd770aa2e58f37fb341e1d13234848f950dadc39b37088c078e399515f08730",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 39.071,
+      "opaque_percent": 42.584,
+      "soft_edge_and_bottom_percent": 18.345,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 718,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 1512,
+          "curve_applied": false,
+          "frame_feather_fraction": 0.012
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "soros",
+      "source": "ajay-council/soros-portrait.png",
+      "source_sha256": "dd8c3129fbbfc09456cfc6afb7414ad4a1cd1965f96726f9ea34ce3894383eeb",
+      "output": "ajay-speakers/soros.png",
+      "output_sha256": "22bf19231ff3cf8b8773ff43c320253d63033ad55497bd442ef2b2b196bfcffb",
+      "mask_sha256": "320f9032e3a6fe4ab649aab88f4e54cce5ef49a9cf87da1526bcc6f150e73cdf",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 35.801,
+      "opaque_percent": 45.87,
+      "soft_edge_and_bottom_percent": 18.328,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 1219,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 841,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "dalio",
+      "source": "ajay-council/dalio-portrait.png",
+      "source_sha256": "d0c08aca33cd6d73e9ea06ec5c74d2bdc9439972d7db0ee6546399d97db6d2ad",
+      "output": "ajay-speakers/dalio.png",
+      "output_sha256": "e3a22a862f26bc89039d815f33614d71c26e5a6e5a3c295518d8f1c1d4c2a870",
+      "mask_sha256": "18343de680ed41a5b2598e4c472f3598d4ea1936bf8eb6ac7c4db5b126a8825a",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 33.837,
+      "opaque_percent": 46.935,
+      "soft_edge_and_bottom_percent": 19.227,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 1044,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 734,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    },
+    {
+      "id": "livermore",
+      "source": "ajay-council/livermore-portrait.png",
+      "source_sha256": "687ac08d679022f99fd435c6c856107cf2e1d42db31e785756817b2cdba88424",
+      "output": "ajay-speakers/livermore.png",
+      "output_sha256": "65e219d75428224baeed9b8275cb1afe50abe059c443a49dc3e5c98eb04009dc",
+      "mask_sha256": "12aabe823396398c86c016332378d10cb614999cc8a55b5da71b2807eba150ab",
+      "dimensions": [
+        1024,
+        1536
+      ],
+      "mode": "RGBA",
+      "method": "Apple Vision VNGeneratePersonSegmentationRequest revision 1, accurate quality, native-size person mask; local alpha composition",
+      "network_upload": false,
+      "source_rgb_preserved_exactly": true,
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_percent": 42.913,
+      "opaque_percent": 40.051,
+      "soft_edge_and_bottom_percent": 17.036,
+      "bottom_fade_start_fraction": 0.83,
+      "silhouette_treatment": "adaptive_curved_crop_fade_v2",
+      "side_profiles": {
+        "left": {
+          "frame_crop_y": 858,
+          "curve_applied": true,
+          "max_inset_fraction": 0.035,
+          "feather_fraction_range": [
+            0.025,
+            0.145
+          ]
+        },
+        "right": {
+          "frame_crop_y": 1519,
+          "curve_applied": false,
+          "frame_feather_fraction": 0.012
+        }
+      },
+      "background_mask_threshold": 3,
+      "opaque_mask_threshold": 248
+    }
+  ],
+  "composition_elapsed_seconds": 9.128,
+  "visual_review": {
+    "status": "reviewed_at_actual_120px_and_200px_in_both_themes",
+    "themes": [
+      "#0b1b26",
+      "#edf2f3"
+    ],
+    "contact_sheets": [
+      "contact-sheet-dark.png",
+      "contact-sheet-light.png"
+    ],
+    "edge_review": "edge-review-light.png",
+    "findings": "Compared fixed 4% vertical feather, 10% inset curve, 16% inset curve, and softer contour. Selected the gentler 3.5% inset with 2.5–14.5% progressive feather, triggered separately at each source-clipped side. The strong 16% curve looked conical and was rejected. Narrower upper shoulder and broader lower-side dissolution reduce the rectangular torso boundary without changing the source RGB. Face and central torso test regions remain alpha 255."
+  },
+  "limitations": [
+    "Fine individual flyaway hairs may be lost by automatic segmentation; the original photographs remain available.",
+    "Original portraits were already frame-cropped at shoulders/torso. The cutout preserves that source composition rather than inventing anatomy."
+  ],
+  "segmentation_elapsed_seconds": 2.393,
+  "local_attempts": [
+    {
+      "method": "Swift Apple Vision entrypoint",
+      "status": "toolchain_error",
+      "note": "Local CommandLineTools duplicate SwiftBridging module definitions; no system files changed. Replaced with Objective-C CLI."
+    },
+    {
+      "method": "VNGenerateForegroundInstanceMaskRequest revision 1",
+      "status": "replaced_after_visual_review",
+      "note": "Generic foreground mask preserved subject but left dark rims around fine white hair on light theme."
+    },
+    {
+      "method": "VNGeneratePersonSegmentationRequest revision 1, quality accurate",
+      "status": "accepted",
+      "native_model_mask_size": [
+        1512,
+        2016
+      ],
+      "output_mask_size": [
+        1024,
+        1536
+      ],
+      "note": "Accurate person mask better preserved fine hair. Output mask rescaled to the unchanged source image coordinates."
+    },
+    {
+      "method": "adaptive_curved_crop_fade_v2",
+      "status": "accepted_after_120px_and_200px_review",
+      "replaces": "fixed 4% vertical frame feather",
+      "previous_output_sha256": {
+        "buffett": "bd1835aa453c48e94081ea9c1312be51329d8925f2902f2cc5acf47ba7ebba9b",
+        "simons": "15182c249843045d86132964c3bea0390534f9e6547137329b59eacb42f2fcbb",
+        "graham": "665173a62dfbfba7a532b2deffcb8d212ddfada6bb06d7ffd48050de4a4d0399",
+        "lynch": "4ca101352e12da6b83e36eca58c506da5b71ab4aaab91a828407c3cca765734e",
+        "munger": "60ed7a659538e42821a57029aa055e5f98f86ad3bc3b6a7c565ef58fec76854a",
+        "soros": "49bc4fcb08dfec56263b7e8e0ed3563d4b16cca3f25887035f5f74673b84ba77",
+        "dalio": "7d16c101e0c54941d0749ae8484e6cfb4f6c62a660cf527b0886a66a8b21259c",
+        "livermore": "93a053f4cc35b37cf10fd71e3bb4b66089ba919023dd54e03b3dba8a952652bf"
+      },
+      "note": "No invented outline pixels: only existing cropped shoulder/torso alpha is smoothly attenuated. Natural uncropped edges are retained."
+    }
+  ]
+}

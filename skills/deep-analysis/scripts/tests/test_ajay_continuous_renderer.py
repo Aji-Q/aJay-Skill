@@ -100,10 +100,22 @@ def test_photography_is_chapter_space_not_switchable_tab(assembled):
     for cls in ['ny-arrival','shanghai-tower','london-frieze','hk-horizon']:
         assert len(index.select(cls=cls))==1
     css=(ASSETS/'report-continuous.css').read_text()
-    assert 'aspect-ratio:835/1884' in css
-    assert 'min-height:1559px' in css
+    assert 'aspect-ratio:4994/11270' in css
+    assert 'min-height:1559px' not in css
+    assert '--tower-runway:clamp(2400px,285svh,3600px)' in css
+    assert 'height:var(--tower-runway)' in css
+    assert 'shanghai-tower img{position:absolute' in css
+    assert 'height:clamp(1350px,180svh,1900px)' in css
+    assert 'model-opening::after' in css and 'london-frieze{position:absolute;inset:0' in css
+    assert len(index.select(id='visual-notes'))==1
+    assert len(index.select(cls='image-credit-mark'))==4
+    assert '摄影来源与呈现说明' not in assembled[1]
     assert 'scroll-snap-type' not in css
-    assert 'wheel' not in (ASSETS/'report-continuous.js').read_text()
+    js=(ASSETS/'report-continuous.js').read_text()
+    # A passive, one-shot gesture observer cancels initial deep-link alignment;
+    # it does not intercept or replace native wheel scrolling.
+    assert 'deltaY' not in js and 'passive: false' not in js
+    assert 'initialNavigationInterrupted = true; }, { once: true, passive: true }' in js
 
 
 def test_raw_payload_injection_is_data_not_executable():
@@ -127,9 +139,31 @@ def test_functional_interaction_and_print_contracts():
 
 def test_midnight_model_and_fancy_data_surface_contracts():
     css=(ASSETS/'report-continuous.css').read_text()
-    for token in ['V5 — midnight data continuum','.table-frame','.ajay-data-table','data-cell-level','.model-chapter svg text','prefers-reduced-motion:reduce']:
+    for token in ['Research room v0','.table-frame','.ajay-data-table','data-cell-level','--bg-void:#07111a','prefers-reduced-motion:reduce','env(safe-area-inset-bottom)']:
         assert token in css
-    assert css.rfind('linear-gradient(180deg,#091522 0%') > css.find('background:#dfe5e9')
+    assert 'background:#dfe5e9' not in css
+    assert 'html.motion-ready .data-reveal:not' not in css
+
+
+def test_continuous_output_has_one_owned_style_and_runtime(assembled):
+    index=ReportIndex(assembled[1])
+    assert len(index.select(tag='style')) == 1
+    assert len(index.select(tag='script')) == 3  # Data, vendored GSAP, report runtime.
+    assert 'LEGACY_JS' not in assembled[1]
+    assert 'LEGACY_CSS' not in assembled[1]
+
+
+def test_price_map_and_assumptions_arrive_before_full_model_record(assembled):
+    index=ReportIndex(assembled[1])
+    stage=index.select(cls='valuation-stage')[0]
+    aside=index.select(cls='model-aside')[0]
+    full=index.select(cls='model-workspace-content')[0]
+    assert stage['start'] < aside['start'] < full['start']
+    assert len(index.select(cls='method-voice',within=aside)) == 2
+    for view in ('chart','table','source'):
+        assert index.select(id='price-panel-'+view)
+        assert index.select(id='price-tab-'+view)
+    assert index.select(id='motion-toggle')
 
 
 def test_nested_kpis_do_not_leak_python_dict_representation():
@@ -167,3 +201,66 @@ def test_mobile_photo_keeps_research_tasks_and_segment_state():
     assert len(index.select(cls='evidence-link',within=notes))==3
     assert index.select(cls='market-actions')
     assert index.select(cls='model-directory')
+
+
+def test_semantic_pale_backgrounds_follow_theme_without_changing_data():
+    from lib.report.continuous_renderer import normalize_presentation
+    markup='<div style="background:#fef3c7;color:#059669">0</div><tr style="background:#fffbeb"></tr><svg><path fill="#fef3c7" stroke="#ef4444"/></svg>'
+    result=normalize_presentation(markup)
+    assert result.count('var(--gold-tint,#')==2
+    assert 'var(--bull-green,#059669)' in result
+    assert '>0</div>' in result
+    assert '<path fill="#fef3c7" stroke="#ef4444"/>' in result
+
+
+def test_shanghai_photo_is_decoupled_from_full_evidence(assembled):
+    index=ReportIndex(assembled[1])
+    story=index.select(cls='quality-grid')[0]
+    foundation=index.select(cls='quality-foundation')[0]
+    assert not index.select(cls='dim-card',within=story)
+    assert len(index.select(cls='dim-card',within=foundation)) >= 2
+    assert story['end'] < foundation['start']
+    photo=index.select(cls='shanghai-tower')[0]
+    img=index.select(tag='img',within=photo)[0]
+    assert img['attrs']['width']=='4994' and img['attrs']['height']=='11270'
+    for ident in ('quality-return','quality-growth','quality-governance'):
+        assert len(index.select(id=ident))==1
+        assert f'data-research-target="{ident}"' in index.html(photo)
+    assert '楼层位置不代表财务评分' in index.html(photo)
+
+
+def test_original_shanghai_resolution_and_attribution():
+    from PIL import Image
+    photo=next(x for x in json.loads((ASSETS/'ajay-council/photography.json').read_text()) if x['id']=='shanghai')
+    with Image.open(ASSETS/'ajay-council'/photo['asset']) as image:
+        assert image.size==(4994,11270)
+    assert photo['license']=='CC BY 4.0'
+    assert '原片' in photo['credit']
+    assert 'no AI reconstruction' in photo['render_method']
+
+
+def test_person_entry_is_one_time_and_keeps_faces_opaque():
+    js=(ASSETS/'report-continuous.js').read_text()
+    css=(ASSETS/'report-continuous.css').read_text()
+    assert 'const editorialPlayed = new WeakSet()' in js
+    assert 'editorialPlayed.add(entry.target)' in js
+    assert 'loop:' not in js and 'repeat: -1' not in js
+    # Native RGBA assets already fade their lower edge; avoid double fading faces/body.
+    assert '.voice-photo.is-cutout img{mask-image:none}' in css
+    assert '.voice-photo{opacity:' not in css
+    assert 'updateQualityScene' in js
+
+
+def test_chan_desk_owns_market_primary_chart_and_preserves_technical_card(assembled):
+    index=ReportIndex(assembled[1])
+    desk=index.select(id='chan-workspace')[0]
+    conventional=index.select(cls='technical-details')[0]
+    dialogue=index.select(cls='market-dialogue')[0]
+    assert desk['end'] <= conventional['start'] < dialogue['start']
+    technical=[n for n in index.select(cls='dim-card') if n['attrs'].get('data-dim')=='02']
+    assert len(technical)==1
+    assert conventional['inside'] < technical[0]['start'] < conventional['close']
+    assert len(index.select(tag='style'))==1
+    assert len(index.select(tag='script'))==3
+    assert 'chan-analyst-source.png' not in index.html(desk)
+    assert not index.select(cls='chan-expert',within=desk)

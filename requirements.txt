@@ -25,5 +25,5 @@ playwright>=1.42.0
 rich>=13.0.0
 
 # aJay additions
-czsc>=1.0.0          # 缠论结构(chan_signals.py)
+czsc==1.0.1          # 缠论结构(chan_signals.py) · chan.v1兼容版本
 # moomoo-api           # 资金流向/行情,需本机 OpenD;按需手动安装

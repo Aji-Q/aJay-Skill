@@ -67,8 +67,14 @@ def test_real_financial_photos_have_distinct_sources():
         assert item['date_kind'] in ('captured','published')
         assert item['source_url'].startswith('https://')
         assert item['license_url'].startswith('https://')
-        assert item['author'] and 'image' in item['credit']
-        assert hashlib.sha256((ASSETS/'ajay-council'/item['asset']).read_bytes()).hexdigest()==item['edited_sha256']
+        assert item['author']
+        if item['id']=='shanghai':
+            assert '实拍原片' in item['credit']
+            assert item['rendered_dimensions']==[4994,11270]
+        else:
+            assert 'image' in item['credit']
+        expected_hash=item.get('rendered_sha256') or item['edited_sha256']
+        assert hashlib.sha256((ASSETS/'ajay-council'/item['asset']).read_bytes()).hexdigest()==expected_hash
         assert item['model_version']=='not returned by tool'
         assert '-room.png' not in item['asset']
     shanghai=next(e for e in entries if e['id']=='shanghai')

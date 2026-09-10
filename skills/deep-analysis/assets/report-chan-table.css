@@ -1,0 +1,32 @@
+/* Structure ledger: restrained, dense evidence below the visual explanation. */
+.chan-desk .chan-point-table-wrap{max-height:430px;overflow:auto;border-radius:0;scrollbar-width:thin;scrollbar-color:var(--chan-border) transparent}
+.chan-desk .chan-point-table{min-width:1120px;font-size:12px}
+.chan-desk .chan-point-table th{position:sticky;top:0;z-index:2;background:var(--chan-elevated);font:10px/1.5 var(--ajay-mono);padding:13px 12px;letter-spacing:.04em}
+.chan-desk .chan-point-table th:first-child,.chan-desk .chan-point-table td:first-child{position:sticky;left:0;z-index:1;background:var(--chan-surface);min-width:160px;max-width:210px;white-space:normal}
+.chan-desk .chan-point-table th:first-child{z-index:3;background:var(--chan-elevated)}
+.chan-desk .chan-point-table tr.is-selected td{background:var(--chan-tint)}
+.chan-desk .chan-point-table tr:hover td{background:var(--chan-tint)}
+.chan-desk .chan-point-table .chan-basis-cell,.chan-desk .chan-point-table .chan-invalid-cell{min-width:220px;max-width:280px;white-space:normal;line-height:1.8}
+.chan-desk .chan-point-table .chan-date-cell{font:10px/1.8 var(--ajay-mono);max-width:190px;white-space:normal}
+.chan-desk .chan-point-table .chan-price-cell{font:12px/1.8 var(--ajay-mono);color:var(--chan-bright);font-variant-numeric:tabular-nums}
+.chan-desk .chan-point-button{min-height:38px;line-height:1.6}.chan-structure-id{display:block;font:9px/1.8 var(--ajay-mono);color:var(--chan-dim);overflow-wrap:anywhere}
+.chan-desk .chan-point-table caption{font:10px/1.7 var(--ajay-mono);padding:14px 12px;letter-spacing:.06em}
+@media print{
+ .chan-desk .chan-point-table-wrap{max-height:none;overflow:visible;border:0}
+ .chan-desk .chan-point-table{min-width:0;font-size:8pt;table-layout:fixed;width:100%}
+ .chan-desk .chan-point-table th,.chan-desk .chan-point-table td{position:static!important;min-width:0!important;max-width:none!important;white-space:normal!important;font-size:8pt!important;overflow-wrap:anywhere;padding:5px!important}
+ .chan-desk .chan-point-table tr{break-inside:avoid}.chan-desk .chan-point-button{min-height:0;font-size:8pt}
+}
+
+.chan-selected-detail{padding:14px 0 18px;border-bottom:1px solid var(--chan-border);margin-bottom:18px}
+.chan-selected-detail h4{font:22px/1.3 var(--ajay-serif);margin:0 0 12px;color:var(--chan-cyan)}
+.chan-selected-detail p{font-size:12px;line-height:1.7;color:var(--chan-muted);margin:6px 0;overflow-wrap:anywhere}
+.chan-selected-detail p strong{display:block;font:10px var(--ajay-mono);color:var(--chan-dim);margin-bottom:4px}
+@media print{
+ .chan-desk .chan-condition-line[hidden],.chan-desk .chan-condition-link[hidden],.chan-desk .chan-condition-arrow[hidden],.chan-desk .chan-condition-label[hidden]{display:inline!important}
+}
+
+
+.chan-selected-detail{display:grid;grid-template-columns:minmax(180px,1fr) 2fr 2fr;gap:12px 24px;margin:0;padding:20px 0;border:0;border-top:1px solid var(--chan-border-soft)}
+.chan-selected-detail h4{font-size:22px;margin:0}.chan-selected-detail p{margin:0}
+@media(max-width:960px){.chan-selected-detail{grid-template-columns:1fr}}
