@@ -54,13 +54,13 @@ def test_panel_record_distinguishes_score_from_simulated_agreement():
 def assembled(tmp_path_factory):
     import assemble_report as report
     from lib.report.demo_fixture import augment_demo
-    raw=augment_demo({'ticker':'AJAY.DEMO','is_demo':True,'market':'U','dimensions':{'0_basic':{'data':{'name':'Demo','price':100}}}})
-    inputs={'raw_data':raw,'panel':{'investors':[]},'dimensions':{'fundamental_score_valid':False},'synthesis':{'ticker':'AJAY.DEMO','name':'Demo','overall_score':56,'verdict_label':'UNSUPPORTED BUY','dashboard':{}}}
+    raw=augment_demo({'ticker':'JTRADER.DEMO','is_demo':True,'market':'U','dimensions':{'0_basic':{'data':{'name':'Demo','price':100}}}})
+    inputs={'raw_data':raw,'panel':{'investors':[]},'dimensions':{'fundamental_score_valid':False},'synthesis':{'ticker':'JTRADER.DEMO','name':'Demo','overall_score':56,'verdict_label':'UNSUPPORTED BUY','dashboard':{}}}
     with pytest.MonkeyPatch.context() as m:
         m.setattr(report,'read_task_output',lambda ticker,key:inputs.get(key))
         m.setattr(report,'market_status',lambda market:{'label':'TEST','is_open':False})
         m.setenv('AJAY_SKIP_REVIEW','1');m.chdir(tmp_path_factory.mktemp('continuous'))
-        path=report.assemble('AJAY.DEMO')
+        path=report.assemble('JTRADER.DEMO')
         path=path.resolve();html=path.read_text()
     return path,html
 
@@ -141,7 +141,7 @@ def test_nested_kpis_do_not_leak_python_dict_representation():
 
 def test_entry_uses_quality_gated_conclusion_not_generic_cover_copy():
     legacy='<div class="hero-copy"><p class="one-liner">GENERIC SLOGAN</p><div class="price-row">0</div></div><div class="core-conclusion"><div class="text">Evidence &amp; limitations</div></div>'
-    html=render_continuous({'ticker':'AJAY.DEMO'}, {}, legacy)
+    html=render_continuous({'ticker':'JTRADER.DEMO'}, {}, legacy)
     hero=ReportIndex(html).first(cls='hero-copy')
     assert 'GENERIC SLOGAN' not in hero
     assert 'Evidence &amp; limitations' in hero
@@ -151,7 +151,7 @@ def test_entry_uses_quality_gated_conclusion_not_generic_cover_copy():
 
 def test_missing_governance_cannot_render_as_clean_in_visible_chat():
     legacy='<main><div class="chat-container"><p>治理干净</p><div>符合标准： • [权4] 治理干净 • [权3] 其他规则</div></div></main>'
-    html=render_continuous({'ticker':'AJAY.DEMO'}, {}, legacy)
+    html=render_continuous({'ticker':'JTRADER.DEMO'}, {}, legacy)
     chat=ReportIndex(html).first(cls='chat-container')
     assert '治理材料缺失 · 待核验' in chat
     assert '治理干净' not in chat

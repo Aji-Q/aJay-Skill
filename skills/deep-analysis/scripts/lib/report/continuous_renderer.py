@@ -153,7 +153,7 @@ def render_continuous(raw, analysis, legacy_html):
     for a,b in [('&','\\u0026'),('<','\\u003c'),('>','\\u003e'),('\u2028','\\u2028'),('\u2029','\\u2029')]:payload=payload.replace(a,b)
     credits=''.join(f'<li><strong>{escape(p["name"])}</strong><p>{escape(p["author"])} · {escape(p["date"])} {"拍摄" if p["date_kind"]=="captured" else "发布，拍摄日未确认"} · <a href="{escape(p["source_url"],quote=True)}" target="_blank" rel="noopener noreferrer">原摄影作品</a> · <a href="{escape(p["license_url"],quote=True)}" target="_blank" rel="noopener noreferrer">{escape(p["license"])}</a></p><p>以原图为参照，经 image 工具局部重构曝光与材质；不是未经修改的实拍。{escape(p["credit"])}</p></li>' for p in photos)
     values={
-      'TITLE':name+' · aJay Private Research','NAME':name,'TICKER':ticker,
+      'TITLE':name+' · J Trader Private Research','NAME':name,'TICKER':ticker,
       'LEGACY_CSS':old_styles,'CSS':(ASSETS/'report-continuous.css').read_text(),
       'HERO_COPY':hero,'CORE':block('core-overview')+block('dashboard-bento'),
       'NOTICES':block('report-notices'),'EVIDENCE':block('evidence-strip'),

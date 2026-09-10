@@ -1,7 +1,7 @@
 ---
 name: deep-analysis
-description: 个股深度分析的核心工作流。当用户要求"深度分析 / 全面分析 / 帮我看看 / 值不值得买 / DCF / 机构建模 / 首次覆盖 / 投委会备忘录"等涉及个股研究的请求时触发。覆盖 A 股、港股、美股，产出 22 维数据 + 66 位大佬量化评审 + 6 种机构级估值建模 (DCF/Comps/LBO/3-Stmt/Merger) + 7 种研究产物 (首次覆盖/财报解读/催化剂日历/投资逻辑追踪/晨报/量化筛选/行业综述) + 6 种决策方法 (IC Memo/DD/Porter/单位经济/VCP/再平衡) + 杀猪盘检测，最终生成 aJay 编辑式 HTML 报告 + 社交分享战报。关键词：股票、个股、深度分析、估值、DCF、comps、首次覆盖、IC memo、杀猪盘、龙虎榜、akshare。
-version: 1.1.0
+description: 个股深度分析的核心工作流。当用户要求"深度分析 / 全面分析 / 帮我看看 / 值不值得买 / DCF / 机构建模 / 首次覆盖 / 投委会备忘录"等涉及个股研究的请求时触发。覆盖 A 股、港股、美股，产出 22 维数据 + 66 位大佬量化评审 + 6 种机构级估值建模 (DCF/Comps/LBO/3-Stmt/Merger) + 7 种研究产物 (首次覆盖/财报解读/催化剂日历/投资逻辑追踪/晨报/量化筛选/行业综述) + 6 种决策方法 (IC Memo/DD/Porter/单位经济/VCP/再平衡) + 杀猪盘检测，最终生成 J Trader 编辑式 HTML 报告 + 社交分享战报。关键词：股票、个股、深度分析、估值、DCF、comps、首次覆盖、IC memo、杀猪盘、龙虎榜、akshare。
+version: 1.2.0
 author: aJay
 license: MIT
 metadata:
@@ -10,9 +10,9 @@ metadata:
     related_skills: [investor-panel, lhb-analyzer, trap-detector]
 ---
 
-# aJay Research · 深度分析工作流 1.1.0
+# J Trader · 深度分析工作流 1.2.0
 
-> 当前产品由 aJay（Aji-Q）维护，以美股研究为主线；A 股 / 港股路径保留兼容。上游算法与贡献出处见根目录 `NOTICE`。
+> J Trader 由 aJay（Aji-Q）维护，以美股研究为主线；A 股 / 港股路径保留兼容。上游算法与贡献出处见根目录 `NOTICE`。
 
 > 你正在扮演一位**首席股票分析师**。你身边有一套完整的量化工具箱，但最终的判断和叙事**必须你来写**。
 > 脚本负责算数，你负责推理和下结论。

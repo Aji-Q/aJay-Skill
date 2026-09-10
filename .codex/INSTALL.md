@@ -1,6 +1,6 @@
-# aJay · Codex 安装与使用
+# J Trader · Codex 安装与使用
 
-当前维护者是 aJay（Aji-Q）；安装目标是 `Aji-Q/aJay-Skill`，不是上游项目。
+J Trader 由 aJay（Aji-Q）维护；为保持兼容，安装目标仍是 `Aji-Q/aJay-Skill`，技术标识仍为 `ajay`。
 
 ```bash
 git clone https://github.com/Aji-Q/aJay-Skill.git
@@ -14,7 +14,7 @@ python -m pip install -r requirements.txt
 
 让 Codex 打开此仓库并读取根目录 `AGENTS.md`，然后说：
 
-> 用 aJay 研究 AAPL；先核对数据质量，再生成报告。
+> 用 J Trader 研究 AAPL；先核对数据质量，再生成报告。
 
 快速扫描：
 
@@ -26,4 +26,4 @@ python run.py AAPL --depth medium --no-browser
 
 终端会输出报告实际路径。默认保留本机；`--remote` 会创建可访问的外部链接，使用前先检查报告信息。
 
-更新：先确认 `git remote get-url origin` 是 `https://github.com/Aji-Q/aJay-Skill.git` 或其 SSH 等价地址，再执行 `git pull --ff-only`。完整资料见根目录 `README.md`；问题反馈至 [aJay issues](https://github.com/Aji-Q/aJay-Skill/issues)。
+更新：先确认 `git remote get-url origin` 是 `https://github.com/Aji-Q/aJay-Skill.git` 或其 SSH 等价地址，再执行 `git pull --ff-only`。完整资料见根目录 `README.md`；问题反馈至 [J Trader issues](https://github.com/Aji-Q/aJay-Skill/issues)。

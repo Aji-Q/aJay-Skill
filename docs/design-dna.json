@@ -1,5 +1,7 @@
 {
-  "brand": "aJay",
+  "brand": "J Trader",
+  "maintainer": "aJay (Aji-Q)",
+  "product_version": "1.2.0",
   "owner": "Aji-Q",
   "version": "2.0.0",
   "status": "current preview verified; screen-reader and print-cleanup checks pending",
@@ -254,7 +256,7 @@
     "photography_records": "docs/PHOTOGRAPHY-PROVENANCE.md",
     "ownership_records": "docs/OWNERSHIP.md",
     "upstream_rights": "original open-source code, libraries, photography and licenses remain with their respective rights holders",
-    "aJay_scope": "new report orchestration, visual arrangement, implementation changes and project-authored copy",
+    "maintainer_scope": "new report orchestration, visual arrangement, implementation changes and project-authored copy",
     "reference": "https://vantara.in/en",
     "reference_boundary": "layout and rhythm research only; no claim of source-code, brand, photo, font or copy reuse"
   }

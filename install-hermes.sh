@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# install-hermes.sh · aJay 1.1.0
+# install-hermes.sh · J Trader 1.2.0
 #
-# Install reviewed local aJay source as Hermes skill symlinks.
+# Install reviewed local J Trader source as Hermes skill symlinks.
 # This local-source route does not run Hermes Hub / Skills Guard scanning.
 # Review this script and its dependencies before executing it.
 #
@@ -15,7 +15,7 @@
 set -euo pipefail
 
 REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据;不再默认克隆上游 UZI-Skill
-[ -n "$REPO_URL" ] || [ -d "$(dirname "$0")/skills" ] || { echo "❌ 请设 AJAY_REPO_URL=<你的 aJay 仓库地址>,或在 ~/Claude/aJay 源码目录内运行"; exit 1; }
+[ -n "$REPO_URL" ] || [ -d "$(dirname "$0")/skills" ] || { echo "❌ 请设 AJAY_REPO_URL=<你的 J Trader 仓库地址>,或在 ~/Claude/aJay 源码目录内运行"; exit 1; }
 
 # Compare repository identities before updating an existing checkout. Accept
 # GitHub HTTPS/SSH spellings, but never silently repoint another project's origin.
@@ -25,12 +25,12 @@ normalize_repo_url() {
 verify_repo_origin() {
     local directory="$1" actual
     actual=$(git -C "$directory" remote get-url origin 2>/dev/null) || {
-        echo "❌ $directory 没有 origin；请先确认它是 aJay 源码，再配置来源。"
+        echo "❌ $directory 没有 origin；请先确认它是 J Trader 源码，再配置来源。"
         return 1
     }
     if [ "$(normalize_repo_url "$actual")" != "$(normalize_repo_url "$REPO_URL")" ]; then
         echo "❌ 仓库来源不匹配：$actual"
-        echo "   预期：${REPO_URL}；未更新该目录。请选择新的 aJay 目录，或显式设置 AJAY_REPO_URL。"
+        echo "   预期：${REPO_URL}；未更新该目录。请选择新的 J Trader 目录，或显式设置 AJAY_REPO_URL。"
         return 1
     fi
 }
@@ -42,7 +42,7 @@ HERMES_SKILLS_DIR="$HERMES_HOME/skills"
 SKILLS=(deep-analysis investor-panel lhb-analyzer trap-detector)
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🛠   aJay-Skill · Hermes 本地源码安装（不运行 Skills Guard 扫描）"
+echo "🛠   J Trader · Hermes 本地源码安装（不运行 Skills Guard 扫描）"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "  Repo:    $REPO_URL"
 echo "  Clone →  $CLONE_DIR"
@@ -200,7 +200,7 @@ echo "✅ 安装完成！"
 echo ""
 echo "下一步："
 echo "   1. 启动 Hermes:    hermes"
-echo "   2. 列出 skills:    /skills            (应见 4 个 aJay skill)"
+echo "   2. 列出 skills:    /skills            (应见 4 个 J Trader skill)"
 echo "   3. 触发分析:       直接用自然语言说「分析 AAPL」或「深度分析 MSFT」"
 echo "                      → 自动触发 deep-analysis skill"
 echo ""

@@ -1,5 +1,5 @@
 #!/bin/bash
-# aJay-Skill 一键安装脚本
+# J Trader 一键安装脚本（技术目录名保留 aJay-Skill）
 # 用法: bash ~/Claude/aJay/setup.sh        # 在源码目录内运行;不在目录内时 AJAY_REPO_URL 默认 https://github.com/Aji-Q/aJay-Skill.git
 
 set -e
@@ -14,18 +14,18 @@ normalize_repo_url() {
 verify_repo_origin() {
     local directory="$1" actual
     actual=$(git -C "$directory" remote get-url origin 2>/dev/null) || {
-        echo "❌ $directory 没有 origin；请先确认它是 aJay 源码，再配置来源。"
+        echo "❌ $directory 没有 origin；请先确认它是 J Trader 源码，再配置来源。"
         return 1
     }
     if [ "$(normalize_repo_url "$actual")" != "$(normalize_repo_url "$REPO_URL")" ]; then
         echo "❌ 仓库来源不匹配：$actual"
-        echo "   预期：${REPO_URL}；未更新该目录。请选择新的 aJay 目录，或显式设置 AJAY_REPO_URL。"
+        echo "   预期：${REPO_URL}；未更新该目录。请选择新的 J Trader 目录，或显式设置 AJAY_REPO_URL。"
         return 1
     fi
 }
 
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo "🎯 aJay Skills · 安装中..."
+echo "🎯 J Trader · 安装中..."
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
 # 检查 Python
@@ -50,7 +50,7 @@ if [ ! -f "run.py" ]; then
         verify_repo_origin "aJay-Skill"
         cd aJay-Skill && git pull --ff-only origin
     else
-        # 默认克隆 aJay 自己的 private 仓库(不是上游 UZI-Skill);可用 AJAY_REPO_URL 覆盖
+        # 默认克隆 J Trader 官方仓库；技术仓库名保留 aJay-Skill，可用 AJAY_REPO_URL 覆盖
         AJAY_REPO_URL="${AJAY_REPO_URL:-https://github.com/Aji-Q/aJay-Skill.git}"  # private 仓库,需本机已配置 GitHub 凭据
         echo "⏬ 克隆仓库 $AJAY_REPO_URL ..."
         git clone "$AJAY_REPO_URL" aJay-Skill
@@ -119,7 +119,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "✅ 安装完成！"
 echo ""
 echo "用法:"
-echo "  python run.py AAPL              # aJay 美股研究"
+echo "  python run.py AAPL              # J Trader 美股研究"
 echo "  python run.py 贵州茅台          # A 股兼容工作流"
 echo "  python run.py 00700.HK          # 分析港股"
 echo "  python run.py AAPL --remote      # 主动公开报告访问链接"

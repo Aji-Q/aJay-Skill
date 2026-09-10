@@ -1,8 +1,8 @@
 > 当前主报告城市图已改为近期真实金融摄影轻微重构，见 [PHOTOGRAPHY-PROVENANCE.md](PHOTOGRAPHY-PROVENANCE.md)。下文仅保留V1生成图历史记录，不能当作当前采用列表。
 
-# aJay 品牌图像来源记录
+# J Trader 品牌图像来源记录
 
-日期：2026-09-09。用途：aJay 研究报告的摄影质感主视觉与章节分隔。最新采用方向为黑曜石、深海军蓝、金属银的金融科技夜景；自然晨光与庭院方向已撤下，保留为未采用概念稿。
+日期：2026-09-09。用途：J Trader 研究报告的摄影质感主视觉与章节分隔。最新采用方向为黑曜石、深海军蓝、金属银的金融科技夜景；自然晨光与庭院方向已撤下，保留为未采用概念稿。
 
 ## 真实性与工具记录
 
@@ -10,7 +10,7 @@
 - 使用 Codex 内置 `image_gen.imagegen` 工具；没有使用 CLI/API fallback。
 - 庭院图及两张金融夜景图的实际返回包含 `image_url`（PNG data URL）和 `output_hint`（默认保存路径），未返回可独立核实的模型版本字段。因此本项目不将这些生成宣称为 “image-2.5”。
 - 原始 PNG 留在工具默认生成目录；项目素材是无修改的逐字节副本。后续用于网页的压缩版、裁剪版或重新生成版本应另记录，不覆盖此来源记录。
-- 这些素材用于 aJay 品牌表达，不使用 Vantara 的图像、商标或站点截图作为源图。生成过程没有输入参考图片。
+- 这些素材用于 J Trader 品牌表达，不使用 Vantara 的图像、商标或站点截图作为源图。生成过程没有输入参考图片。
 
 ## 01 · 水岸与森林晨光 Hero
 
@@ -40,7 +40,7 @@
 
 ```text
 Use case: photorealistic-natural
-Asset type: premium editorial architecture photograph for a wide 16:9 section divider in aJay's investment research report, titled “Long view” by the surrounding webpage; render no words inside the image.
+Asset type: premium editorial architecture photograph for a wide 16:9 section divider in J Trader's investment research report, titled “Long view” by the surrounding webpage; render no words inside the image.
 Primary request: a serene contemporary research library courtyard with a warm limestone arcade, mature deep-green palms and lush courtyard planting, morning sunlight and long architectural shadows.
 Scene and subject: a believable modern institutional library or research retreat; a sequence of beautifully proportioned pale limestone arches and quiet sheltered colonnades frames a green courtyard. The material is softly textured natural warm limestone, with subtle weathering and realistic joints. Plantings feel established and carefully maintained, not tropical fantasy.
 Style/medium: high-end architectural magazine photography, genuinely photographic material detail, restrained and sophisticated, naturally imperfect, not CGI or an illustration. Shot with a full-frame architectural camera and a tilt-shift lens, carefully corrected verticals, realistic depth and tonal range.
@@ -130,6 +130,6 @@ The generated image is already displayed to the user. There is no need to render
 
 ## 使用与署名边界
 
-- 页面、仓库与报告品牌归属以 aJay 为产品身份；图像应描述为 aJay 项目专用的生成素材，而不是声称“aJay 实地摄影”。
+- 页面、仓库与报告品牌归属以 J Trader 为产品身份；图像应描述为 J Trader 项目专用的生成素材，而不是声称“aJay 实地摄影”。
 - 此记录不承诺 AI 生成内容具有排他著作权，也不改变项目继承代码或其他第三方素材的许可义务。
 - 本次图像任务只新增 PNG 与本来源记录，没有修改模板、CSS 或报告数据。

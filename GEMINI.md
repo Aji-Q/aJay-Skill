@@ -1,6 +1,6 @@
-# aJay · Gemini CLI 指令
+# J Trader · Gemini CLI 指令
 
-由 aJay（Aji-Q）维护的美股研究工作台，保留 A 股 / 港股兼容路径。
+J Trader 是由 aJay（Aji-Q）维护的美股研究助手，保留 A 股 / 港股兼容路径；扩展技术名仍为 `ajay`。
 
 ## 安装与更新
 
@@ -18,7 +18,7 @@ python run.py AAPL --depth medium --no-browser
 
 ## 完整流程
 
-读 `AGENTS.md` 和 `skills/deep-analysis/SKILL.md`：采集 → 按需美股补数 → 重新建模 / 输入指纹 → agent 证据复核 → aJay 编辑式 HTML 报告。
+读 `AGENTS.md` 和 `skills/deep-analysis/SKILL.md`：采集 → 按需美股补数 → 重新建模 / 输入指纹 → agent 证据复核 → J Trader 编辑式 HTML 报告。
 
 模拟评审不是人物真实观点，评分不是收益概率。缺失来源应明确展示；默认报告保留本地。
 

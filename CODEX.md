@@ -1,4 +1,4 @@
-# aJay-Skill · Codex 专属指引
+# J Trader · Codex 专属指引
 
 > 本文件供 **OpenAI Codex CLI / codex-rescue agent** 读取.
 > 作用：在短上下文场景下给 codex 一份浓缩的项目地图 · 避免走错目录 / 误报结构问题.

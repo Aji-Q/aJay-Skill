@@ -45,7 +45,7 @@
   const downloadButton=$('#download-inputs');
   downloadButton.addEventListener('click',()=>{
     downloadButton.classList.add('is-busy');downloadButton.setAttribute('aria-busy','true');downloadButton.textContent='正在准备研究输入';
-    requestAnimationFrame(()=>{const blob=new Blob([JSON.stringify({report:'aJay continuous research',raw:data.raw,analysis:data.analysis},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=node('a');a.href=url;a.download=`aJay-${String(data.raw.ticker||'report').replace(/[^a-zA-Z0-9._-]/g,'_')}-inputs.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);downloadButton.classList.remove('is-busy');downloadButton.removeAttribute('aria-busy');downloadButton.textContent='研究输入已生成';setTimeout(()=>downloadButton.textContent='下载研究输入',1800);});
+    requestAnimationFrame(()=>{const blob=new Blob([JSON.stringify({report:'J Trader continuous research',raw:data.raw,analysis:data.analysis},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=node('a');a.href=url;a.download=`J-Trader-${String(data.raw.ticker||'report').replace(/[^a-zA-Z0-9._-]/g,'_')}-inputs.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);downloadButton.classList.remove('is-busy');downloadButton.removeAttribute('aria-busy');downloadButton.textContent='研究输入已生成';setTimeout(()=>downloadButton.textContent='下载研究输入',1800);});
   });
   $('#expand-research').addEventListener('click',()=>{$$('details.research-category').forEach(d=>d.open=true);$('#expand-research').textContent='全部研究维度已展开';});
   const search=$('#perspective-search'),messages=$$('.chat-msg');

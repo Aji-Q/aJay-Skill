@@ -1,4 +1,4 @@
-"""aJay report contracts: truthful evidence, original assets and offline rendering."""
+"""J Trader report contracts: truthful evidence, original assets and offline rendering."""
 from pathlib import Path
 import re
 import pytest
@@ -44,7 +44,7 @@ def test_old_confidence_not_presented_as_current_coverage(tmp_path):
 def test_core_photography_and_ownership():
     for name in ['manhattan-night.png', 'shanghai-night.png', 'buffett-portrait.png', 'simons-portrait.png']:
         assert (ASSETS / 'ajay-brand' / name).is_file()
-    assert 'aJay Research' in TEMPLATE
+    assert 'J Trader' in TEMPLATE
     assert 'AI-GENERATED PORTRAITS' in TEMPLATE
     assert 'FloatFu-true' not in TEMPLATE and 'wbh604' not in TEMPLATE
 

@@ -1,4 +1,4 @@
-"""Complete the offline ``AJAY.DEMO`` report fixture.
+"""Complete the offline ``JTRADER.DEMO`` report fixture.
 
 This module is deliberately a data-only fixture adapter.  It never resolves a
 ticker, reads a provider, or makes a network request.  ``augment_demo`` takes
@@ -18,8 +18,8 @@ import math
 from typing import Any, Mapping
 
 
-FIXTURE_ID = "AJAY.DEMO"
-FIXTURE_SOURCE = "fixture:AJAY.DEMO synthetic/offline"
+FIXTURE_ID = "JTRADER.DEMO"
+FIXTURE_SOURCE = "fixture:JTRADER.DEMO synthetic/offline"
 FIXTURE_DATE = date(2026, 9, 9)
 
 

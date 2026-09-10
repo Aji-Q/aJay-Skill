@@ -1,4 +1,4 @@
-"""aJay report evidence surface. Coverage is not calibrated predictive confidence."""
+"""J Trader report evidence surface. Coverage is not calibrated predictive confidence."""
 from __future__ import annotations
 
 import math

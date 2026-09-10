@@ -1,7 +1,7 @@
 ---
 name: ajay
-description: aJay US-focused equity research skill (A-share/Hong Kong workflows retained for compatibility) for deep research, quick scans, investor panel review, hot-money/LHB analysis, trap detection, valuation, IC memos, and aJay editorial HTML reports.
-version: 1.1.0
+description: J Trader, an open-source AI US-equity research skill (A-share/Hong Kong workflows retained for compatibility) for deep research, quick scans, investor panel review, hot-money/LHB analysis, trap detection, valuation, IC memos, and J Trader editorial HTML reports.
+version: 1.2.0
 author: aJay
 license: MIT
 metadata:
@@ -9,9 +9,9 @@ metadata:
   related_skills: [deep-analysis, investor-panel, lhb-analyzer, trap-detector]
 ---
 
-# aJay Skill Root · 1.1.0
+# J Trader Skill Root · 1.2.0
 
-Maintained by **aJay (Aji-Q)** at `https://github.com/Aji-Q/aJay-Skill`.
+**J Trader** is maintained by **aJay (Aji-Q)** at `https://github.com/Aji-Q/aJay-Skill`.
 The product focus is US equity research; legacy A-share/Hong Kong workflows remain available.
 Upstream code and contributor credit are recorded in `NOTICE` and `docs/OWNERSHIP.md`.
 

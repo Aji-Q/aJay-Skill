@@ -1,6 +1,14 @@
-aJay-Skill 1.1.0
+J Trader 1.2.0
 Maintained by aJay (Aji-Q)
 Canonical repository: https://github.com/Aji-Q/aJay-Skill
+
+PRODUCT IDENTITY
+J Trader is the current product and user-facing report brand. aJay (Aji-Q) is
+the maintainer and creator of this distribution's product direction, interface,
+copy and project-specific modifications. For backward compatibility, the
+repository slug aJay-Skill, plugin ID ajay, command namespace /ajay:, AJAY_*
+environment variables and existing ajay-* asset paths remain technical identifiers.
+Installation, updates and project-support links point to Aji-Q/aJay-Skill.
 
 PROVENANCE
 This project is derived from stock-deep-analyzer 3.9.4, distributed through
@@ -11,29 +19,25 @@ Original author/contributor aliases include FloatFu-true; historical contributor
 and release records remain in docs/UPSTREAM-CONTRIBUTORS.md and
 docs/UPSTREAM-RELEASE-NOTES.md.
 
-Copyright (c) 2026 aJay (Aji-Q), for aJay-specific additions and modifications.
+Copyright (c) 2026 aJay (Aji-Q), for J Trader-specific additions and modifications.
 This notice does not transfer upstream copyright, erase third-party credit or
 claim that all inherited software was originally authored by aJay. The project
-continues to use the MIT License; the aJay identity does not make inherited
-MIT-licensed code exclusively owned by aJay.
-
-PROJECT IDENTITY
-The current project name, maintained distribution and user-facing report brand
-are aJay. aJay is not an official upstream release or an endorsement by upstream
-contributors, simulated investors, market-data providers or UI reference sites.
-Installation, updates and project-support links should point to Aji-Q/aJay-Skill.
+continues to use the MIT License; the J Trader identity does not make inherited
+MIT-licensed code exclusively owned by aJay. J Trader is not an official upstream
+release or an endorsement by upstream contributors, simulated investors,
+market-data providers or UI reference sites.
 
 DESIGN REFERENCE
 The editorial report layout takes inspiration from Vantara (https://vantara.in/en).
-Vantara logos, photographs, copy and source assets are not redistributed as aJay
-assets. No Vantara affiliation, sponsorship or endorsement is claimed.
+Vantara logos, photographs, copy and source assets are not redistributed as
+J Trader assets. No Vantara affiliation, sponsorship or endorsement is claimed.
 
 HISTORICAL MATERIAL
 Snapshots under docs/archive/, upstream history documents and existing screenshots
 are retained for provenance. Their old links, branding and version claims are not
-current aJay product instructions. Inherited third-party assets retain the rights
-and attribution of their respective owners; retaining an asset is not a claim of
-original aJay authorship or an independent license grant for that asset.
+current J Trader product instructions. Inherited third-party assets retain the
+rights and attribution of their respective owners; retaining an asset is not a
+claim of original J Trader authorship or an independent license grant.
 
 CURRENT VISUAL AND RUNTIME ASSETS
 The financial photography sources and AI-edited derivatives are listed in
@@ -44,4 +48,5 @@ license: three originals use the Unsplash License and Shanghai Tower uses CC BY
 GSAP 3.15.0 remains copyright Webflow, under its Standard No Charge License
 (https://gsap.com/standard-license/), not MIT. Original bundle notices retained.
 Lucide SVG icons retain their ISC license in assets/vendor/LUCIDE-LICENSE.txt.
-These notices do not imply endorsement of aJay by people, photographers or firms.
+These notices do not imply endorsement of J Trader or aJay by people,
+photographers or firms.

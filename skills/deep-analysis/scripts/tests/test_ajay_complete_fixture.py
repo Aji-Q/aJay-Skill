@@ -1,4 +1,4 @@
-"""Renderer contract tests for the complete offline AJAY.DEMO fixture."""
+"""Renderer contract tests for the complete offline JTRADER.DEMO fixture."""
 from __future__ import annotations
 
 from copy import deepcopy
@@ -30,13 +30,13 @@ from lib.report.dim_viz import _viz_financials, _viz_kline
 def _raw() -> dict:
     """The intentionally sparse shape emitted by preview_editorial."""
     return {
-        "ticker": "AJAY.DEMO",
+        "ticker": "JTRADER.DEMO",
         "name": "Aster Systems",
         "market": "U",
         "is_demo": True,
         "dimensions": {
             "0_basic": {"data": {
-                "code": "AJAY.DEMO", "name": "Aster Systems", "market": "U",
+                "code": "JTRADER.DEMO", "name": "Aster Systems", "market": "U",
                 "price": 184.5, "change_pct": 1.26,
                 "market_cap": "128B USD (DEMO)", "pe_ttm": 28.4, "pb": 4.2,
                 "industry": "Enterprise infrastructure / 演示",

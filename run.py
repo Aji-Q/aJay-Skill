@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""aJay-Skill 一键运行入口 — 适用于 Claude Code / Codex / Cursor / 命令行 / 任何 agent。
+"""J Trader 一键运行入口 — 适用于 Claude Code / Codex / Cursor / 命令行 / 任何 agent。
 
 用法:
     python run.py 002273.SZ                   # 本地分析，浏览器打开
@@ -466,7 +466,7 @@ def _maybe_prompt_update() -> None:
 
 def main():
     parser = argparse.ArgumentParser(
-        description="aJay Research · 个股深度分析",
+        description="J Trader · 开源 AI 美股研究助手",
         epilog="示例: python run.py 贵州茅台 --remote",
     )
     parser.add_argument("ticker", nargs="?", default="002273.SZ",
@@ -611,7 +611,7 @@ def main():
 
     print()
     print("━" * 50)
-    print(f"🎯 aJay Research v{_get_version()} · 深度分析引擎")
+    print(f"J Trader v{_get_version()} · 开源 AI 美股研究助手 · Maintained by aJay")
     print(f"   目标: {args.ticker}")
     print(f"   环境: {'Codex' if env['is_codex'] else 'Docker' if env['is_docker'] else 'SSH' if env['is_ssh'] else '本地'}")
     print(f"   浏览器: {'✓' if env['has_browser'] and not args.no_browser else '✗ (headless)'}")

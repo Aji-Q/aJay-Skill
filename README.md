@@ -1,273 +1,111 @@
 <div align="center">
 
-# aJay
+# J Trader
 
-### 让 42 套投资方法在你买入之前，先把一家公司吵明白。
+### 给你的自选股，配个研究员。
 
-**巴菲特会等，西蒙斯会算，索罗斯会追问宏观，查诺斯会先找破绽。**<br>
-**aJay 把这些方法原型放进同一间私人研究室，但只允许它们对证据说话。**
+把想研究的美股代码交给 J Trader。<br>
+查财务、算估值、找风险，整理成一份可以保存的网页研报。
 
-[![Version](https://img.shields.io/badge/aJay-1.1.0-C7A46A?style=for-the-badge&labelColor=0B1118)](RELEASE-NOTES.md)
-[![Market](https://img.shields.io/badge/FOCUS-US%20EQUITIES-17324D?style=for-the-badge)](#这是啥)
-[![Dimensions](https://img.shields.io/badge/RESEARCH-19%20DIMENSIONS-2C4157?style=for-the-badge)](#一次研究会得到什么)
-[![Perspectives](https://img.shields.io/badge/COMMITTEE-42%20PERSPECTIVES-7A6238?style=for-the-badge)](#42-位美股适配评审团)
-[![Commands](https://img.shields.io/badge/WORKFLOWS-20%20COMMANDS-324A46?style=for-the-badge)](#20-条专项工作流)
-[![Tests](https://img.shields.io/badge/RELEASE%20GATE-1004%20PASSED-2E7D65?style=for-the-badge)](docs/FUNCTIONAL-AUDIT.md)
+**开源 AI 美股研究助手**
 
-**美股优先 · 19 维研究 × 42 位市场适配视角 × 20 条专项工作流 × 六章沉浸式报告**
-
-[30 秒上手](#30-秒上手) · [这是啥](#这是啥) · [报告长什么样](#报告长什么样) · [评审团](#42-位美股适配评审团) · [专项命令](#20-条专项工作流) · [三档深度](#三档研究深度) · [FAQ](#faq) · [English](README_EN.md)
+[先试一只](#first-stock) · [看看研报](#report) · [安装](#install) · [更多用法](#workflows)
 
 </div>
 
-![aJay private research report — Wall Street investment brief](docs/readme/ajay-report-hero.jpg)
+![J Trader 网页研报预览](docs/readme/ajay-report-hero.jpg)
 
-> **不是行情终端，不是三段式 GPT 总结，也不是换了皮的股票评分卡。**
->
-> 输入一个代码，aJay 会完成数据采集、证据质量检查、经营拆解、估值建模、42 种方法审理与风险证伪，最后生成一座可以离线保存的金融研究网站。
+## 自选股加了不少，研究还没顾上？
 
----
+刷到一家有意思的公司，先加自选。
 
-## 30 秒上手
+真要研究，又得找财报、查同行、抄数据、算估值。浏览器开了一排，最初那个问题还在：这家公司，现在到底贵不贵？
 
-任何支持 agent / skill 的环境里，直接把安装和研究要求说清楚。装好后，你只需要一句：
+J Trader 接下这部分准备工作。你给它一个股票代码，它调用公开数据和估值工具，整理经营表现、价格假设与风险，再交出一份网页研报。
 
-> **用 aJay 深度研究 AAPL。先检查数据质量，再给我估值、反方意见和可证伪的决策条件。**
+从你一直想查、却还没顾上查的那只开始。
 
-| 你使用的环境 | 直接执行或交给 agent |
-|---|---|
-| **Claude Code** | `/plugin marketplace add Aji-Q/aJay-Skill`，然后 `/plugin install ajay@ajay-skill` |
-| **Codex** | `按 https://raw.githubusercontent.com/Aji-Q/aJay-Skill/main/.codex/INSTALL.md 安装 aJay，然后深度研究 AAPL` |
-| **Cursor** | `/add-plugin ajay`，然后说“用 aJay 深度研究 AAPL” |
-| **Gemini CLI** | `gemini extensions install https://github.com/Aji-Q/aJay-Skill` |
-| **OpenCode** | `按 https://raw.githubusercontent.com/Aji-Q/aJay-Skill/main/.opencode/INSTALL.md 安装 aJay，然后研究 AAPL` |
-| **Hermes** | 克隆仓库后执行 `bash install-hermes.sh "$PWD"`；完整说明见 [INSTALL-HERMES.md](INSTALL-HERMES.md) |
-| **纯 CLI** | `git clone https://github.com/Aji-Q/aJay-Skill.git && cd aJay-Skill && pip install -r requirements.txt && python run.py AAPL` |
+<a id="first-stock"></a>
 
-Claude Code 中最常用的四句话：
+## 先试一只
+
+[安装](#install)后，让你的 agent 在项目目录读取 `AGENTS.md`，再发这段话：
 
 ```text
-/ajay:analyze-stock AAPL     ← 完整个股研究与编辑式 HTML 报告
-/ajay:quick-scan NVDA        ← 快速排雷与核心结论
-/ajay:dcf MSFT               ← DCF、WACC 与敏感性矩阵
-/ajay:ic-memo META           ← 投委会备忘录与三情景回报
+用 J Trader 研究 AAPL。
+我想知道它怎么赚钱、现在贵不贵，以及看空它有哪些理由。
+生成一份 HTML 研报，数据不够的地方标出来。
 ```
 
-Codex、Gemini、Hermes、OpenCode 等环境直接说自然语言即可；agent 会按 [AGENTS.md](AGENTS.md) 选择对应工作流。
-
-> **当前稳定版 v1.1.0**
-> - 美股报告从 66 人总池中自动筛选 **42 位市场适配视角**，不再让 24 位 A 股游资刷屏说“不参与”；
-> - 报告升级为纽约、上海、伦敦、香港贯穿的 **六章连续研究网站**，不是照片轮播，也不是卡片堆砌；
-> - 未知 ROE、负债率、估值分位与宏观输入保持未知，**不再用默认 `0` 制造完整感**；
-> - 搜索、流派筛选、证据弹窗、主题、导出、移动端与浏览器控制台已完成真实流程验收；
-> - v1.1 自动化发布闸门：**1004 passed**。
-
----
-
-## 这是啥
-
-一句话：**输入一家公司，让 agent 像买方研究团队一样核验公开事实、拆解生意、计算价格、组织分歧，然后交付一份能追到原始证据的研究网站。**
-
-```text
-一个股票代码
-   ↓
-公开数据 + 来源日期 + 缺口检查
-   ↓
-19 个研究维度 + 经营质量 + 资本效率
-   ↓
-DCF / Comps / LBO / Segmental Model
-   ↓
-42 种美股适配投资方法交叉审理
-   ↓
-支持证据 + 反方证据 + 失效条件
-   ↓
-可检索、可导出、可离线保存的 HTML 研究网站
-```
-
-### 一次研究会得到什么
-
-- **一份连续六章的 HTML 研究网站**：简报 → 生意质量 → 价格模型 → 市场分歧 → 决策条件 → 研究底册；
-- **一个可攻击的估值工作台**：DCF、历史分位、同行比较、LBO 与敏感性，而不只是孤零零的目标价；
-- **一场可搜索的投资委员会讨论**：按人物、流派和关键词查看全部判断与反证；
-- **一套证据质量记录**：数据源、日期、代理指标、降级路径和真正的未知值；
-- **一组决策边界**：什么条件支持建仓、什么变化触发复核、什么证据足以推翻当前判断；
-- **一份可以带走的研究资产**：单文件 HTML 与研究输入导出，默认只保存在本机。
-
-## 为什么做 aJay
-
-过去研究一只美股，常见流程是：
-
-```text
-SEC / 财报找数字
-→ 行情网站看估值
-→ Excel 搭 DCF
-→ 搜同行与共识
-→ 刷新闻和观点
-→ 自己拼一份备忘录
-→ 最后忘了哪些是事实，哪些只是当时的假设
-```
-
-市场从来不缺信息，真正稀缺的是**判断的生产线**：
-
-1. 事实和推理必须分开；
-2. 支持理由和反方证据必须同时出现；
-3. 估值必须暴露假设，而不是只报一个数字；
-4. 缺失数据必须保持未知，不能偷偷变成 `0`；
-5. 报告必须告诉你下一步核验什么，而不是用“建议关注”结束。
-
-所以有了 aJay：
-
-> **公开事实 × 证据质量 × 估值模型 × 方法分歧 × 决策条件**<br>
-> **而不是：抓一堆数据 × 让 AI 自信地写三段话。**
-
----
-
-## 报告长什么样
-
-### 01 / 纽约：投资简报
-
-第一屏先回答“这家公司现在值不值得继续研究”，并同时展示支持核验、重大缺口、当前价格和判断边界。
-
-### 02 / 上海：生意质量
-
-收入、利润、ROE、分红、负债和现金流随着陆家嘴纵向构图逐步展开。城市不是壁纸，而是研究节奏的一部分。
-
-![aJay business-quality chapter — Shanghai financial district](docs/readme/ajay-business-quality.jpg)
-
-### 03 / 伦敦：价格模型
-
-当前估值、历史分位、行业比较、DCF 内在价值与敏感性矩阵进入同一工作台。每个结果都能追问：“它依赖了什么假设？”
-
-![aJay valuation workspace — DCF and sensitivity analysis](docs/readme/ajay-valuation-workspace.jpg)
-
-### 04 / 香港：市场分歧
-
-同一家公司，不同的市场解释。价值、成长、宏观、趋势、量化与科技产业方法在这里正面碰撞。
-
-![aJay market disagreement chapter — Hong Kong financial district](docs/readme/ajay-market-disagreement.jpg)
-
-### 05–06 / 决策条件与研究底册
-
-最后两章不是重复结论，而是把催化剂、风险、失效条件、原始记录和证据入口集中交给读者。桌面端适合深读，移动端保留完整决策路径。
-
-<p align="center">
-  <img src="docs/readme/ajay-report-mobile.png" width="360" alt="aJay mobile equity research report" />
-</p>
-
----
-
-## 42 位美股适配评审团
-
-不是 42 段人物口吻，也不是名人金句生成器。每个角色代表一套投资方法，判断必须落回当前公司的真实输入。
-
-| 组别 | 方法方向 | 人数 | 代表方法原型 |
-|---|---:|---:|---|
-| A | 经典价值 | 6 | Buffett · Graham · Munger · Fisher · Templeton · Klarman |
-| B | 成长与科技投资 | 9 | Lynch · O'Neil · Thiel · Wood · Andreessen · Gurley · Naval |
-| C | 宏观与对冲 | 7 | Soros · Dalio · Howard Marks · Druckenmiller · Burry · Chanos |
-| D | 趋势与交易系统 | 4 | Livermore · Minervini · Darvas · Gann |
-| E | 中国价值投资方法 | 7 | 段永平 · 张磊 · 冯柳 · 朱少醒 · 邓晓峰 |
-| G | 量化与统计套利 | 4 | Simons · Thorp · D. E. Shaw · Asness |
-| H | 科技产业领袖视角 | 4 | Jensen Huang · Musk · Sam Altman · Saylor |
-| I | AI 卡位与瓶颈审视 | 1 | Serenity |
-
-**为什么不是 66 位？** 因为 aJay 的核心服务对象是美股研究。24 位依赖 A 股涨停板、龙虎榜与席位生态的短线角色不会参与美股报告，避免用“不适用”消息填满讨论区。A 股兼容工作流仍会在对应市场启用它们。
-
-> 上述角色均为算法 / AI 对投资方法的模拟，不是真实人物投票、发言、独立意见或背书。
-
----
-
-## 20 条专项工作流
-
-不必每次都跑完整报告。直接选择你此刻真正要解决的问题：
-
-| 命令 | 用来做什么 |
-|---|---|
-| `/ajay:analyze-stock AAPL` | 完整个股深度研究与最终报告 |
-| `/ajay:quick-scan NVDA` | 快速扫描核心数据与风险 |
-| `/ajay:dcf MSFT` | DCF、WACC、终值与 5×5 敏感性 |
-| `/ajay:comps AMD` | 同行估值、历史分位与隐含价格 |
-| `/ajay:lbo DELL` | 杠杆收购可行性与 IRR 快速测试 |
-| `/ajay:segmental-model AMZN` | 分业务收入、三情景与三年预测 |
-| `/ajay:initiate META` | 机构风格首次覆盖报告 |
-| `/ajay:ic-memo GOOGL` | 投委会备忘录与三情景回报 |
-| `/ajay:earnings AAPL` | 财报结果、超预期检测与逻辑影响 |
-| `/ajay:earnings-preview NVDA` | 财报前共识、情景与隐含波动 |
-| `/ajay:model-update MSFT` | 新财报 / 指引后的模型增量更新 |
-| `/ajay:catalysts TSLA` | 已发生事件与未来 60 天催化剂 |
-| `/ajay:thesis AMZN` | 五条核心投资逻辑的持续追踪 |
-| `/ajay:dd COST` | 五类工作流、21 项尽调清单 |
-| `/ajay:screen AAPL` | Value / Growth / Quality / GARP / Short 筛选 |
-| `/ajay:ai-readiness ORCL` | AI 暴露、卡位评级与关键杠杆点 |
-| `/ajay:panel-only AAPL` | 只运行市场适配评审团 |
-| `/ajay:scan-trap TICKER` | 异常宣传、资金与交易风险排查 |
-| `/ajay:returns` | 组合收益与行业贡献归因 |
-| `/ajay:rebalance` | 持仓漂移、交易清单与换手成本 |
-
-> Claude Code 使用 `/ajay:<command>`；其他 agent 可以直接说自然语言。命令能力和可用数据仍取决于当前市场、数据源与配置。
-
-### CLI 进阶
+只想先看一份基础报告，也可以直接运行：
 
 ```bash
-python run.py AAPL --depth lite --no-browser              # 快速扫描
-python run.py AAPL --depth medium --no-browser            # 日常研究
-python run.py AAPL --depth deep --no-browser              # 深度工作流 Stage 1
-python run.py AAPL --school A --no-browser                # 只看经典价值方法
-python run.py --versus AAPL MSFT GOOGL                    # 2–4 只股票横向比较
-python run.py --portfolio holdings.csv                    # 组合排名与健康度
-python run.py AAPL --from-modeling --no-browser           # 从缓存恢复建模
-python run.py AAPL --output-dir ./output --no-browser     # 集成到指定目录
-python run.py AAPL --remote                               # 显式生成远程访问入口
-```
-
----
-
-## 三档研究深度
-
-| 档位 | 适合场景 | 目标耗时 | 研究方式 |
-|---|---|---:|---|
-| `lite` | 盘前扫描、快速排雷 | 1–2 分钟 | 核心数据、代表性视角、关键风险 |
-| `medium` | 日常个股研究 | 5–8 分钟 | 完整数据采集、建模与报告；默认档 |
-| `deep` | 建仓前、财报后、投委会 | 15–20 分钟以上 | 强化补数、Bull/Bear 辩论、分部建模与人工复核 gate |
-
-实际耗时受网络、数据源和 agent 推理过程影响。`deep` 会先完成 Stage 1；agent 还必须读取当前输入、完成带 `analysis_input_hash` 的复核，才能进入最终组装。旧股票的角色判断不会直接复用到新数据上。
-
----
-
-## 数据与可信度
-
-美股是当前主线：SEC XBRL 财务补数、yfinance 行情与同行信息可直接参与工作流；FMP 共识数据和 moomoo OpenD 资金流为可选增强。A 股、港股与龙虎榜能力作为兼容路径保留，但不同市场不会伪装成同等覆盖。
-
-| aJay 的处理原则 | 报告里的表现 |
-|---|---|
-| 观察值与推理分开 | 原始数据、规则评分、AI 解释分别标记 |
-| 缺失就是缺失 | 不把未知 ROE、负债率或估值分位写成 `0` |
-| 降级必须可见 | 记录来源链、代理指标与 fallback |
-| 分数不是概率 | 未经校准的置信度只作为研究线索 |
-| 反方必须上桌 | 风险、证伪条件与支持理由同等可见 |
-
-v1.1 发布前已真实运行 AAPL 流程，验证报告生成、42 位美股适配阵容、搜索、流派筛选、证据弹窗、主题切换、研究输入导出、移动端布局与浏览器控制台；自动化测试结果为 **1004 passed**。
-
-[分析架构审计](docs/ANALYSIS-AUDIT.md) · [功能与应用审核](docs/FUNCTIONAL-AUDIT.md) · [UI 交付记录](docs/UI-REFACTOR.md) · [图像来源](docs/IMAGE-PROVENANCE.md)
-
----
-
-## 安装
-
-### Python / CLI
-
-需要 Git 与 Python 3.10+：
-
-```bash
-git clone https://github.com/Aji-Q/aJay-Skill.git
-cd aJay-Skill
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
 python run.py AAPL --depth medium --no-browser
 ```
 
-完成后终端会输出报告实际路径。打开 `full-report-standalone.html` 即可离线阅读。
+终端会给出报告路径。深度研究还需要 agent 复核，单独运行一次 CLI 不等于完成整个深度流程。
+
+> **J Trader 是产品名，aJay 是维护者。** 为避免破坏现有安装，仓库地址、插件 ID、命令前缀和 `AJAY_*` 环境变量暂时继续使用 `aJay-Skill` / `ajay`；这些是兼容标识，不再作为产品品牌展示。
+
+## 先看看，这家公司到底怎么赚钱
+
+收入靠什么撑着？利润涨了，现金流有没有跟上？负债会不会让经营变得吃力？
+
+J Trader 把经营数据、现金流和资本效率放在一起分析。值得继续查的问题、缺失的资料，也会留在报告里。
+
+![公司经营与财务分析](docs/readme/ajay-business-quality.jpg)
+
+## 贵不贵，把账摊开算
+
+一个目标价，背后能藏下不少乐观假设。
+
+J Trader 把现金流折现（DCF）、同行比较和敏感性分析放进同一份报告。折现率换个数，长期增长慢一点，估值会变多少？你可以查看模型呈现的不同情景，再判断自己认不认同这些假设。
+
+![估值模型与敏感性分析](docs/readme/ajay-valuation-workspace.jpg)
+
+## 看多的理由有了。看空的呢？
+
+你可能看中了增长，有人却觉得价格太贵；你看好行业前景，有人更在意现金流。
+
+美股研究可调用 **42 种投资方法视角**，从价值、成长、宏观、趋势、量化等方向检查同一家公司，整理各自支持、反对和暂时无法判断的地方。
+
+读报告时，可以按流派筛选，也可以搜索自己关心的问题。
+
+<sub>这些视角由算法 / AI 模拟，不是真实投资者参与或背书，也不等于 42 份独立证据。</sub>
+
+<a id="report"></a>
+
+## 查完了，给你一份能留下来的研报
+
+报告在浏览器里打开。从公司概况往下读，接着看生意、估值、分歧和风险，最后查原始记录。也可以直接跳到你关心的章节。
+
+想核对数据，打开证据记录。想下次接着研究，保存单文件 HTML 和研究输入。之后再次运行研究时，可以把新旧报告放在一起复盘。
+
+报告支持搜索、流派筛选和移动端阅读，默认保存在本机，生成后的单文件报告可以离线查看。
+
+<p align="center">
+  <img src="docs/readme/ajay-report-mobile.png" width="340" alt="手机端研报阅读预览" />
+</p>
+
+## 不用每次都做全套
+
+刚发现一家公司，可以先快速扫描。喜欢它的业务、拿不准价格，就单独算估值。财报出来了，再检查原来的看法有没有需要修改的地方。
+
+| 手头的问题 | 对应工作流 |
+|---|---|
+| 这只股票值得花时间细看吗？ | `/ajay:quick-scan AAPL` |
+| 这个价格怎么算出来的？ | `/ajay:dcf MSFT` |
+| 跟同行比，到底贵在哪儿？ | `/ajay:comps AMD` |
+| 新财报改变了什么？ | `/ajay:earnings AAPL` |
+| 认真研究一遍，留份完整报告。 | `/ajay:analyze-stock AAPL` |
+
+这些是 Claude Code 命令。其他适配的 agent 环境可使用自然语言。股票代码仅用于演示，不代表推荐。
+
+<a id="install"></a>
+
+## 安装
+
+需要 Git 与 Python 3.10+。完整深度研究还需要能读取项目文件、执行脚本并进行复核的 agent 环境。
 
 ### Claude Code
 
@@ -279,9 +117,31 @@ python run.py AAPL --depth medium --no-browser
 
 ### Codex
 
-直接把这句话交给 Codex：
+让 Codex 按以下地址的说明安装，再读取仓库根目录的 `AGENTS.md`：
 
-> 按 https://raw.githubusercontent.com/Aji-Q/aJay-Skill/main/.codex/INSTALL.md 安装 aJay，读取 AGENTS.md，然后深度研究 AAPL。
+```text
+https://raw.githubusercontent.com/Aji-Q/aJay-Skill/main/.codex/INSTALL.md
+```
+
+随后在项目目录发出研究请求即可。详细步骤见 [.codex/INSTALL.md](.codex/INSTALL.md)。
+
+### Python / CLI
+
+以下是 macOS / Linux 的安装步骤：
+
+```bash
+git clone https://github.com/Aji-Q/aJay-Skill.git
+cd aJay-Skill
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python run.py AAPL --depth medium --no-browser
+```
+
+在终端给出的目录里打开 `full-report-standalone.html`。
+
+<details>
+<summary><strong>Gemini CLI、OpenCode、Hermes 与其他环境</strong></summary>
 
 ### Gemini CLI
 
@@ -289,71 +149,157 @@ python run.py AAPL --depth medium --no-browser
 gemini extensions install https://github.com/Aji-Q/aJay-Skill
 ```
 
-OpenCode、Hermes 和其他环境见 [.opencode/INSTALL.md](.opencode/INSTALL.md)、[INSTALL-HERMES.md](INSTALL-HERMES.md) 与 [AGENTS.md](AGENTS.md)。Hermes 从仓库根目录运行 `bash install-hermes.sh "$PWD"`，脚本会明确显示本地安装与验证步骤。
+### OpenCode
 
-### 只想看产品演示
+按 [.opencode/INSTALL.md](.opencode/INSTALL.md) 安装。
+
+### Hermes
+
+克隆仓库后，在仓库根目录执行：
+
+```bash
+bash install-hermes.sh "$PWD"
+```
+
+完整说明见 [INSTALL-HERMES.md](INSTALL-HERMES.md)。其他环境的工作流入口见 [AGENTS.md](AGENTS.md)。
+
+</details>
+
+<details>
+<summary><strong>先在本机看产品演示</strong></summary>
+
+完成依赖安装后，从仓库根目录运行：
 
 ```bash
 cd skills/deep-analysis/scripts
 python preview_editorial.py
 ```
 
-Aster Systems / `AJAY.DEMO` 是合成样本，不是实际证券或推荐。默认报告留在本机；`--remote` 会主动建立外部访问入口，公开前请检查报告内容。
+演示中的 Aster Systems / `JTRADER.DEMO` 为合成样本，不是真实证券或分析业绩。
+
+</details>
+
+<a id="workflows"></a>
+
+## 更多用法
+
+<details>
+<summary><strong>查看全部 20 条工作流</strong></summary>
+
+| 命令 | 用途 |
+|---|---|
+| `/ajay:analyze-stock AAPL` | 完整个股研究与最终报告 |
+| `/ajay:quick-scan NVDA` | 核心数据与风险快速扫描 |
+| `/ajay:dcf MSFT` | DCF、WACC、终值与敏感性分析 |
+| `/ajay:comps AMD` | 同行估值、历史分位与隐含价格 |
+| `/ajay:lbo DELL` | 杠杆收购可行性与 IRR 测试 |
+| `/ajay:segmental-model AMZN` | 分业务收入、三情景与三年预测 |
+| `/ajay:initiate META` | 首次覆盖报告 |
+| `/ajay:ic-memo GOOGL` | 投资备忘录与三情景回报分析 |
+| `/ajay:earnings AAPL` | 财报解读与投资逻辑影响 |
+| `/ajay:earnings-preview NVDA` | 财报前共识、情景与隐含波动 |
+| `/ajay:model-update MSFT` | 新财报或指引后的模型更新 |
+| `/ajay:catalysts TSLA` | 已发生事件与未来催化剂 |
+| `/ajay:thesis AMZN` | 投资逻辑复查与追踪 |
+| `/ajay:dd COST` | 尽调工作流与清单 |
+| `/ajay:screen AAPL` | 价值、成长、质量、GARP 与做空方向筛选 |
+| `/ajay:ai-readiness ORCL` | AI 业务暴露、产业位置与关键因素分析 |
+| `/ajay:panel-only AAPL` | 仅运行市场适配的方法评审 |
+| `/ajay:scan-trap TICKER` | 异常宣传、资金与交易风险检查 |
+| `/ajay:returns` | 组合收益与行业贡献归因 |
+| `/ajay:rebalance` | 持仓漂移、交易清单与换手成本分析 |
+
+各工作流的可用输出取决于市场、数据源、配置与输入。组合相关工作流需要你提供对应数据；“交易清单”指分析结果，不是自动下单。
+
+</details>
+
+<details>
+<summary><strong>研究深度与 CLI 进阶</strong></summary>
+
+| 深度 | 适合做什么 |
+|---|---|
+| `lite` | 快速了解核心数据和主要风险 |
+| `medium` | 日常研究，默认档位 |
+| `deep` | 建仓前或财报后的深入研究，需完成 agent 复核 |
+
+```bash
+python run.py AAPL --depth lite --no-browser
+python run.py AAPL --depth medium --no-browser
+python run.py AAPL --depth deep --no-browser
+python run.py AAPL --school A --no-browser
+python run.py --versus AAPL MSFT GOOGL
+python run.py --portfolio holdings.csv
+python run.py AAPL --from-modeling --no-browser
+python run.py AAPL --output-dir ./output --no-browser
+```
+
+`deep` 先执行 Stage 1，再由 agent 读取本次输入、完成带输入指纹的复核，最后组装报告。具体流程见 [AGENTS.md](AGENTS.md)。实际耗时受模型、网络和数据覆盖影响。
+
+确需建立外部访问入口时，可以显式运行：
+
+```bash
+python run.py AAPL --remote
+```
+
+远程模式会扩大报告的访问范围，使用前请检查私人信息。默认在本机阅读即可。
+
+</details>
+
+## 开始前，几个实际问题
+
+<details>
+<summary><strong>必须买数据服务吗？</strong></summary>
+
+核心研究路径可以使用公开数据。SEC XBRL 和 yfinance 参与美股数据采集，FMP 共识数据、moomoo OpenD 等为可选增强。不同标的和网络环境的覆盖可能不同，缺失项会标记出来。AI 模型服务和可选数据服务可能另行收费。
+
+</details>
+
+<details>
+<summary><strong>主要研究哪些市场？</strong></summary>
+
+当前以美股个股为主。保留 A 股、港股兼容工作流，但各市场的数据覆盖和可用分析并不相同。
+
+</details>
+
+<details>
+<summary><strong>能自动盯盘、下单吗？</strong></summary>
+
+这里提供的是按需研究工作流。需要新结果时，重新运行对应分析；当前产品介绍不包含持续盯盘或自动交易服务。
+
+</details>
+
+<details>
+<summary><strong>数据不够，或者 AI 看错了怎么办？</strong></summary>
+
+报告保留数据来源、时间和缺口；缺失值不应被当成真实的零，计算结果与 AI 推理也需要区分。模型、数据和生成过程仍可能出错，重要数字与结论需要独立核验。方法视角的数量、评分或测试通过数都不代表投资准确率。
+
+相关实现与检查记录见 [分析审计](docs/ANALYSIS-AUDIT.md) 和 [功能审核](docs/FUNCTIONAL-AUDIT.md)。
+
+</details>
+
+<details>
+<summary><strong>报告放在本机，等于所有过程都在本地吗？</strong></summary>
+
+不等于。生成的报告默认保存在本机，但研究过程可能调用外部数据接口和你所配置的 AI 服务。报告可保存和发送；分享前检查其中是否有不宜公开的信息。
+
+</details>
+
+## 开源与致谢
+
+J Trader 由 **aJay（Aji-Q）** 维护。
+
+项目派生自 MIT 许可的 stock-deep-analyzer 3.9.4，保留原作者版权与贡献记录。软件许可见 [LICENSE](LICENSE)，上游来源与第三方声明见 [NOTICE](NOTICE) 和 [OWNERSHIP.md](docs/OWNERSHIP.md)。摄影、图像与部分前端依赖适用各自许可，不因项目采用 MIT 而一并改变。
+
+[版本记录](RELEASE-NOTES.md) · [反馈问题](https://github.com/Aji-Q/aJay-Skill/issues) · [贡献记录](docs/UPSTREAM-CONTRIBUTORS.md)
 
 ---
-
-## FAQ
-
-<details>
-<summary><strong>这些投资者真的参与了分析吗？</strong></summary>
-
-没有。评审团是对公开投资方法的算法 / AI 模拟，用于制造方法分歧与反证，不代表任何真实人物的实时观点、投票或背书。
-</details>
-
-<details>
-<summary><strong>42 位是不是越多越准？</strong></summary>
-
-不是。人数不是准确率。42 位的价值是覆盖不同的决策框架；最终仍应看证据质量、模型假设、分歧来源和失效条件。
-</details>
-
-<details>
-<summary><strong>为什么美股报告删掉了 A 股游资？</strong></summary>
-
-因为涨停板、龙虎榜、席位溢价等方法不适用于美股。aJay 会按市场过滤角色，而不是用大量“不讨论”制造虚假繁荣。
-</details>
-
-<details>
-<summary><strong>一定需要付费 API 吗？</strong></summary>
-
-核心路径可以使用公开数据运行；FMP、moomoo OpenD 等属于可选增强。具体覆盖受网络、数据源、标的和凭据影响，缺失项会在报告中保留为空缺。
-</details>
-
-<details>
-<summary><strong>报告能发到手机吗？</strong></summary>
-
-可以。单文件 HTML 可直接保存与发送；也可显式使用 `--remote` 创建临时外部访问入口。远程模式会公开报告访问面，使用前应检查私人信息。
-</details>
-
-<details>
-<summary><strong>这能替我决定买卖吗？</strong></summary>
-
-aJay 的任务是提高研究质量，不是替你承担决策。评分不是收益概率，模型依赖假设，所有结论都应结合最新公开信息独立核验。
-</details>
-
----
-
-## aJay 出品
-
-**aJay（Aji-Q）拥有并维护 aJay 项目的品牌、产品方向与本项目修改。** 维护边界、上游版权与软件来源见 [OWNERSHIP.md](docs/OWNERSHIP.md) 与 [NOTICE](NOTICE)。
-
-本项目派生自 MIT 许可的 stock-deep-analyzer 3.9.4，并保留上游版权和贡献记录。摄影与图像工具重构素材均有来源记录；报告对真实投资者不构成关联声明。
 
 <div align="center">
 
-### 研究的终点不是一个分数，而是一个你敢为之负责的判断。
+### 自选股里总有一只，你一直想弄明白。
 
-[开始使用](#30-秒上手) · [查看版本记录](RELEASE-NOTES.md) · [提交问题](https://github.com/Aji-Q/aJay-Skill/issues) · [MIT License](LICENSE)
+[从那只开始](#first-stock)
 
-<sub>研究辅助工具，不构成投资建议。请独立核验数据与假设，并自行承担决策风险。</sub>
+<sub>J Trader 是研究辅助工具，不构成投资建议，不承诺收益。请独立核验数据与结论。</sub>
 
 </div>

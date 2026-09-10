@@ -1,4 +1,4 @@
-# aJay 1.1 functional and application audit
+# J Trader functional and application audit
 
 Audit date: 2026-09-09. Target: the default continuous single-security report
 and the `python run.py <ticker>` workflow.
@@ -14,7 +14,7 @@ and the `python run.py <ticker>` workflow.
 | Provider provenance | Pass | US quote/history records identify the US provider or fallback chain rather than an A-share source label. |
 | Search and school filters | Pass | Perspective search returned 1/42 for Buffett; the value-school filter returned 6/42. |
 | Evidence workflow | Pass | Evidence buttons open a modal with status, provider, period, collected time, facts and raw input. Focus returns on close. |
-| Export workflow | Pass | Export dialog opens; research-input download produced `aJay-AAPL-inputs.json`; print/share remains available. |
+| Export workflow | Pass | Export dialog opens; research-input download produced `J-Trader-AAPL-inputs.json`; print/share remains available. |
 | Reading controls | Pass | Light/dark reading theme toggles and persists; chapter navigation and progress remain functional. |
 | Responsive use | Pass | 390×844 mobile review preserves the brief, findings, price, primary actions and chapter bar without replacing the report with a photo gallery. |
 | Browser console | Pass | Reloaded standalone report produced no page-script or missing-favicon error. |

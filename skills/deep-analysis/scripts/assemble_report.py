@@ -484,7 +484,7 @@ def assemble(ticker: str, layout: str = "continuous") -> Path:
     for placeholder, filename in (("{{HERO_IMAGE_URI}}", "manhattan-night.png"), ("{{INTERLUDE_IMAGE_URI}}", "shanghai-night.png"), ("{{BUFFETT_IMAGE_URI}}", "buffett-portrait.png"), ("{{SIMONS_IMAGE_URI}}", "simons-portrait.png")):
         asset = ROOT / "assets" / "ajay-brand" / filename
         if not asset.is_file():
-            raise RuntimeError(f"Missing aJay report asset: {asset}")
+            raise RuntimeError(f"Missing J Trader report asset: {asset}")
         template = template.replace(placeholder, "data:image/png;base64," + base64.b64encode(asset.read_bytes()).decode("ascii"))
 
     market_state = {"label": "DEMO / 合成行情快照", "is_open": False} if raw.get("is_demo") else market_status(_mkt)
@@ -734,7 +734,7 @@ def assemble(ticker: str, layout: str = "continuous") -> Path:
         for key in ("bullish", "neutral", "bearish")
     )
     one_liner = (
-        f"{syn.get('name')} aJay 研究分：{overall_display}，"
+        f"{syn.get('name')} J Trader 研究分：{overall_display}，"
         f"{syn.get('verdict_label')}。\n"
         f"{long_active} 个模拟多头流派角色里 {(panel.get('signal_distribution') or {}).get('bullish', 0)} 个看多；非真实投资者意见或胜率。\n"
         f"💬 {divide.get('punchline') or '—'}\n"

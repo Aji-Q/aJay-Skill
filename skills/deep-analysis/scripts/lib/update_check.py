@@ -2,7 +2,7 @@
 
 设计：
 - 读本地 `.claude-plugin/plugin.json::version`
-- 显式启用时查 aJay 仓库的 GitHub releases/latest；默认无网络请求
+- 显式启用时查 J Trader 仓库的 GitHub releases/latest；默认无网络请求
 - semver 比较 · 缓存 6h 防 GH API 60/h 限流
 - 支持 "skip this version"：用户跳某版后直到下一个新版前不再弹
 - 非 TTY / `AJAY_NO_UPDATE_CHECK=1` / 网络异常 → silent skip
@@ -19,7 +19,7 @@ from pathlib import Path
 
 CANONICAL_REPO = "Aji-Q/aJay-Skill"
 GITHUB_REPO = os.environ.get("AJAY_REPO", CANONICAL_REPO)
-# 网络检查仍需显式设置 AJAY_REPO；默认目的地始终为 aJay，不回退到上游。
+# 网络检查仍需显式设置 AJAY_REPO；默认目的地始终为 J Trader，不回退到上游。
 CACHE_TTL_SEC = 6 * 3600  # 6h · 避免 GH API 限流
 HTTP_TIMEOUT = 5  # 失败快速放行
 
@@ -191,7 +191,7 @@ def check_for_update(force: bool = False) -> UpdateInfo | None:
 def format_prompt(info: UpdateInfo) -> str:
     """标准化展示模板 · run.py 和 session-start hook 共用."""
     return (
-        f"\n📦 aJay-Skill 有新版本可更新：v{info.current} → v{info.latest}\n"
+        f"\n📦 J Trader 有新版本可更新：v{info.current} → v{info.latest}\n"
         f"   {info.url}\n\n"
         f"更新内容（前 600 字）：\n{info.notes}\n\n"
         f"选项：\n"

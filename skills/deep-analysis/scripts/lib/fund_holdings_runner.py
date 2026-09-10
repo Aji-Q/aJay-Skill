@@ -258,7 +258,7 @@ def _generate_summary_html(
   </table>
 
   <p style="margin-top:30px;color:#6b7280;font-size:12px;text-align:center">
-    aJay-Skill v3.4.0 · 基金/ETF 持仓批量分析功能 · 数据来自 akshare.fund_portfolio_hold_em
+    J Trader · 基金/ETF 持仓批量分析功能 · 数据来自 akshare.fund_portfolio_hold_em
   </p>
 </body>
 </html>"""

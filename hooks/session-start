@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Session-start hook: injects aJay-Skill context into agent sessions.
+# Session-start hook: injects J Trader context into agent sessions.
 # Called by hooks.json via run-hook.cmd on SessionStart.
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -34,14 +34,14 @@ fi
 
 # Build the context message with skill summaries
 CONTEXT="$(cat <<'SKILLS_CONTEXT'
-🎯 aJay Research v1.1.0 已加载 · Maintained by aJay (Aji-Q)
+J Trader Research v1.2.0 已加载 · Maintained by aJay (Aji-Q)
 美股研究主线；上游贡献与许可见 NOTICE。
 
 ## 可用技能
 
 | 命令 | 说明 |
 |---|---|
-| `/ajay:analyze-stock <代码>` | 完整深度分析（22维 + 66评委 + aJay 编辑式报告；美股自动补数链） |
+| `/ajay:analyze-stock <代码>` | 完整深度分析（多维数据 + 市场适配评审团 + J Trader 编辑式报告；美股自动补数链） |
 | `/ajay:dcf <代码>` | DCF 估值 |
 | `/ajay:comps <代码>` | 同行对标 |
 | `/ajay:lbo <代码>` | LBO 压力测试 |

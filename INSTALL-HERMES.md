@@ -1,6 +1,6 @@
-# aJay · Hermes 安装
+# J Trader · Hermes 安装
 
-**维护者 aJay（Aji-Q） · 默认仓库 [Aji-Q/aJay-Skill](https://github.com/Aji-Q/aJay-Skill)。**
+**J Trader 由 aJay（Aji-Q）维护 · 默认仓库仍为 [Aji-Q/aJay-Skill](https://github.com/Aji-Q/aJay-Skill)。**
 
 这是从本地审阅过的源码创建 skill 软链接的安装流程，不经过 Hermes Hub 的 Skills Guard 扫描。运行前阅读脚本及依赖；不要把“跳过扫描”理解为安全认证。
 
@@ -21,7 +21,7 @@ bash install-hermes.sh "$PWD"
 
 对 Hermes 说：
 
-> 用 aJay 分析 AAPL，先检查数据质量，再生成研究报告。
+> 用 J Trader 分析 AAPL，先检查数据质量，再生成研究报告。
 
 **`/ajay:analyze-stock` 是 Claude Code 的插件命令，不是 Hermes 的 slash 命令。** Hermes 加载 `SKILL.md`，不自动注册本仓库 `commands/`。
 
@@ -45,5 +45,5 @@ git -C ~/aJay-Skill pull --ff-only
 
 - 默认报告保留本机，`--remote` 会公开报告访问入口。
 - 美股是当前研究主线，A 股 / 港股路径保留兼容。
-- 当前维护反馈入口：[aJay issues](https://github.com/Aji-Q/aJay-Skill/issues)。
+- 当前维护反馈入口：[J Trader issues](https://github.com/Aji-Q/aJay-Skill/issues)。
 - 上游贡献与版权保留于 `NOTICE`、`LICENSE` 和历史档案。

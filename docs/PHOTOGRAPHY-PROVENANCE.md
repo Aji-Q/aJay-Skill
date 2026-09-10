@@ -1,4 +1,4 @@
-# aJay 金融摄影来源与编辑记录
+# J Trader 金融摄影来源与编辑记录
 
 审核日期：2026-09-09。金融/投资语义优先；不以城市旅游感替代研究场所。
 
@@ -83,6 +83,6 @@ Perform only a subtle high-end photographic finishing edit of the supplied actua
 
 ## 许可与产品归属
 
-上海摄影按 CC BY 4.0 保留作者、原作链接、许可链接和改动声明；伦敦原作按 CC0 1.0 使用；纽约与香港按 Unsplash License 使用并自愿署名。图片没有因进入 aJay 代码库而变成 aJay 独占摄影版权。UI 设计与新增实现署名 aJay，照片作者/上游 MIT/第三方依赖各自保留权利边界。
+上海摄影按 CC BY 4.0 保留作者、原作链接、许可链接和改动声明；伦敦原作按 CC0 1.0 使用；纽约与香港按 Unsplash License 使用并自愿署名。图片没有因进入 J Trader 代码库而变成 aJay 独占摄影版权。J Trader UI 设计与新增实现署名 aJay，照片作者/上游 MIT/第三方依赖各自保留权利边界。
 
 原图与编辑图并列预览：在scripts下运行python preview_photography.py；脚本仅在首次预览时下载原图并核对 SHA256，输出photography-review.html。主报告将四张编辑图和八张肖像内联，运行时不加载远程影像。

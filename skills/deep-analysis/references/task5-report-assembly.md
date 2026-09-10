@@ -1,6 +1,6 @@
 # Task 5 · aJay V3 continuous research report assembly
 
-将已有分析输入装配成可连续阅读、证据可回查的 **aJay Research** 报告。主页面是金融研究快照，不是实时行情终端、交易指令或真实投资者背书；模型结果也不自动等于回测、校准概率或事实确认。
+将已有分析输入装配成可连续阅读、证据可回查的 **J Trader** 报告。主页面是金融研究快照，不是实时行情终端、交易指令或真实投资者背书；模型结果也不自动等于回测、校准概率或事实确认。
 
 当前状态（2026-09-09）：root 已在默认 continuous 预览完成主要功能、视口、主题、`prefers-reduced-motion`、下载/分享、外部 Edge 打印和两轮视觉复核；屏幕阅读器仍待测，打印对比度、原始 JSON 省略与 PE 历史图轴语义已修复并核验；完整最终 PDF 未做逐页人工审阅。以下记录实际结果，不延伸为全部金融算法审计或全部模型校准。
 
@@ -133,7 +133,7 @@ python render_share_card.py "$TICKER"   # 按需
 python render_war_report.py "$TICKER"   # 按需
 ```
 
-`AJAY.DEMO` / Aster Systems 是离线合成 fixture，用于 UI、缺失状态和安全边界检查，不代表真实证券。默认预览应显示 DEMO/合成样本和开发闸门状态。
+`JTRADER.DEMO` / Aster Systems 是离线合成 fixture，用于 UI、缺失状态和安全边界检查，不代表真实证券。默认预览应显示 DEMO/合成样本和开发闸门状态。
 
 ## 8. root 当前验收记录
 

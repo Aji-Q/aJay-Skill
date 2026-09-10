@@ -7,8 +7,9 @@
     {
       "name": "ajay",
       "source": "./",
-      "description": "aJay 美股研究工作台 · 可追溯数据、模拟投资方法评审与编辑式 HTML 报告 | US-focused equity research by aJay"
+      "description": "J Trader 开源 AI 美股研究助手 · 可追溯数据、模拟投资方法评审与编辑式 HTML 报告 | Maintained by aJay",
+      "displayName": "J Trader"
     }
   ],
-  "description": "aJay 美股研究工作台 · 可追溯数据、模拟投资方法评审与编辑式 HTML 报告 | US-focused equity research by aJay"
+  "description": "J Trader 开源 AI 美股研究助手 · 可追溯数据、模拟投资方法评审与编辑式 HTML 报告 | Maintained by aJay"
 }

@@ -11,7 +11,7 @@ from lib.daily_screen import run_daily_screen
 
 
 def main(argv: list[str] | None = None) -> dict:
-    parser = argparse.ArgumentParser(description="aJay A+港股每日游资/Serenity 筛选")
+    parser = argparse.ArgumentParser(description="J Trader A+港股每日游资/Serenity 筛选")
     parser.add_argument("--mode", choices=("noon", "close"), default="noon")
     parser.add_argument("--markets", default="A,H", help="逗号分隔，仅支持 A,H")
     parser.add_argument("--schools", default="F,I", help="当前固定 F,I；保留参数用于兼容")

@@ -1,17 +1,17 @@
-# aJay 报告 UI 重构：可复用 Skill 调研
+# J Trader 报告 UI 重构：可复用 Skill 调研
 
 核查日期：2026-09-09。范围：公开 GitHub 原始文件、README、许可及关键依赖的只读检查；未安装候选、未运行外部脚本。这里的“可用”表示源文件和使用路径已核实，不代表已完成候选的运行时安全审计或视觉验收。
 
 ## 结论与采用方式
 
-本项目采用 **Design DNA 的结构化设计提取方法 + Open Design web-clone 的证据与多视口验收方法**，沿用 aJay 现有报告生成链路，不引入完整克隆平台或 Studio 编辑器。
+本项目采用 **Design DNA 的结构化设计提取方法 + Open Design web-clone 的证据与多视口验收方法**，沿用 J Trader 现有报告生成链路，不引入完整克隆平台或 Studio 编辑器。
 
 **后续用户调整优先**：用户明确要求金融科技语境，采用黑曜石、深海军蓝、金属银和真实感金融城市夜景，拒绝自然景观与柔和色调。因此 Vantara 保留为信息层次、导航与章节节奏参考，不再直接采用其奶油色、森林绿或自然意象。新图像与未采用概念稿见 `IMAGE-PROVENANCE.md`。
 
-- 主参考：[zanwei/design-dna 的 SKILL.md](https://github.com/zanwei/design-dna/blob/593e39bc9e3652734653bd75544a333d7d43615e/SKILL.md)。将参考页面拆成 `design_system`、`design_style`、`visual_effects`，再把 aJay 的分析内容映射到版式，而不是复制参考品牌。
+- 主参考：[zanwei/design-dna 的 SKILL.md](https://github.com/zanwei/design-dna/blob/593e39bc9e3652734653bd75544a333d7d43615e/SKILL.md)。将参考页面拆成 `design_system`、`design_style`、`visual_effects`，再把 J Trader 的分析内容映射到版式，而不是复制参考品牌。
 - 质量补充：[Open Design web-clone 的 SKILL.md](https://github.com/nexu-io/open-design/blob/main/skills/web-clone/SKILL.md)。先观测实际页面，再记录设计规则、响应式布局和交互；对照真实浏览器输出，不凭代码推断“已经还原”。
 - 当前执行方式是读取并应用方法论，不是声称新 Skill 已被安装或加载。报告仍由项目原有 Python 组装器与单文件 HTML 模板生成。
-- 保留 aJay 的标题、分析逻辑、数据来源、警示、报告交互及品牌；Vantara 仅为版式、视觉层次和滚动叙事的参照。参考网站的品牌、文案、照片、字体授权和上游 Skill 的许可彼此独立。
+- 保留 J Trader 的标题、分析逻辑、数据来源、警示、报告交互及品牌；Vantara 仅为版式、视觉层次和滚动叙事的参照。参考网站的品牌、文案、照片、字体授权和上游 Skill 的许可彼此独立。
 
 ## 候选比较
 
@@ -53,17 +53,17 @@
 
 依赖：明确绑定 `agent-browser`，不同浏览器工作流需额外适配。
 
-限制：实时 GitHub repository API 的 `license` 为 `null`，根目录未见 LICENSE；README 的 Publishing Notes 仍提示公开发布前选择许可。因此不把该仓库的脚本/模板复制进 aJay，也不将其标为 MIT。可参考其事实与推断分离、计算样式优先的通用方法。
+限制：实时 GitHub repository API 的 `license` 为 `null`，根目录未见 LICENSE；README 的 Publishing Notes 仍提示公开发布前选择许可。因此不把该仓库的脚本/模板复制进 J Trader，也不将其标为 MIT。可参考其事实与推断分离、计算样式优先的通用方法。
 
 ## 排除的失效结果
 
 搜索目录仍收录 `Yeachan-Heo/oh-my-codex/skills/web-clone`，但本次打开对应 SKILL.md 返回 404，实时 `skills/` 目录也没有该路径。因此不使用目录站的一键安装建议，不把旧索引当作当前可用性证据。
 
-## Vantara 参考证据与 aJay 转译
+## Vantara 参考证据与 J Trader 转译
 
 参考页：[Vantara 英文首页](https://vantara.in/en)。下表来自本次主任务使用 CUA 对真实页面的截图和 computed styles 观测，不是候选 Skill 自动生成的结果。
 
-| 观测项 | 参考值/特征 | aJay 的应用原则 |
+| 观测项 | 参考值/特征 | J Trader 的应用原则 |
 |---|---|---|
 | 导航 | 胶囊容器，圆角 40px，内边距 20px 28px | 保持报告章节导航和键盘可达性 |
 | 标题 | `fontGTUltra`，观察到 56/32/24px 层级 | 保留鲜明字阶与编辑式层次；字体文件另核许可 |
@@ -83,7 +83,7 @@
 3. **两套内容验证**：完整数据与缺失/降级数据均可阅读；用本地 fixture 验证，不触发新的金融数据采集。
 4. **功能不缩水**：目录跳转、折叠、筛选、主题/布局开关、导出与分享等已有交互按实际模板范围回归。
 5. **无伪造精度**：不把 heuristic score、评委人数或配色差异当成统计置信度；视觉相似度没有实测时不写百分比。
-6. **归属清晰**：aJay 是当前产品身份；有实际复制的上游代码/素材则保留必要许可和来源，避免把第三方原创资产归为 aJay 原创。
+6. **归属清晰**：J Trader 是当前产品身份；有实际复制的上游代码/素材则保留必要许可和来源，避免把第三方原创资产归为 J Trader 原创。
 7. **浏览器交付证据**：记录测试视口、实际截图、console 错误、交互结果与仍未验证的部分。
 
 ## 现有模板兼容契约（重构前检查）

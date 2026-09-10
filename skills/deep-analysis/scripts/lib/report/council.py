@@ -271,7 +271,7 @@ def build_council(raw: dict) -> dict:
                 "role": profile_map[investor_id]["role"], "claim": claim, "rebuttal": rebuttal,
                 "evidence_ids": list(dict.fromkeys(f["evidence_id"] for f in supporting)),
                 "supporting_facts": supporting,
-                "disclosure": "aJay 模拟方法视角 · 非真实发言"}
+                "disclosure": "J Trader 模拟方法视角 · 非真实发言"}
 
     quality_voices = [
         voice("buffett", roe_summary + roe_test,
@@ -334,7 +334,7 @@ def build_council(raw: dict) -> dict:
             record["status"] = "missing"
     return {
         "schema_version": "ajay-council-v1", "profiles": profiles,
-        "disclosure": "全部讲话为 aJay 根据输入生成的模拟方法视角；非本人发言、背书或独立投票。肖像仅作视觉方位提示。",
+        "disclosure": "全部讲话为 J Trader 根据输入生成的模拟方法视角；非本人发言、背书或独立投票。肖像仅作视觉方位提示。",
         "method": "deterministic_raw_evidence_only", "is_demo": raw.get("is_demo") is True,
         "topics": [
             {"id": "quality", "title": "质量持续性", "question": "已有回报记录，足以支持持续质量吗？", "voices": quality_voices},

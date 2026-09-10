@@ -1,46 +1,45 @@
-# aJay 品牌与项目归属
+# J Trader 品牌与项目归属
 
 ## 当前身份
 
 | 字段 | 规范值 |
 |---|---|
-| 产品品牌 | **aJay** |
+| 产品品牌 | **J Trader** |
 | 维护者 | **aJay（Aji-Q）** |
 | 官方仓库 | `https://github.com/Aji-Q/aJay-Skill` |
-| 插件命令空间 | `ajay` / `/ajay:` |
-| Marketplace 名称 | `ajay-skill` |
+| 插件技术 ID / 命令空间 | `ajay` / `/ajay:` |
+| Marketplace 技术名称 | `ajay-skill` |
 | 配置前缀 / 本地状态目录 | `AJAY_` / `~/.ajay-skill/` |
-| 当前版本 | `1.1.0` |
-| 产品定位 | aJay 的美股研究工作台；保留 A 股 / 港股兼容路径 |
+| 当前版本 | `1.2.0` |
+| 产品定位 | J Trader 开源 AI 美股研究助手；保留 A 股 / 港股兼容路径 |
 
-“归属于 aJay”指当前品牌、维护、分发与 aJay 自己的新增修改，不表示上游 MIT 代码变成独占资产，也不代表其他投资者、供应商或设计参考方为项目背书。
+**J Trader 是产品名，aJay 是维护者。** 仓库名、插件 ID、命令前缀、环境变量和部分资产路径继续保留 `aJay-Skill` / `ajay`，用于兼容现有安装，不再作为产品品牌展示。
+
+“归属于 aJay”指 J Trader 的当前产品方向、维护、分发及 aJay 自己的新增修改；不表示上游 MIT 代码变成独占资产，也不代表投资者、供应商、摄影作者或设计参考方为项目背书。
 
 ## 版权与来源边界
 
 - 上游基础：stock-deep-analyzer 3.9.4，来自 `wbh604/UZI-Skill`，MIT 许可。
 - `LICENSE` 保留 **Copyright (c) 2026 Float Future**，并增加 aJay 新增修改的版权行。
 - `NOTICE` 是当前分发的来源声明；`docs/UPSTREAM-CONTRIBUTORS.md`、`docs/UPSTREAM-RELEASE-NOTES.md` 保留贡献与历史证据。
-- README 安装入口、更新建议、插件作者、报告署名统一为 aJay；上游作者信息留在来源说明，不伪称全部内容由 aJay 原创。
-- 报告 UI 借鉴 Vantara 的宏观布局、章节节奏和留白，不复制其标志、图片或文案。不要把他人素材重新署名为 aJay。
-- 历史截图及 `docs/archive/` 的旧 README 不是当前品牌素材库。尤其旧二维码、社群入口、旧报告署名不得被当作 aJay 联系入口重新发布。
-- 投资者人物资料、数据源与依赖的权利归各自权利人；MIT 许可不自动覆盖来源不明的第三方素材。发布时仍需按素材来源逐项确认。
+- README、CLI、会话提示、报告 UI 和导出文件使用 J Trader；维护与创作者署名使用 aJay（Aji-Q）。
+- 报告 UI 借鉴 Vantara 的宏观布局、章节节奏和留白，不复制其标志、图片或文案，也不把第三方素材重新署名为 J Trader 或 aJay。
+- `docs/archive/` 与旧截图是历史证据，不是当前品牌入口；旧二维码、社群入口和旧产品名不得作为当前联系或安装入口重新发布。
+- 投资者人物资料、数据源与依赖的权利归各自权利人；MIT 许可不自动覆盖来源不明的第三方素材。
 
-## 1.1.0 检查及修复范围
+## 1.2.0 品牌迁移范围
 
-1. 根技能与 4 个子技能的作者、版本，Claude/Cursor/Gemini/npm manifest。
-2. 中文、英文 README，Codex/OpenCode/Gemini/Hermes 安装说明。
-3. 安装脚本默认远端与已存在仓库的身份检查；防止误将上游 checkout 当作 aJay 更新。
-4. 更新模块的默认目标、用户提示与 Hermes 更新命令；网络检查仍为显式启用。
-5. 会话 hook、CLI 品牌、组合 / 对比报告署名、免责声明。
-6. `LICENSE` / `NOTICE`、历史资料隔离与新增回归测试。
-
-主报告与证据质量的修改记录见根目录 `RELEASE-NOTES.md`。回归测试检查身份入口与分发边界，不对所有第三方图片或每一条历史贡献做法律确权；未覆盖资产不得被解释为已获独占权。
+1. 中文 / 英文 README 与产品叙事统一为 J Trader，保留现有安装命令。
+2. 根技能、子技能、Claude/Cursor/Gemini/npm manifest 同步至 1.2.0；技术 ID 继续为 `ajay`。
+3. CLI、会话 hook、主报告、投委会、组合 / 对比报告、导出文件和免责声明统一展示 J Trader。
+4. 合成 UI fixture 改为 `JTRADER.DEMO`，明确与真实证券研究隔离。
+5. 新增回归断言：产品品牌、维护者署名、兼容 ID、版本和来源边界必须同时成立。
 
 ## 维护规则
 
-- 新增安装 / 支持链接默认使用本项目仓库，不默认跳转至上游维护者。
-- 版本通过 `.version-bump.json` 列出的当前分发文件同步；历史版本、schema 版本、研究来源版本保持原值。
+- 新增用户可见入口默认展示 J Trader；作者、维护者或版权语境使用 aJay（Aji-Q）。
+- 不主动改名仓库、插件 ID、`/ajay:` 命令、`AJAY_*` 环境变量或既有资产目录；这些变更需单独迁移方案。
+- 版本通过 `.version-bump.json` 列出的当前分发文件同步；历史版本、schema 版本与研究来源版本保持原值。
 - 更新器只提示版本，不执行远程安装或替用户改写 `origin`。
-- 安装到已有目录时应先检查仓库来源；显式 `AJAY_REPO_URL` 可选择用户自己的镜像，默认仍为 aJay。
-- 加入新报告入口时检查页面 title、导航 logo、页脚、分享卡、二维码目标及导出文件署名。
-- 测试入口：`python -m pytest tests/test_ajay_ownership.py -q`（在 `skills/deep-analysis/scripts/` 运行）。
+- 加入新报告入口时检查页面 title、导航 logo、页脚、分享卡与导出文件署名。
+- 测试入口：在 `skills/deep-analysis/scripts/` 运行 `python -m pytest tests/test_ajay_ownership.py -q`。

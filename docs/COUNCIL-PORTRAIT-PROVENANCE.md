@@ -1,7 +1,7 @@
-# aJay Council portrait · generation provenance
+# J Trader Council portrait · generation provenance
 
 - 日期：2026-09-09
-- 用途：aJay 研究报告的模拟投委会 / 投资方法论人物肖像。
+- 用途：J Trader 研究报告的模拟投委会 / 投资方法论人物肖像。
 - 本批范围：新增 Benjamin Graham、Charlie Munger、Peter Lynch、George Soros、Ray Dalio、Jesse Livermore 六张独立肖像。
 - 工具：Codex 内置 `image_gen.imagegen`（built-in tool mode）。共六次独立生成，分两批并行各三次；没有使用 CLI/API fallback。
 - 参考图：没有向生成工具输入参考图片；通过统一 prompt 规格匹配已有 Buffett/Simons 的视觉语言。

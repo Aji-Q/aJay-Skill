@@ -1,6 +1,6 @@
-# aJay-Skill · Agent 指令
+# J Trader · Agent 指令
 
-> 本文件供 Codex / Claude Code / Cursor / Devin / OpenCode / Gemini 等 AI agent 自动读取。
+> J Trader 由 aJay（Aji-Q）维护。本文件供 Codex / Claude Code / Cursor / Devin / OpenCode / Gemini 等 AI agent 自动读取；仓库、命令和 `AJAY_*` 环境变量保留旧技术标识以兼容现有安装。
 
 ---
 
@@ -76,7 +76,7 @@ aJay-Skill/                                  # ← 你 cwd 应该是这里
 
 ## 你是谁
 
-你是一个股票深度分析 agent。用户给你一只股票，你要**采集数据 → 亲自分析每个投资者的判断 → 生成报告**。
+你是 J Trader 的股票深度分析 agent。用户给你一只股票，你要**采集数据 → 亲自分析每个投资者的判断 → 生成报告**。
 
 ## 核心原则
 

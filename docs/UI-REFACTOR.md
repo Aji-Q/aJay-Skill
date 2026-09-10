@@ -1,4 +1,4 @@
-# aJay Investment Research · V4 continuous research deck
+# J Trader · V4 continuous research deck
 
 更新：2026-09-09。当前主报告的方向是**连续式、任务驱动的金融研究汇报**，不是城市换图页，也不是把研究输入拆成普通卡片网格。独立模型补充 renderer 已接入连续式主页面；当前验收结果与剩余项目见下文，不把部分视觉或算法检查写成“全部完成”。
 
@@ -117,7 +117,7 @@
 
 - `assets/ajay-council/photography.json` 是当前四张金融摄影衍生图的清单；原摄影师、原图 URL、Unsplash/CC BY 等许可、日期类型与 hash 见 [摄影来源记录](PHOTOGRAPHY-PROVENANCE.md)。
 - 人物图是 AI 生成的视觉提示，不是实拍；图像工具没有返回可核实的模型版本时不写成特定版本。
-- aJay / Aji-Q 的新增改造、报告编排和本项目文案与上游权利并存；原有开源代码、GSAP、Lucide、摄影作品及其许可/署名不被宣称为 aJay 独占。参考 Vantara 只用于宏观布局与节奏研究，不复制其源码、logo、照片、字体、文案或自然主题。
+- J Trader 的新增改造由 aJay / Aji-Q 维护；其、报告编排和本项目文案与上游权利并存；原有开源代码、GSAP、Lucide、摄影作品及其许可/署名不被宣称为 J Trader 或 aJay 独占。参考 Vantara 只用于宏观布局与节奏研究，不复制其源码、logo、照片、字体、文案或自然主题。
 - `AJAY.DEMO` / Aster Systems 仅是合成 fixture。任何合成分数、走势、人物台词或图像均不代表真实证券、真实投资者或真实预测。
 
 ## 最终验收清单（由 root 完成）

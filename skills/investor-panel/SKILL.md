@@ -1,7 +1,7 @@
 ---
 name: investor-panel
 description: 66 位投资大佬评审团。给定一只股票的 dimensions.json 和 raw_data.json，让 66 位投资者各自按自己的方法论打分并输出 Pydantic Signal（signal/confidence/score/verdict/comment）。覆盖经典价值派、成长投资派、宏观对冲派、技术趋势派、中国价投派、A股游资派、量化系统派、科技领袖派、AI 卡位猎手 9 大流派。当用户请求"评审团/65 大佬怎么看/某某会买吗/做一次大佬投票"时使用。
-version: 1.1.0
+version: 1.2.0
 author: aJay
 license: MIT
 metadata:
@@ -10,7 +10,7 @@ metadata:
     related_skills: [deep-analysis]
 ---
 
-# aJay · 模拟投资方法评审团
+# J Trader · 模拟投资方法评审团
 
 ## 调用上下文
 

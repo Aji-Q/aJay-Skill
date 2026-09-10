@@ -1,5 +1,5 @@
 {
-  "version": "1.1.0",
+  "version": "1.2.0",
   "files": [
     ".claude-plugin/plugin.json",
     ".cursor-plugin/plugin.json",
@@ -24,8 +24,8 @@
     "skills/investor-panel/SKILL.md": "version: VERSION",
     "skills/lhb-analyzer/SKILL.md": "version: VERSION",
     "skills/trap-detector/SKILL.md": "version: VERSION",
-    "hooks/session-start": "aJay Research vVERSION 已加载",
-    "skills/deep-analysis/scripts/lib/portfolio_runner.py": "aJay-Skill vVERSION",
-    "skills/deep-analysis/scripts/lib/versus_runner.py": "aJay-Skill vVERSION"
+    "hooks/session-start": "J Trader Research vVERSION 已加载",
+    "skills/deep-analysis/scripts/lib/portfolio_runner.py": "J Trader vVERSION",
+    "skills/deep-analysis/scripts/lib/versus_runner.py": "J Trader vVERSION"
   }
 }

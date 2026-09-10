@@ -1,6 +1,6 @@
 # Warren Buffett portrait · generation provenance
 
-- Created for: aJay-Skill editorial report interface.
+- Created for: J Trader editorial report interface.
 - Status: **AI-generated depiction, not a real photograph or a documented photo session.**
 - Subject: Warren Buffett, represented for simulated investment-method discussion.
 - Endorsement: no claim of endorsement, sponsorship, participation or actual investment opinion.
@@ -43,4 +43,4 @@ The generated image is already displayed to the user. There is no need to render
 
 The generated result was visually inspected: one chest-up portrait, recognizable elderly Buffett likeness and eyeglasses, classic dark suit and light shirt, low-key charcoal backdrop, monochrome silver-gelatin-inspired tonal treatment, natural skin detail, and no visible lettering, logos or watermark.
 
-Any placement in aJay reports should remain labeled **AI-generated portrait · simulated methodology, not endorsement**. The asset is not a source of evidence for investment claims.
+Any placement in J Trader reports should remain labeled **AI-generated portrait · simulated methodology, not endorsement**. The asset is not a source of evidence for investment claims.

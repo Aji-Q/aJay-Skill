@@ -1,6 +1,23 @@
-# aJay 变更记录
+# J Trader 变更记录
 
 上游 stock-deep-analyzer 的历史见 [docs/UPSTREAM-RELEASE-NOTES.md](docs/UPSTREAM-RELEASE-NOTES.md)。
+
+## v1.2.0 · 2026-09-10
+
+### 产品品牌与 README
+
+- 产品名称由 aJay Research 更新为 **J Trader**；**aJay（Aji-Q）是维护者**，继续保留创作者与项目修改署名。
+- 中文 README 按“给你的自选股，配个研究员”重新组织：先建立真实研究场景，再展示经营质量、估值、反方观点、可保存研报与分层工作流，减少架构术语先行。
+- 英文 README 同步产品定位、名称、版本和使用边界；主报告截图重新由当前 J Trader fixture 生成。
+- 为保护现有用户，仓库 `aJay-Skill`、插件 ID `ajay`、命令 `/ajay:`、环境变量 `AJAY_*` 与既有内部资源路径暂不改名。
+
+### 运行时与归属
+
+- CLI、会话 hook、主报告、投委会、组合 / 对比页、输入导出与免责声明统一展示 J Trader，并保留 `Maintained by aJay`。
+- 合成 UI 样本由 `AJAY.DEMO` 更新为 `JTRADER.DEMO`；仍明确标注为离线合成 fixture，不代表证券或分析业绩。
+- 插件与技能版本同步到 `1.2.0`；`NOTICE`、品牌规范、归属文档和回归断言同步更新。
+- 品牌迁移不改变上游 MIT 版权、第三方依赖许可、摄影来源记录或历史归档。
+- v1.2.0 发布闸门完成 **1006 passed**；桌面与 390px 移动端实测品牌、无整页横向溢出，浏览器控制台无错误。
 
 ## v1.1.0 · 2026-09-09
 

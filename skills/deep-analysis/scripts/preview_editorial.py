@@ -1,4 +1,4 @@
-"""Offline aJay visual fixture, explicitly synthetic. No market data is requested."""
+"""Offline J Trader visual fixture, explicitly synthetic. No market data is requested."""
 from __future__ import annotations
 import math
 import os
@@ -9,11 +9,11 @@ from lib.pipeline.score_fns import score_dimensions, generate_panel, generate_sy
 
 
 def build_preview():
-    ticker = "AJAY.DEMO"
+    ticker = "JTRADER.DEMO"
     raw = {"ticker": ticker, "name": "Aster Systems", "market": "U", "is_demo": True,
            "fetched_at": datetime.now(timezone.utc).isoformat(), "dimensions": {}}
     def dim(key, data):
-        raw["dimensions"][key] = {"data": data, "source": "aJay synthetic fixture", "fallback": False}
+        raw["dimensions"][key] = {"data": data, "source": "J Trader synthetic fixture", "fallback": False}
     dim("0_basic", {"code": ticker, "name": "Aster Systems", "market": "U", "price": 184.5,
         "change_pct": 1.26, "market_cap": "128B USD (DEMO)", "pe_ttm": 28.4, "pb": 4.2,
         "industry": "Enterprise infrastructure / 演示", "one_liner": "穿透叙事，回到证据。以现金流、资本效率与风险边界，理解一家企业的长期价值。"})
